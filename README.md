@@ -1,73 +1,62 @@
-# Welcome to your Lovable project
+# CRx Navigator (v0.1)
 
-## Project info
+CRx Navigator is a hybrid clinical documentation app that combines:
+1. Fast free-text note writing,
+2. Topic-driven snippet insertion,
+3. Structured clinical capture and reasoning support,
+4. A unified final output preview.
 
-**URL**: https://lovable.dev/projects/REPLACE_WITH_PROJECT_ID
+## Core Workflow
+1. Pick a topic in the left pane.
+2. Write in the center editor and insert snippets with `/trigger` or `Ctrl/Cmd + K`.
+3. Use the right pane for reasoning checks and structured fields.
+4. Review and optionally edit final output in Preview.
+5. Copy final output with `Ctrl/Cmd + S`.
 
-## How can I edit this code?
+## Features Implemented
+- Three-pane desktop layout with resizable panels.
+- Mobile pane navigation (Library / Editor / Reasoning).
+- Topic JSON loader from `public/topics/*.json`.
+- Trigger suggestions and command palette snippet insertion.
+- Token resolver modal for:
+  - choice tokens: `{yes|no*|n/a}`
+  - variable tokens: `[Duration]`
+  - date tokens: `@date(+7d)`, `@date(+2w)`, `@date(+1m)`
+- Structured forms with `showIf` conditional display.
+- Reasoning panel with red flags, discriminators, must-not-miss, references.
+- Composed output preview with section include/exclude toggles.
+- Output override mode (manual edit + reset to computed).
+- Local persistence + autosave restore modal.
 
-There are several ways of editing your application.
+## Keyboard Shortcuts
+- `Ctrl/Cmd + K`: Open command palette
+- `Ctrl/Cmd + S`: Copy/export final output
+- `Ctrl/Cmd + 1`: Focus editor
+- `Ctrl/Cmd + 2`: Focus structured pane
+- `?`: Show shortcuts modal
 
-**Use Lovable**
+## Data Model
+Topic schema is defined in:
+- `src/types/topic.ts`
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/REPLACE_WITH_PROJECT_ID) and start prompting.
+Consultation state schema is defined in:
+- `src/types/consultation.ts`
 
-Changes made via Lovable will be committed automatically to this repo.
+Starter topics:
+- `public/topics/sore-throat.json`
+- `public/topics/uti.json`
+- `public/topics/low-back-pain.json`
 
-**Use your preferred IDE**
-
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
-
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
-
-Follow these steps:
-
-```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
-
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
-
-# Step 3: Install the necessary dependencies.
-npm i
-
-# Step 4: Start the development server with auto-reloading and an instant preview.
+## Dev Commands
+```bash
+npm install
 npm run dev
+npm run test
+npm run build
 ```
 
-**Edit a file directly in GitHub**
-
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
-
-**Use GitHub Codespaces**
-
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
-
-## What technologies are used for this project?
-
-This project is built with:
-
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
-
-## How can I deploy this project?
-
-Simply open [Lovable](https://lovable.dev/projects/REPLACE_WITH_PROJECT_ID) and click on Share -> Publish.
-
-## Can I connect a custom domain to my Lovable project?
-
-Yes, you can!
-
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
-
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/features/custom-domain#custom-domain)
+## Known v0.1 Limits
+- Topic validation is lightweight runtime validation, not full schema enforcement.
+- No backend or cloud sync (local-only).
+- No cross-topic authoring UI yet (JSON files are edited directly).
+- Token resolver is insertion-time and not persistent as live editable tokens in-editor.

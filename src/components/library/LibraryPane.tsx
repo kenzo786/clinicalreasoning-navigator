@@ -2,7 +2,7 @@ import { useState, useMemo } from "react";
 import type { TopicV1 } from "@/types/topic";
 import { useConsultation } from "@/context/ConsultationProvider";
 import { AVAILABLE_TOPICS } from "@/lib/topicSchema";
-import { parseTokens, applyResolutions } from "@/lib/tokenParser";
+import { parseTokens } from "@/lib/tokenParser";
 import { TokenResolverModal } from "@/components/editor/TokenResolverModal";
 import { Search, ChevronDown } from "lucide-react";
 

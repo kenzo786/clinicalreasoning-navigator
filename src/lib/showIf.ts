@@ -24,10 +24,21 @@ export function evaluateShowIf(
   }
 
   // Single condition
+  const normalizeTarget = (value: string): string => {
+    const trimmed = value.trim();
+    if (
+      (trimmed.startsWith("'") && trimmed.endsWith("'")) ||
+      (trimmed.startsWith('"') && trimmed.endsWith('"'))
+    ) {
+      return trimmed.slice(1, -1);
+    }
+    return trimmed;
+  };
+
   const containsMatch = expression.match(/^(\w[\w.-]*)\s+contains\s+(.+)$/);
   if (containsMatch) {
     const fieldVal = responses[containsMatch[1]];
-    const target = containsMatch[2].trim();
+    const target = normalizeTarget(containsMatch[2]);
     if (Array.isArray(fieldVal)) return fieldVal.includes(target);
     return String(fieldVal ?? "").includes(target);
   }
@@ -35,13 +46,13 @@ export function evaluateShowIf(
   const neqMatch = expression.match(/^(\w[\w.-]*)\s*!=\s*(.+)$/);
   if (neqMatch) {
     const fieldVal = String(responses[neqMatch[1]] ?? "");
-    return fieldVal !== neqMatch[2].trim();
+    return fieldVal !== normalizeTarget(neqMatch[2]);
   }
 
   const eqMatch = expression.match(/^(\w[\w.-]*)\s*==\s*(.+)$/);
   if (eqMatch) {
     const fieldVal = String(responses[eqMatch[1]] ?? "");
-    return fieldVal === eqMatch[2].trim();
+    return fieldVal === normalizeTarget(eqMatch[2]);
   }
 
   return true;

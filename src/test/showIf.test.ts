@@ -30,4 +30,9 @@ describe("showIf evaluator", () => {
   it("returns true for empty expression", () => {
     expect(evaluateShowIf("", {})).toBe(true);
   });
+
+  it("supports quoted comparison values", () => {
+    expect(evaluateShowIf("antibiotics == 'none'", { antibiotics: "none" })).toBe(true);
+    expect(evaluateShowIf('antibiotics == "none"', { antibiotics: "none" })).toBe(true);
+  });
 });

@@ -38,6 +38,14 @@ describe("tokenParser", () => {
     expect(result).toBe("Pain: severe, Duration: 3 days");
   });
 
+  it("applies a single token resolution to all repeated occurrences", () => {
+    const result = applyResolutions(
+      "Review in [Days] days. If not better in [Days] days, return.",
+      new Map([["[Days]", "7"]])
+    );
+    expect(result).toBe("Review in 7 days. If not better in 7 days, return.");
+  });
+
   it("handles content with no tokens", () => {
     const { textWithDatesResolved, unresolvedTokens } = parseTokens("Simple text with no tokens.");
     expect(textWithDatesResolved).toBe("Simple text with no tokens.");

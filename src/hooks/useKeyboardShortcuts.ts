@@ -4,6 +4,7 @@ interface ShortcutHandlers {
   onCommandPalette: () => void;
   onCopyExport: () => void;
   onFocusEditor: () => void;
+  onFocusStructured: () => void;
   onShowShortcuts: () => void;
 }
 
@@ -33,6 +34,10 @@ export function useKeyboardShortcuts(handlers: ShortcutHandlers) {
         case "1":
           e.preventDefault();
           handlers.onFocusEditor();
+          break;
+        case "2":
+          e.preventDefault();
+          handlers.onFocusStructured();
           break;
       }
     },

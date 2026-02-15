@@ -12,7 +12,7 @@ export function ReasoningTab({ topic }: ReasoningTabProps) {
 
   return (
     <div className="p-3 space-y-4">
-      {/* Red Flags — prominent */}
+      {/* Red Flags - prominent */}
       {reasoning.redFlags.length > 0 && (
         <section>
           <h3 className="flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wider text-destructive mb-2">
@@ -54,7 +54,7 @@ export function ReasoningTab({ topic }: ReasoningTabProps) {
           <ul className="space-y-1">
             {reasoning.mustNotMiss.map((item, i) => (
               <li key={i} className="flex items-start gap-2 text-sm px-1 py-0.5">
-                <span className="text-warning mt-1 shrink-0">•</span>
+                <span className="text-warning mt-1 shrink-0">-</span>
                 <span>{item}</span>
               </li>
             ))}
@@ -72,7 +72,7 @@ export function ReasoningTab({ topic }: ReasoningTabProps) {
           <ul className="space-y-1">
             {reasoning.discriminators.map((d, i) => (
               <li key={i} className="flex items-start gap-2 text-sm px-1 py-0.5">
-                <span className="text-primary mt-1 shrink-0">•</span>
+                <span className="text-primary mt-1 shrink-0">-</span>
                 <span>{d}</span>
               </li>
             ))}

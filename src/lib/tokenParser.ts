@@ -31,10 +31,12 @@ export function parseTokens(content: string): {
 
   // 2. Extract choice tokens
   const unresolvedTokens: UnresolvedToken[] = [];
+  const seenRawTokens = new Set<string>();
 
   const choiceMatches = [...text.matchAll(CHOICE_RE)];
   for (const m of choiceMatches) {
     const raw = m[0];
+    if (seenRawTokens.has(raw)) continue;
     const inner = m[1];
     const parts = inner.split("|");
     let defaultIndex = 0;
@@ -46,12 +48,16 @@ export function parseTokens(content: string): {
       return p;
     });
     unresolvedTokens.push({ type: "choice", raw, options, defaultIndex });
+    seenRawTokens.add(raw);
   }
 
   // 3. Extract variable tokens
   const varMatches = [...text.matchAll(VARIABLE_RE)];
   for (const m of varMatches) {
-    unresolvedTokens.push({ type: "variable", raw: m[0], name: m[1] });
+    const raw = m[0];
+    if (seenRawTokens.has(raw)) continue;
+    unresolvedTokens.push({ type: "variable", raw, name: m[1] });
+    seenRawTokens.add(raw);
   }
 
   return { textWithDatesResolved: text, unresolvedTokens };
@@ -66,7 +72,7 @@ export function applyResolutions(
 ): string {
   let result = text;
   for (const [raw, value] of resolutions) {
-    result = result.replace(raw, value);
+    result = result.split(raw).join(value);
   }
   return result;
 }

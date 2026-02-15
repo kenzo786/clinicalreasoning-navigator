@@ -13,7 +13,10 @@ const mockTopic: TopicV1 = {
     {
       id: "history",
       title: "History",
-      fields: [{ id: "duration", label: "Duration", type: "text" }],
+      fields: [
+        { id: "duration", label: "Duration", type: "text" },
+        { id: "abx-detail", label: "ABX detail", type: "text", showIf: "abx == yes" },
+      ],
     },
   ],
   outputTemplate: {
@@ -36,6 +39,16 @@ describe("outputComposer", () => {
     const state: ConsultationState = { ...DEFAULT_CONSULTATION_STATE, structuredResponses: { duration: "3 days" } };
     const output = composeOutput(mockTopic, state);
     expect(output).toContain("Duration: 3 days");
+  });
+
+  it("omits structured fields when showIf is not satisfied", () => {
+    const state: ConsultationState = {
+      ...DEFAULT_CONSULTATION_STATE,
+      structuredResponses: { duration: "3 days", "abx-detail": "Penicillin", abx: "no" },
+    };
+    const output = composeOutput(mockTopic, state);
+    expect(output).toContain("Duration: 3 days");
+    expect(output).not.toContain("ABX detail");
   });
 
   it("omits empty sections", () => {
@@ -61,5 +74,6 @@ describe("outputComposer", () => {
     };
     const output = composeOutput(mockTopic, state);
     expect(output).toContain("Red flags assessed");
+    expect(output).toContain("Red flag 1");
   });
 });

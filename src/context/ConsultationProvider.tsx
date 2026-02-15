@@ -9,7 +9,15 @@ import { saveState, loadState, saveAutosave, loadAutosave, clearAutosave } from 
 function consultationReducer(state: ConsultationState, action: ConsultationAction): ConsultationState {
   switch (action.type) {
     case "SET_TOPIC":
-      return { ...state, activeTopicId: action.topicId };
+      if (state.activeTopicId === action.topicId) return state;
+      return {
+        ...state,
+        activeTopicId: action.topicId,
+        structuredResponses: {},
+        reasoningChecks: { redFlagsConfirmed: {} },
+        sectionInclusions: {},
+        outputOverrideText: null,
+      };
     case "SET_EDITOR_TEXT":
       return { ...state, editorText: action.text };
     case "SET_STRUCTURED_RESPONSE":
@@ -76,6 +84,11 @@ export function ConsultationProvider({ children }: { children: React.ReactNode }
   const savedState = loadState();
   const [state, dispatch] = useReducer(consultationReducer, savedState ?? DEFAULT_CONSULTATION_STATE);
   const [hasAutosave, setHasAutosave] = React.useState(false);
+  const stateRef = useRef(state);
+
+  useEffect(() => {
+    stateRef.current = state;
+  }, [state]);
 
   // Check for autosave on mount
   useEffect(() => {
@@ -101,11 +114,11 @@ export function ConsultationProvider({ children }: { children: React.ReactNode }
   // Autosave every 30s
   useEffect(() => {
     const interval = setInterval(() => {
-      saveAutosave(state);
+      saveAutosave(stateRef.current);
       dispatch({ type: "SET_AUTOSAVE_TIME", timestamp: Date.now() });
     }, 30000);
     return () => clearInterval(interval);
-  }, [state]);
+  }, []);
 
   const restoreAutosave = useCallback(() => {
     const autosaved = loadAutosave();

@@ -1,5 +1,6 @@
 import type { TopicV1 } from "@/types/topic";
 import type { ConsultationState } from "@/types/consultation";
+import { evaluateShowIf } from "@/lib/showIf";
 
 export function composeOutput(topic: TopicV1, state: ConsultationState): string {
   const sections: string[] = [];
@@ -20,6 +21,9 @@ export function composeOutput(topic: TopicV1, state: ConsultationState): string 
       if (structSection) {
         const lines: string[] = [];
         for (const field of structSection.fields) {
+          if (field.showIf && !evaluateShowIf(field.showIf, state.structuredResponses)) {
+            continue;
+          }
           const val = state.structuredResponses[field.id];
           if (val !== undefined && val !== "" && val !== false) {
             const display = Array.isArray(val) ? val.join(", ") : String(val);
@@ -29,11 +33,17 @@ export function composeOutput(topic: TopicV1, state: ConsultationState): string 
         content = lines.join("\n");
       }
     } else if (section.source === "reasoning") {
-      const confirmed = Object.entries(state.reasoningChecks.redFlagsConfirmed)
+      const confirmedLabels = Object.entries(state.reasoningChecks.redFlagsConfirmed)
         .filter(([, v]) => v)
-        .map(([k]) => k);
-      if (confirmed.length > 0) {
-        content = `Red flags assessed: ${confirmed.join(", ")}`;
+        .map(([key]) => {
+          const match = key.match(/^rf-(\d+)$/);
+          if (!match) return null;
+          const index = Number(match[1]);
+          return topic.reasoning.redFlags[index] ?? null;
+        })
+        .filter((label): label is string => Boolean(label));
+      if (confirmedLabels.length > 0) {
+        content = `Red flags assessed: ${confirmedLabels.join(", ")}`;
       }
     }
 

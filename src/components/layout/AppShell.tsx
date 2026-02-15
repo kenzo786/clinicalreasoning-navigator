@@ -11,22 +11,62 @@ import { ShortcutsModal } from "@/components/shared/ShortcutsModal";
 import { CommandPalette } from "@/components/library/CommandPalette";
 import { MobileNav } from "@/components/layout/MobileNav";
 import { useKeyboardShortcuts } from "@/hooks/useKeyboardShortcuts";
-import { useState } from "react";
+import { useCallback, useMemo, useRef, useState } from "react";
 import { Stethoscope } from "lucide-react";
+import { composeOutput } from "@/lib/outputComposer";
+import { useToast } from "@/hooks/use-toast";
 
 export default function AppShell() {
   const { state, dispatch } = useConsultation();
   const { topic, loading, error } = useTopicLoader(state.activeTopicId);
   const isMobile = useIsMobile();
+  const { toast } = useToast();
   const [showPreview, setShowPreview] = useState(false);
   const [showShortcuts, setShowShortcuts] = useState(false);
   const [showPalette, setShowPalette] = useState(false);
-  const editorRef = { current: null as HTMLTextAreaElement | null };
+  const editorRef = useRef<HTMLTextAreaElement | null>(null);
+  const rightPaneRef = useRef<HTMLDivElement | null>(null);
+  const computedOutput = useMemo(() => (topic ? composeOutput(topic, state) : ""), [topic, state]);
+
+  const handleCopyExport = useCallback(async () => {
+    const text = (state.outputOverrideText ?? computedOutput).trim();
+    if (!text) {
+      toast({ title: "Nothing to copy", description: "No note output to copy yet." });
+      return;
+    }
+    try {
+      await navigator.clipboard.writeText(text);
+      toast({ title: "Output copied", description: "Final note copied to clipboard." });
+    } catch {
+      toast({ title: "Copy failed", description: "Unable to copy output.", variant: "destructive" });
+    }
+  }, [computedOutput, state.outputOverrideText, toast]);
+
+  const focusStructured = useCallback(() => {
+    dispatch({ type: "SET_UI_PREF", key: "rightPaneTab", value: "structured" });
+    if (isMobile) {
+      dispatch({ type: "SET_UI_PREF", key: "mobileActivePane", value: "reasoning" });
+    }
+    setTimeout(() => {
+      const container = rightPaneRef.current;
+      if (!container) return;
+      const el =
+        container.querySelector("input, textarea, select") ??
+        container.querySelector("button");
+      if (el instanceof HTMLElement) el.focus();
+    }, 0);
+  }, [dispatch, isMobile]);
 
   useKeyboardShortcuts({
     onCommandPalette: () => setShowPalette(true),
-    onCopyExport: () => {/* handled in preview */},
-    onFocusEditor: () => editorRef.current?.focus(),
+    onCopyExport: handleCopyExport,
+    onFocusEditor: () => {
+      if (isMobile) {
+        dispatch({ type: "SET_UI_PREF", key: "mobileActivePane", value: "editor" });
+      }
+      setTimeout(() => editorRef.current?.focus(), 0);
+    },
+    onFocusStructured: focusStructured,
     onShowShortcuts: () => setShowShortcuts(true),
   });
 
@@ -85,7 +125,11 @@ export default function AppShell() {
             <div className="flex-1 overflow-auto">
               {activePane === "library" && <LibraryPane topic={topic} editorRef={editorRef} />}
               {activePane === "editor" && <EditorPane topic={topic} editorRef={editorRef} />}
-              {activePane === "reasoning" && <RightPane topic={topic} />}
+              {activePane === "reasoning" && (
+                <div ref={rightPaneRef} className="h-full">
+                  <RightPane topic={topic} />
+                </div>
+              )}
             </div>
             <MobileNav />
           </div>
@@ -121,7 +165,9 @@ export default function AppShell() {
               defaultSize={state.uiPrefs.desktopPaneSizes[2]}
               minSize={20}
             >
-              <RightPane topic={topic} />
+              <div ref={rightPaneRef} className="h-full">
+                <RightPane topic={topic} />
+              </div>
             </ResizablePanel>
           </ResizablePanelGroup>
         )}

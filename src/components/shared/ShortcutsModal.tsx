@@ -11,12 +11,12 @@ interface ShortcutsModalProps {
 }
 
 const shortcuts = [
-  { keys: "Ctrl/⌘ + K", description: "Command palette" },
-  { keys: "Ctrl/⌘ + S", description: "Copy/export note" },
-  { keys: "Ctrl/⌘ + Z", description: "Undo" },
-  { keys: "Ctrl/⌘ + Shift + Z", description: "Redo" },
-  { keys: "Ctrl/⌘ + 1", description: "Focus editor" },
-  { keys: "Ctrl/⌘ + 2", description: "Focus structured" },
+  { keys: "Ctrl/Cmd + K", description: "Command palette" },
+  { keys: "Ctrl/Cmd + S", description: "Copy/export note" },
+  { keys: "Ctrl/Cmd + Z", description: "Undo" },
+  { keys: "Ctrl/Cmd + Shift + Z", description: "Redo" },
+  { keys: "Ctrl/Cmd + 1", description: "Focus editor" },
+  { keys: "Ctrl/Cmd + 2", description: "Focus structured" },
   { keys: "/", description: "Trigger snippet insertion" },
   { keys: "?", description: "Show this help" },
 ];

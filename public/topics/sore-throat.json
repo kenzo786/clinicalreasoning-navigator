@@ -1,0 +1,142 @@
+{
+  "version": "1.0",
+  "metadata": {
+    "id": "sore-throat",
+    "slug": "sore-throat",
+    "displayName": "Sore Throat",
+    "specialty": "General Practice",
+    "triggers": ["/sorethroat", "/urti", "/tonsillitis"]
+  },
+  "snippets": [
+    {
+      "id": "st-hx",
+      "trigger": "sorethroat",
+      "label": "Sore Throat History",
+      "category": "History",
+      "content": "Sore throat for [Duration]. Associated with {fever|no fever*}. {cough present|no cough*}. No difficulty breathing or stridor. No drooling. Able to swallow fluids. No recent travel or sick contacts."
+    },
+    {
+      "id": "st-centor",
+      "trigger": "centor",
+      "label": "Centor Criteria",
+      "category": "Assessment",
+      "content": "Centor score: {0|1|2|3*|4}/4\n- Tonsillar exudate: {yes|no*}\n- Tender anterior cervical lymphadenopathy: {yes|no*}\n- Fever >38°C: {yes|no*}\n- Absence of cough: {yes|no*}"
+    },
+    {
+      "id": "st-exam",
+      "trigger": "throatexam",
+      "label": "Throat Examination",
+      "category": "Examination",
+      "content": "Oropharynx: {erythematous|normal*}. Tonsils {enlarged and erythematous|normal*}. {Exudate present|No exudate*}. No peritonsillar swelling or asymmetry. Anterior cervical lymph nodes {tender|non-tender*}."
+    },
+    {
+      "id": "st-viral",
+      "trigger": "viralthroat",
+      "label": "Viral Sore Throat Plan",
+      "category": "Plan",
+      "content": "Impression: Likely viral pharyngitis.\nPlan:\n- Supportive care: regular paracetamol/ibuprofen, warm fluids, throat lozenges\n- Antibiotics not indicated at this time\n- Safety net: return if worsening, difficulty swallowing/breathing, or not improving in {5|7*|10} days\n- Review @date(+7d) if not resolving"
+    },
+    {
+      "id": "st-abx",
+      "trigger": "throatabx",
+      "label": "Sore Throat Antibiotics",
+      "category": "Plan",
+      "content": "Phenoxymethylpenicillin 500mg QDS for 10 days.\nIf penicillin allergic: clarithromycin 250mg BD for 5 days.\nAdvised to complete full course. Safety net provided."
+    },
+    {
+      "id": "st-safety",
+      "trigger": "safetynet",
+      "label": "Safety Netting",
+      "category": "Safety Net",
+      "content": "Safety net advice given:\n- Return if difficulty breathing or swallowing\n- Return if unable to manage fluids\n- Return if symptoms worsen significantly\n- Return if not improving after {5|7*|10} days\n- Advised to call 999 if stridor or severe breathing difficulty"
+    }
+  ],
+  "reasoning": {
+    "discriminators": [
+      "Duration and progression of symptoms",
+      "Centor criteria score",
+      "Presence of systemic features",
+      "Unilateral vs bilateral tonsillar changes",
+      "History of recurrent tonsillitis"
+    ],
+    "mustNotMiss": [
+      "Peritonsillar abscess (quinsy)",
+      "Epiglottitis",
+      "Ludwig's angina",
+      "Lemierre syndrome",
+      "Retropharyngeal abscess"
+    ],
+    "redFlags": [
+      "Stridor or respiratory distress",
+      "Drooling or inability to swallow",
+      "Trismus (difficulty opening mouth)",
+      "Unilateral peritonsillar swelling",
+      "Neck swelling with systemic toxicity",
+      "Immunocompromised patient"
+    ],
+    "references": [
+      { "label": "NICE NG84 – Sore Throat", "url": "https://www.nice.org.uk/guidance/ng84" },
+      { "label": "FeverPAIN Score", "url": "https://www.nice.org.uk/guidance/ng84/chapter/recommendations" }
+    ]
+  },
+  "structuredFields": [
+    {
+      "id": "history",
+      "title": "History",
+      "fields": [
+        { "id": "duration", "label": "Duration", "type": "text", "placeholder": "e.g., 3 days" },
+        { "id": "fever", "label": "Fever", "type": "select", "options": ["yes", "no", "unknown"] },
+        { "id": "cough", "label": "Cough", "type": "select", "options": ["yes", "no"] },
+        { "id": "dysphagia", "label": "Difficulty swallowing", "type": "select", "options": ["none", "mild", "severe"] },
+        { "id": "recurrence", "label": "Recurrent episodes", "type": "toggle" }
+      ]
+    },
+    {
+      "id": "exam",
+      "title": "Examination",
+      "fields": [
+        { "id": "tonsils", "label": "Tonsils", "type": "select", "options": ["normal", "erythematous", "enlarged", "exudate present"] },
+        { "id": "lymph-nodes", "label": "Anterior cervical LN", "type": "select", "options": ["normal", "tender", "enlarged"] },
+        { "id": "temp", "label": "Temperature (°C)", "type": "number", "placeholder": "37.0" },
+        { "id": "peritonsillar", "label": "Peritonsillar swelling", "type": "toggle" }
+      ]
+    },
+    {
+      "id": "assessment",
+      "title": "Assessment",
+      "fields": [
+        { "id": "centor-score", "label": "Centor Score", "type": "select", "options": ["0", "1", "2", "3", "4"] },
+        { "id": "impression", "label": "Impression", "type": "textarea", "placeholder": "e.g., Likely viral pharyngitis" }
+      ]
+    },
+    {
+      "id": "plan",
+      "title": "Plan",
+      "fields": [
+        { "id": "antibiotics", "label": "Antibiotics prescribed", "type": "select", "options": ["none", "phenoxymethylpenicillin", "clarithromycin", "other"] },
+        { "id": "abx-detail", "label": "Antibiotic details", "type": "text", "showIf": "antibiotics != none", "placeholder": "Dose and duration" },
+        { "id": "analgesia", "label": "Analgesia advised", "type": "toggle" },
+        { "id": "follow-up", "label": "Follow-up plan", "type": "text", "placeholder": "e.g., Review in 1 week if not improving" }
+      ]
+    },
+    {
+      "id": "safety-net",
+      "title": "Safety Net",
+      "fields": [
+        { "id": "safety-advice", "label": "Safety net advice given", "type": "toggle" },
+        { "id": "safety-details", "label": "Specific advice", "type": "textarea", "showIf": "safety-advice == true", "placeholder": "Details of safety netting advice" }
+      ]
+    }
+  ],
+  "outputTemplate": {
+    "sections": [
+      { "id": "editor", "title": "Clinical Notes", "source": "editor", "includeByDefault": true },
+      { "id": "history", "title": "History", "source": "structured", "structuredSectionId": "history", "includeByDefault": true },
+      { "id": "exam", "title": "Examination", "source": "structured", "structuredSectionId": "exam", "includeByDefault": true },
+      { "id": "assessment", "title": "Assessment", "source": "structured", "structuredSectionId": "assessment", "includeByDefault": true },
+      { "id": "plan", "title": "Plan", "source": "structured", "structuredSectionId": "plan", "includeByDefault": true },
+      { "id": "safety-net", "title": "Safety Net", "source": "structured", "structuredSectionId": "safety-net", "includeByDefault": true },
+      { "id": "reasoning", "title": "Clinical Reasoning", "source": "reasoning", "includeByDefault": false }
+    ]
+  }
+}

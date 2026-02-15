@@ -1,0 +1,150 @@
+{
+  "version": "1.0",
+  "metadata": {
+    "id": "low-back-pain",
+    "slug": "low-back-pain",
+    "displayName": "Low Back Pain",
+    "specialty": "General Practice",
+    "triggers": ["/backpain", "/lbp", "/sciatica"]
+  },
+  "snippets": [
+    {
+      "id": "lbp-hx",
+      "trigger": "backpain",
+      "label": "Back Pain History",
+      "category": "History",
+      "content": "Low back pain for [Duration]. Onset: {sudden|gradual*}. {Radiating to leg|No radiation*}. {Numbness/tingling present|No neurological symptoms*}. No bladder or bowel disturbance. No saddle anaesthesia. No recent trauma. No weight loss or night pain. Aggravating: [Factors]. Relieving: [Factors]."
+    },
+    {
+      "id": "lbp-exam",
+      "trigger": "backexam",
+      "label": "Back Examination",
+      "category": "Examination",
+      "content": "Lumbar spine: {normal alignment|reduced lordosis*}. Tenderness: {localised to L4/5|diffuse|none*}. Range of movement: flexion {full|reduced*}, extension {full|reduced*}. SLR: {positive at [Degrees]°|negative*} bilaterally. Power: {normal|reduced — [Details]*}. Sensation: {intact|reduced — [Dermatome]*}. Reflexes: knee {normal|reduced*}, ankle {normal|reduced*}. Perianal sensation: {intact|not tested*}."
+    },
+    {
+      "id": "lbp-mechanical",
+      "trigger": "mechanical",
+      "label": "Mechanical Back Pain Plan",
+      "category": "Plan",
+      "content": "Impression: Mechanical low back pain, no red flags.\nPlan:\n- Stay active, avoid prolonged bed rest\n- Regular analgesia: paracetamol +/- ibuprofen\n- Consider topical NSAID\n- Physiotherapy referral if not improving\n- Safety net: return if neurological symptoms develop, bladder/bowel disturbance, or worsening pain\n- Review @date(+14d) if not improving"
+    },
+    {
+      "id": "lbp-sciatica",
+      "trigger": "sciatica",
+      "label": "Sciatica Assessment",
+      "category": "Assessment",
+      "content": "Radicular pain consistent with {L4|L5*|S1} distribution.\nSLR positive at [Degrees]°. Motor: [Findings]. Sensory: [Findings].\nManagement: conservative initially, consider neuropathic pain adjunct (amitriptyline/gabapentin).\nRefer if progressive neurological deficit or failure to improve after 6-8 weeks."
+    },
+    {
+      "id": "lbp-cauda",
+      "trigger": "caudaequina",
+      "label": "Cauda Equina Screen",
+      "category": "Safety Net",
+      "content": "CAUDA EQUINA SCREEN:\n- Saddle anaesthesia: {present — URGENT|absent*}\n- Bladder dysfunction: {present — URGENT|absent*}\n- Bowel dysfunction: {present — URGENT|absent*}\n- Bilateral leg weakness: {present — URGENT|absent*}\n- Progressive neurological deficit: {present — URGENT|absent*}\n\nIf ANY positive: immediate ED referral for urgent MRI."
+    },
+    {
+      "id": "lbp-safety",
+      "trigger": "backsafety",
+      "label": "Back Pain Safety Net",
+      "category": "Safety Net",
+      "content": "Safety net advice given:\n- Return URGENTLY if bladder or bowel problems develop\n- Return URGENTLY if numbness in saddle area\n- Return URGENTLY if legs become weak\n- Return if pain worsening despite analgesia\n- Return if not improving after {2|4*|6} weeks"
+    }
+  ],
+  "reasoning": {
+    "discriminators": [
+      "Mechanical vs inflammatory pattern",
+      "Presence of radiculopathy",
+      "Duration: acute (<6w) vs chronic (>12w)",
+      "Neurological deficit — progressive vs stable",
+      "Psychosocial yellow flags (fear avoidance, catastrophising)"
+    ],
+    "mustNotMiss": [
+      "Cauda equina syndrome",
+      "Spinal fracture",
+      "Spinal malignancy/metastasis",
+      "Spinal infection (discitis/epidural abscess)",
+      "Abdominal aortic aneurysm (AAA)"
+    ],
+    "redFlags": [
+      "Saddle anaesthesia",
+      "Bladder or bowel dysfunction",
+      "Progressive bilateral leg weakness",
+      "Age <20 or >55 with new onset",
+      "History of cancer",
+      "Unexplained weight loss",
+      "Night pain unrelieved by position",
+      "Fever or systemic illness",
+      "IV drug use or immunosuppression",
+      "Thoracic spine pain"
+    ],
+    "references": [
+      { "label": "NICE NG59 – Low Back Pain", "url": "https://www.nice.org.uk/guidance/ng59" },
+      { "label": "NICE CKS – Sciatica", "url": "https://cks.nice.org.uk/topics/sciatica-lumbar-radiculopathy/" }
+    ]
+  },
+  "structuredFields": [
+    {
+      "id": "history",
+      "title": "History",
+      "fields": [
+        { "id": "duration", "label": "Duration", "type": "text", "placeholder": "e.g., 5 days" },
+        { "id": "onset", "label": "Onset", "type": "select", "options": ["sudden", "gradual", "post-trauma"] },
+        { "id": "radiation", "label": "Leg radiation", "type": "select", "options": ["none", "left leg", "right leg", "bilateral"] },
+        { "id": "neuro-symptoms", "label": "Neurological symptoms", "type": "multi", "options": ["numbness", "tingling", "weakness", "none"] },
+        { "id": "bladder-bowel", "label": "Bladder/bowel disturbance", "type": "select", "options": ["no", "yes — urinary", "yes — bowel", "yes — both"] },
+        { "id": "night-pain", "label": "Night pain", "type": "toggle" }
+      ]
+    },
+    {
+      "id": "exam",
+      "title": "Examination",
+      "fields": [
+        { "id": "tenderness", "label": "Tenderness location", "type": "text", "placeholder": "e.g., L4/5 paravertebral" },
+        { "id": "rom", "label": "Range of movement", "type": "select", "options": ["full", "reduced flexion", "reduced extension", "globally reduced"] },
+        { "id": "slr", "label": "Straight leg raise", "type": "select", "options": ["negative bilaterally", "positive left", "positive right", "positive bilateral"] },
+        { "id": "slr-degrees", "label": "SLR degrees (if positive)", "type": "number", "showIf": "slr != negative bilaterally", "placeholder": "45" },
+        { "id": "power", "label": "Lower limb power", "type": "select", "options": ["normal", "reduced — specify"] },
+        { "id": "perianal", "label": "Perianal sensation", "type": "select", "options": ["intact", "reduced", "not tested"] }
+      ]
+    },
+    {
+      "id": "assessment",
+      "title": "Assessment",
+      "fields": [
+        { "id": "diagnosis", "label": "Working diagnosis", "type": "select", "options": ["mechanical LBP", "sciatica/radiculopathy", "query cauda equina", "inflammatory", "other"] },
+        { "id": "impression", "label": "Impression details", "type": "textarea", "placeholder": "Additional assessment detail" }
+      ]
+    },
+    {
+      "id": "plan",
+      "title": "Plan",
+      "fields": [
+        { "id": "analgesia", "label": "Analgesia", "type": "multi", "options": ["paracetamol", "ibuprofen", "naproxen", "codeine", "amitriptyline", "gabapentin"] },
+        { "id": "physio", "label": "Physiotherapy referral", "type": "toggle" },
+        { "id": "imaging", "label": "Imaging requested", "type": "select", "options": ["none", "X-ray", "MRI — routine", "MRI — urgent"] },
+        { "id": "follow-up", "label": "Follow-up plan", "type": "text", "placeholder": "e.g., Review in 2 weeks" }
+      ]
+    },
+    {
+      "id": "safety-net",
+      "title": "Safety Net",
+      "fields": [
+        { "id": "cauda-equina-screened", "label": "Cauda equina screen done", "type": "toggle" },
+        { "id": "safety-advice", "label": "Safety net advice given", "type": "toggle" },
+        { "id": "safety-details", "label": "Specific advice", "type": "textarea", "showIf": "safety-advice == true" }
+      ]
+    }
+  ],
+  "outputTemplate": {
+    "sections": [
+      { "id": "editor", "title": "Clinical Notes", "source": "editor", "includeByDefault": true },
+      { "id": "history", "title": "History", "source": "structured", "structuredSectionId": "history", "includeByDefault": true },
+      { "id": "exam", "title": "Examination", "source": "structured", "structuredSectionId": "exam", "includeByDefault": true },
+      { "id": "assessment", "title": "Assessment", "source": "structured", "structuredSectionId": "assessment", "includeByDefault": true },
+      { "id": "plan", "title": "Plan", "source": "structured", "structuredSectionId": "plan", "includeByDefault": true },
+      { "id": "safety-net", "title": "Safety Net", "source": "structured", "structuredSectionId": "safety-net", "includeByDefault": true },
+      { "id": "reasoning", "title": "Clinical Reasoning", "source": "reasoning", "includeByDefault": false }
+    ]
+  }
+}

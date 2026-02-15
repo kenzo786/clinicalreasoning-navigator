@@ -1,0 +1,138 @@
+{
+  "version": "1.0",
+  "metadata": {
+    "id": "uti",
+    "slug": "uti",
+    "displayName": "UTI",
+    "specialty": "General Practice",
+    "triggers": ["/uti", "/cystitis", "/urine"]
+  },
+  "snippets": [
+    {
+      "id": "uti-hx",
+      "trigger": "uti",
+      "label": "UTI History",
+      "category": "History",
+      "content": "Urinary symptoms for [Duration]. {Dysuria|No dysuria*}. {Frequency|No frequency*}. {Urgency|No urgency*}. {Haematuria|No haematuria*}. No loin pain or systemic features. {Not pregnant|Pregnant — [Gestation]}. Last menstrual period: [LMP]."
+    },
+    {
+      "id": "uti-exam",
+      "trigger": "utiexam",
+      "label": "UTI Examination",
+      "category": "Examination",
+      "content": "Abdomen soft, non-tender. No suprapubic tenderness. No renal angle tenderness. Temperature {normal|elevated*}: [Temp]°C. Dipstick: Nitrites {pos|neg*}, Leucocytes {pos|neg*}, Blood {pos|neg*}."
+    },
+    {
+      "id": "uti-simple",
+      "trigger": "simplecystitis",
+      "label": "Simple Cystitis Plan",
+      "category": "Plan",
+      "content": "Impression: Uncomplicated lower UTI.\nPlan:\n- Nitrofurantoin 100mg MR BD for 3 days\n- Increase fluid intake\n- Safety net: return if symptoms worsen, fever develops, loin pain, or not improving within 48h\n- MSU sent if {recurrent|first episode*}\n- Review @date(+3d) if not resolving"
+    },
+    {
+      "id": "uti-recurrent",
+      "trigger": "recurrentuti",
+      "label": "Recurrent UTI Assessment",
+      "category": "Assessment",
+      "content": "Recurrent UTI — [Number] episodes in the past [Timeframe].\nConsider: post-coital prophylaxis, self-start antibiotics, low-dose prophylaxis.\nInvestigations to consider: MSU for culture, renal USS, post-void residual."
+    },
+    {
+      "id": "uti-safety",
+      "trigger": "utisafety",
+      "label": "UTI Safety Net",
+      "category": "Safety Net",
+      "content": "Safety net:\n- Return if fever, rigors, or loin pain develop (suggests pyelonephritis)\n- Return if symptoms not improving after 48 hours of antibiotics\n- Return if vomiting and unable to take oral antibiotics\n- Attend ED if systemically unwell"
+    }
+  ],
+  "reasoning": {
+    "discriminators": [
+      "Lower vs upper tract symptoms",
+      "Complicated vs uncomplicated (pregnancy, male, structural)",
+      "Recurrent vs isolated episode",
+      "Dipstick findings correlation",
+      "Sexually active — consider STI screen"
+    ],
+    "mustNotMiss": [
+      "Pyelonephritis",
+      "Urosepsis",
+      "Urinary retention",
+      "Renal abscess",
+      "Pregnancy-related UTI (high risk)"
+    ],
+    "redFlags": [
+      "Fever >38°C with loin pain",
+      "Rigors or systemic toxicity",
+      "Pregnant with UTI symptoms",
+      "Male with UTI (consider prostatitis)",
+      "Visible frank haematuria",
+      "Immunosuppressed patient"
+    ],
+    "references": [
+      { "label": "NICE NG109 – UTI (lower)", "url": "https://www.nice.org.uk/guidance/ng109" },
+      { "label": "NICE CKS – UTI (Women)", "url": "https://cks.nice.org.uk/topics/urinary-tract-infection-lower-women/" }
+    ]
+  },
+  "structuredFields": [
+    {
+      "id": "history",
+      "title": "History",
+      "fields": [
+        { "id": "duration", "label": "Duration", "type": "text", "placeholder": "e.g., 2 days" },
+        { "id": "dysuria", "label": "Dysuria", "type": "select", "options": ["yes", "no"] },
+        { "id": "frequency", "label": "Urinary frequency", "type": "select", "options": ["yes", "no"] },
+        { "id": "urgency", "label": "Urgency", "type": "select", "options": ["yes", "no"] },
+        { "id": "haematuria", "label": "Haematuria", "type": "select", "options": ["none", "dipstick only", "visible"] },
+        { "id": "pregnant", "label": "Pregnant", "type": "select", "options": ["no", "yes", "unknown"] },
+        { "id": "recurrent", "label": "Recurrent UTIs", "type": "toggle" }
+      ]
+    },
+    {
+      "id": "exam",
+      "title": "Examination",
+      "fields": [
+        { "id": "suprapubic", "label": "Suprapubic tenderness", "type": "toggle" },
+        { "id": "renal-angle", "label": "Renal angle tenderness", "type": "toggle" },
+        { "id": "temp", "label": "Temperature (°C)", "type": "number", "placeholder": "37.0" },
+        { "id": "dipstick-nitrites", "label": "Dipstick nitrites", "type": "select", "options": ["positive", "negative"] },
+        { "id": "dipstick-leuc", "label": "Dipstick leucocytes", "type": "select", "options": ["positive", "negative", "trace"] }
+      ]
+    },
+    {
+      "id": "assessment",
+      "title": "Assessment",
+      "fields": [
+        { "id": "impression", "label": "Impression", "type": "textarea", "placeholder": "e.g., Uncomplicated lower UTI" },
+        { "id": "uti-type", "label": "UTI type", "type": "select", "options": ["uncomplicated", "complicated", "recurrent", "upper tract suspected"] }
+      ]
+    },
+    {
+      "id": "plan",
+      "title": "Plan",
+      "fields": [
+        { "id": "antibiotic", "label": "Antibiotic prescribed", "type": "select", "options": ["nitrofurantoin", "trimethoprim", "cefalexin", "none"] },
+        { "id": "abx-duration", "label": "Duration (days)", "type": "number", "showIf": "antibiotic != none", "placeholder": "3" },
+        { "id": "msu-sent", "label": "MSU sent", "type": "toggle" },
+        { "id": "follow-up", "label": "Follow-up plan", "type": "text", "placeholder": "e.g., Review in 48h if not improving" }
+      ]
+    },
+    {
+      "id": "safety-net",
+      "title": "Safety Net",
+      "fields": [
+        { "id": "safety-advice", "label": "Safety net advice given", "type": "toggle" },
+        { "id": "safety-details", "label": "Specific advice", "type": "textarea", "showIf": "safety-advice == true" }
+      ]
+    }
+  ],
+  "outputTemplate": {
+    "sections": [
+      { "id": "editor", "title": "Clinical Notes", "source": "editor", "includeByDefault": true },
+      { "id": "history", "title": "History", "source": "structured", "structuredSectionId": "history", "includeByDefault": true },
+      { "id": "exam", "title": "Examination", "source": "structured", "structuredSectionId": "exam", "includeByDefault": true },
+      { "id": "assessment", "title": "Assessment", "source": "structured", "structuredSectionId": "assessment", "includeByDefault": true },
+      { "id": "plan", "title": "Plan", "source": "structured", "structuredSectionId": "plan", "includeByDefault": true },
+      { "id": "safety-net", "title": "Safety Net", "source": "structured", "structuredSectionId": "safety-net", "includeByDefault": true },
+      { "id": "reasoning", "title": "Clinical Reasoning", "source": "reasoning", "includeByDefault": false }
+    ]
+  }
+}

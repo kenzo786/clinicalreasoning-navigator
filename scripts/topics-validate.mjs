@@ -33,6 +33,24 @@ function validateTopic(filePath) {
   if (!Array.isArray(raw.outputTemplate?.sections)) issues.push("outputTemplate.sections must be an array");
   if (!Array.isArray(raw.jitl?.linkProviders)) issues.push("jitl.linkProviders must be an array");
   if (typeof raw.ddx?.compareEnabled !== "boolean") issues.push("ddx.compareEnabled must be boolean");
+  if (!Array.isArray(raw.review?.historyPrompts) || raw.review.historyPrompts.length < 1) {
+    issues.push("review.historyPrompts must include at least 1 group");
+  }
+  if (!Array.isArray(raw.review?.examSections) || raw.review.examSections.length < 1) {
+    issues.push("review.examSections must include at least 1 section");
+  }
+  if (
+    !Array.isArray(raw.review?.investigations?.whenHelpful) ||
+    raw.review.investigations.whenHelpful.length < 1
+  ) {
+    issues.push("review.investigations.whenHelpful must include at least 1 item");
+  }
+  if (
+    !Array.isArray(raw.review?.managementConsiderations?.followUpLogic) ||
+    raw.review.managementConsiderations.followUpLogic.length < 1
+  ) {
+    issues.push("review.managementConsiderations.followUpLogic must include at least 1 item");
+  }
 
   const qa = raw.qa ?? {};
   if (!["approved", "draft", "deprecated"].includes(qa.status)) {

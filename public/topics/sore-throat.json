@@ -401,8 +401,67 @@
         "clinicalValue": "Supports safer and faster primary-care decision making."
       }
     ],
-    "historyPrompts": [],
-    "examSections": [],
+    "historyPrompts": [
+      {
+        "category": "History",
+        "prompts": [
+          {
+            "id": "hx-duration",
+            "label": "Duration",
+            "mode": "text",
+            "placeholder": "e.g., 3 days"
+          },
+          {
+            "id": "hx-fever",
+            "label": "Fever",
+            "mode": "yesNoNa"
+          },
+          {
+            "id": "hx-cough",
+            "label": "Cough",
+            "mode": "yesNoNa"
+          },
+          {
+            "id": "hx-dysphagia",
+            "label": "Difficulty swallowing",
+            "mode": "text"
+          },
+          {
+            "id": "hx-recurrence",
+            "label": "Recurrent episodes",
+            "mode": "text"
+          }
+        ]
+      }
+    ],
+    "examSections": [
+      {
+        "id": "exam",
+        "title": "Examination",
+        "prompts": [
+          {
+            "id": "ex-tonsils",
+            "label": "Tonsils",
+            "significance": "Supports narrowing differential and immediate safety decisions."
+          },
+          {
+            "id": "ex-lymph-nodes",
+            "label": "Anterior cervical LN",
+            "significance": "Supports narrowing differential and immediate safety decisions."
+          },
+          {
+            "id": "ex-temp",
+            "label": "Temperature (°C)",
+            "significance": "Supports narrowing differential and immediate safety decisions."
+          },
+          {
+            "id": "ex-peritonsillar",
+            "label": "Peritonsillar swelling",
+            "significance": "Supports narrowing differential and immediate safety decisions."
+          }
+        ]
+      }
+    ],
     "diagnoses": {
       "common": [
         {
@@ -432,18 +491,42 @@
           "name": "Retropharyngeal abscess"
         }
       ],
-      "oftenMissed": []
+      "oftenMissed": [
+        {
+          "name": "Atypical presentation of Peritonsillar abscess (quinsy)"
+        }
+      ]
     },
     "investigations": {
-      "whenHelpful": [],
+      "whenHelpful": [
+        {
+          "test": "Point-of-care observations",
+          "rationale": "Helps detect physiological instability during consultation."
+        },
+        {
+          "test": "Targeted bedside test",
+          "rationale": "Used when findings will change immediate management."
+        },
+        {
+          "test": "Selective laboratory test",
+          "rationale": "Reserve for diagnostic uncertainty or higher risk presentations."
+        }
+      ],
       "whenNotNeeded": [],
       "limitations": []
     },
     "managementConsiderations": {
-      "selfCare": [],
+      "selfCare": [
+        "Provide symptom-control advice tailored to current severity.",
+        "Confirm patient understands red-flag escalation instructions."
+      ],
       "pharmacologicalConcepts": [],
       "delayedStrategies": [],
-      "followUpLogic": []
+      "followUpLogic": [
+        "Seek urgent review for: Stridor or respiratory distress",
+        "Seek urgent review for: Drooling or inability to swallow",
+        "Arrange reassessment if symptoms persist or diagnostic uncertainty remains."
+      ]
     },
     "safetyNetting": {
       "returnAdvice": [

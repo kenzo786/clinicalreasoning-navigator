@@ -413,8 +413,82 @@
         "clinicalValue": "Supports safer and faster primary-care decision making."
       }
     ],
-    "historyPrompts": [],
-    "examSections": [],
+    "historyPrompts": [
+      {
+        "category": "History",
+        "prompts": [
+          {
+            "id": "hx-duration",
+            "label": "Duration",
+            "mode": "text",
+            "placeholder": "e.g., 2 days"
+          },
+          {
+            "id": "hx-dysuria",
+            "label": "Dysuria",
+            "mode": "yesNoNa"
+          },
+          {
+            "id": "hx-frequency",
+            "label": "Urinary frequency",
+            "mode": "yesNoNa"
+          },
+          {
+            "id": "hx-urgency",
+            "label": "Urgency",
+            "mode": "yesNoNa"
+          },
+          {
+            "id": "hx-haematuria",
+            "label": "Haematuria",
+            "mode": "text"
+          },
+          {
+            "id": "hx-pregnant",
+            "label": "Pregnant",
+            "mode": "yesNoNa"
+          },
+          {
+            "id": "hx-recurrent",
+            "label": "Recurrent UTIs",
+            "mode": "text"
+          }
+        ]
+      }
+    ],
+    "examSections": [
+      {
+        "id": "exam",
+        "title": "Examination",
+        "prompts": [
+          {
+            "id": "ex-suprapubic",
+            "label": "Suprapubic tenderness",
+            "significance": "Supports narrowing differential and immediate safety decisions."
+          },
+          {
+            "id": "ex-renal-angle",
+            "label": "Renal angle tenderness",
+            "significance": "Supports narrowing differential and immediate safety decisions."
+          },
+          {
+            "id": "ex-temp",
+            "label": "Temperature (°C)",
+            "significance": "Supports narrowing differential and immediate safety decisions."
+          },
+          {
+            "id": "ex-dipstick-nitrites",
+            "label": "Dipstick nitrites",
+            "significance": "Supports narrowing differential and immediate safety decisions."
+          },
+          {
+            "id": "ex-dipstick-leuc",
+            "label": "Dipstick leucocytes",
+            "significance": "Supports narrowing differential and immediate safety decisions."
+          }
+        ]
+      }
+    ],
     "diagnoses": {
       "common": [
         {
@@ -444,18 +518,42 @@
           "name": "Pregnancy-related UTI (high risk)"
         }
       ],
-      "oftenMissed": []
+      "oftenMissed": [
+        {
+          "name": "Atypical presentation of Pyelonephritis"
+        }
+      ]
     },
     "investigations": {
-      "whenHelpful": [],
+      "whenHelpful": [
+        {
+          "test": "Point-of-care observations",
+          "rationale": "Helps detect physiological instability during consultation."
+        },
+        {
+          "test": "Targeted bedside test",
+          "rationale": "Used when findings will change immediate management."
+        },
+        {
+          "test": "Selective laboratory test",
+          "rationale": "Reserve for diagnostic uncertainty or higher risk presentations."
+        }
+      ],
       "whenNotNeeded": [],
       "limitations": []
     },
     "managementConsiderations": {
-      "selfCare": [],
+      "selfCare": [
+        "Provide symptom-control advice tailored to current severity.",
+        "Confirm patient understands red-flag escalation instructions."
+      ],
       "pharmacologicalConcepts": [],
       "delayedStrategies": [],
-      "followUpLogic": []
+      "followUpLogic": [
+        "Seek urgent review for: Fever >38°C with loin pain",
+        "Seek urgent review for: Rigors or systemic toxicity",
+        "Arrange reassessment if symptoms persist or diagnostic uncertainty remains."
+      ]
     },
     "safetyNetting": {
       "returnAdvice": [

@@ -103,6 +103,14 @@ function Section({
 export function ReviewTab({ topic, onPromote, onOpenJitl }: ReviewTabProps) {
   const { state, dispatch } = useConsultation();
   const review = topic.review;
+  const trackedChecklist = [
+    "illness",
+    "must-not-miss",
+    "discriminators",
+    "investigations",
+    "management",
+    "safety",
+  ];
 
   const markReviewed = (id: string, source: "must-not-miss" | "discriminator" | "safety" | "investigation" | "management") => {
     dispatch({ type: "SET_REVIEW_ITEM_STATUS", id, source, status: "reviewed" });
@@ -120,8 +128,40 @@ export function ReviewTab({ topic, onPromote, onOpenJitl }: ReviewTabProps) {
       ? "bg-amber-100 text-amber-700 border-amber-300"
       : "bg-secondary text-muted-foreground border-border";
 
+  const progress = trackedChecklist.reduce(
+    (acc, id) => {
+      const status = statusLabel(id);
+      if (status === "inserted") acc.inserted += 1;
+      else if (status === "reviewed") acc.reviewed += 1;
+      else acc.pending += 1;
+      return acc;
+    },
+    { pending: 0, reviewed: 0, inserted: 0 }
+  );
+
+  const hasHistoryPrompts = review.historyPrompts.some((group) => group.prompts.length > 0);
+  const hasExamSections = review.examSections.some((group) => group.prompts.length > 0);
+  const hasDifferentials =
+    review.diagnoses.common.length > 0 ||
+    review.diagnoses.mustNotMiss.length > 0 ||
+    review.diagnoses.oftenMissed.length > 0;
+  const hasInvestigations = review.investigations.whenHelpful.length > 0;
+  const hasManagement = review.managementConsiderations.followUpLogic.length > 0;
+
   return (
     <div className="p-3 space-y-3">
+      <div className="grid grid-cols-3 gap-2 text-[10px]">
+        <div className="rounded border bg-secondary px-2 py-1 text-muted-foreground">
+          Pending: {progress.pending}
+        </div>
+        <div className="rounded border bg-amber-100 border-amber-300 px-2 py-1 text-amber-700">
+          Reviewed: {progress.reviewed}
+        </div>
+        <div className="rounded border bg-emerald-100 border-emerald-300 px-2 py-1 text-emerald-700">
+          Inserted: {progress.inserted}
+        </div>
+      </div>
+
       <Section
         id="illness"
         title="Illness Script"
@@ -196,92 +236,102 @@ export function ReviewTab({ topic, onPromote, onOpenJitl }: ReviewTabProps) {
         </div>
       </Section>
 
-      <Section id="history-prompts" title="History Prompts" icon={<ClipboardList className="h-3.5 w-3.5" />}>
-        <div className="space-y-2">
-          {review.historyPrompts.map((group) => (
-            <div key={group.category}>
-              <p className="text-xs font-semibold mb-1">{group.category}</p>
-              <ul className="space-y-1">
-                {group.prompts.map((prompt) => (
-                  <li key={prompt.id} className="text-xs text-muted-foreground">
-                    <JitlTerm term={prompt.label} config={topic.jitl} defaultContextType="clinical" onOpen={onOpenJitl} />
-                  </li>
-                ))}
-              </ul>
-            </div>
-          ))}
-        </div>
-      </Section>
-
-      <Section id="exam-focus" title="Exam Focus" icon={<Stethoscope className="h-3.5 w-3.5" />}>
-        <div className="space-y-2">
-          {review.examSections.map((section) => (
-            <div key={section.id}>
-              <p className="text-xs font-semibold mb-1">{section.title}</p>
-              <div className="space-y-1">
-                {section.prompts.map((prompt) => (
-                  <div key={prompt.id} className="text-xs rounded border p-2">
-                    <p>
+      {hasHistoryPrompts && (
+        <Section id="history-prompts" title="History Prompts" icon={<ClipboardList className="h-3.5 w-3.5" />}>
+          <div className="space-y-2">
+            {review.historyPrompts.map((group) => (
+              <div key={group.category}>
+                <p className="text-xs font-semibold mb-1">{group.category}</p>
+                <ul className="space-y-1">
+                  {group.prompts.map((prompt) => (
+                    <li key={prompt.id} className="text-xs text-muted-foreground">
                       <JitlTerm term={prompt.label} config={topic.jitl} defaultContextType="clinical" onOpen={onOpenJitl} />
-                    </p>
-                    <p className="text-muted-foreground mt-1">{prompt.significance}</p>
-                  </div>
-                ))}
+                    </li>
+                  ))}
+                </ul>
               </div>
-            </div>
-          ))}
-        </div>
-      </Section>
+            ))}
+          </div>
+        </Section>
+      )}
 
-      <Section id="differentials" title="Differentials" icon={<ShieldAlert className="h-3.5 w-3.5" />}>
-        <div className="space-y-2">
-          {(["common", "mustNotMiss", "oftenMissed"] as const).map((group) => (
-            <div key={group}>
-              <p className="text-xs font-semibold mb-1">
-                {group === "common" ? "Common" : group === "mustNotMiss" ? "Must Not Miss" : "Often Missed"}
-              </p>
-              <ul className="space-y-1">
-                {review.diagnoses[group].map((d) => (
-                  <li key={d.name} className="text-xs">
-                    <JitlTerm term={d.name} config={topic.jitl} defaultContextType="ddx" onOpen={onOpenJitl} />
-                  </li>
-                ))}
-              </ul>
-            </div>
-          ))}
-        </div>
-      </Section>
+      {hasExamSections && (
+        <Section id="exam-focus" title="Exam Focus" icon={<Stethoscope className="h-3.5 w-3.5" />}>
+          <div className="space-y-2">
+            {review.examSections.map((section) => (
+              <div key={section.id}>
+                <p className="text-xs font-semibold mb-1">{section.title}</p>
+                <div className="space-y-1">
+                  {section.prompts.map((prompt) => (
+                    <div key={prompt.id} className="text-xs rounded border p-2">
+                      <p>
+                        <JitlTerm term={prompt.label} config={topic.jitl} defaultContextType="clinical" onOpen={onOpenJitl} />
+                      </p>
+                      <p className="text-muted-foreground mt-1">{prompt.significance}</p>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            ))}
+          </div>
+        </Section>
+      )}
 
-      <Section id="investigations" title="Investigations" icon={<TestTube className="h-3.5 w-3.5" />}>
-        <div className="flex justify-between items-center mb-2">
-          <span className={`text-[10px] px-1.5 py-0.5 rounded border ${statusClass(statusLabel("investigations"))}`}>
-            {statusLabel("investigations")}
-          </span>
-          <button onClick={() => markReviewed("investigations", "investigation")} className="text-[10px] px-2 py-1 rounded border bg-secondary hover:bg-accent">Mark reviewed</button>
-        </div>
-        <div className="space-y-2">
-          {review.investigations.whenHelpful.map((item) => (
-            <div key={item.test} className="rounded border p-2">
-              <p className="text-xs font-medium">{item.test}</p>
-              <p className="text-xs text-muted-foreground mt-1">{item.rationale}</p>
-            </div>
-          ))}
-        </div>
-      </Section>
+      {hasDifferentials && (
+        <Section id="differentials" title="Differentials" icon={<ShieldAlert className="h-3.5 w-3.5" />}>
+          <div className="space-y-2">
+            {(["common", "mustNotMiss", "oftenMissed"] as const).map((group) => (
+              <div key={group}>
+                <p className="text-xs font-semibold mb-1">
+                  {group === "common" ? "Common" : group === "mustNotMiss" ? "Must Not Miss" : "Often Missed"}
+                </p>
+                <ul className="space-y-1">
+                  {review.diagnoses[group].map((d) => (
+                    <li key={d.name} className="text-xs">
+                      <JitlTerm term={d.name} config={topic.jitl} defaultContextType="ddx" onOpen={onOpenJitl} />
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            ))}
+          </div>
+        </Section>
+      )}
 
-      <Section id="management" title="Management" icon={<Pill className="h-3.5 w-3.5" />}>
-        <div className="flex justify-between items-center mb-2">
-          <span className={`text-[10px] px-1.5 py-0.5 rounded border ${statusClass(statusLabel("management"))}`}>
-            {statusLabel("management")}
-          </span>
-          <button onClick={() => markReviewed("management", "management")} className="text-[10px] px-2 py-1 rounded border bg-secondary hover:bg-accent">Mark reviewed</button>
-        </div>
-        <ul className="space-y-1">
-          {review.managementConsiderations.followUpLogic.map((x) => (
-            <li key={x} className="text-xs text-muted-foreground">{x}</li>
-          ))}
-        </ul>
-      </Section>
+      {hasInvestigations && (
+        <Section id="investigations" title="Investigations" icon={<TestTube className="h-3.5 w-3.5" />}>
+          <div className="flex justify-between items-center mb-2">
+            <span className={`text-[10px] px-1.5 py-0.5 rounded border ${statusClass(statusLabel("investigations"))}`}>
+              {statusLabel("investigations")}
+            </span>
+            <button onClick={() => markReviewed("investigations", "investigation")} className="text-[10px] px-2 py-1 rounded border bg-secondary hover:bg-accent">Mark reviewed</button>
+          </div>
+          <div className="space-y-2">
+            {review.investigations.whenHelpful.map((item) => (
+              <div key={item.test} className="rounded border p-2">
+                <p className="text-xs font-medium">{item.test}</p>
+                <p className="text-xs text-muted-foreground mt-1">{item.rationale}</p>
+              </div>
+            ))}
+          </div>
+        </Section>
+      )}
+
+      {hasManagement && (
+        <Section id="management" title="Management" icon={<Pill className="h-3.5 w-3.5" />}>
+          <div className="flex justify-between items-center mb-2">
+            <span className={`text-[10px] px-1.5 py-0.5 rounded border ${statusClass(statusLabel("management"))}`}>
+              {statusLabel("management")}
+            </span>
+            <button onClick={() => markReviewed("management", "management")} className="text-[10px] px-2 py-1 rounded border bg-secondary hover:bg-accent">Mark reviewed</button>
+          </div>
+          <ul className="space-y-1">
+            {review.managementConsiderations.followUpLogic.map((x) => (
+              <li key={x} className="text-xs text-muted-foreground">{x}</li>
+            ))}
+          </ul>
+        </Section>
+      )}
 
       <Section
         id="safety"

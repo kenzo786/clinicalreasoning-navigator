@@ -8,6 +8,8 @@ interface ShortcutHandlers {
   onFocusDdx: () => void;
   onInsertRightSection: () => void;
   onShowShortcuts: () => void;
+  onUndoEditor: () => void;
+  onRedoEditor: () => void;
 }
 
 export function useKeyboardShortcuts(handlers: ShortcutHandlers) {
@@ -51,6 +53,17 @@ export function useKeyboardShortcuts(handlers: ShortcutHandlers) {
             handlers.onInsertRightSection();
           }
           break;
+        case "z": {
+          const target = e.target;
+          const isEditorTextArea =
+            target instanceof HTMLTextAreaElement &&
+            target.dataset.crxEditor === "true";
+          if (!isEditorTextArea) break;
+          e.preventDefault();
+          if (e.shiftKey) handlers.onRedoEditor();
+          else handlers.onUndoEditor();
+          break;
+        }
       }
     },
     [handlers]

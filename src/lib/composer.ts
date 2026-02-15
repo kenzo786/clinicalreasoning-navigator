@@ -1,6 +1,11 @@
 import type { TopicRuntime } from "@/types/topic";
 import type { ConsultationState } from "@/types/consultation";
-import type { ComposerSection, ComposerLinkState } from "@/types/composer";
+import type {
+  ComposerDisplayLinkState,
+  ComposerLinkState,
+  ComposerLinkStateTone,
+  ComposerSection,
+} from "@/types/composer";
 import { composeOutput, getComposedSections } from "@/lib/outputComposer";
 import { hashString } from "@/lib/editorBridge";
 
@@ -18,6 +23,22 @@ function deriveLinkState(
     return "linked_missing";
   }
   return "linked_clean";
+}
+
+export function getComposerLinkStatePresentation(
+  state: ComposerLinkState
+): { label: ComposerDisplayLinkState; tone: ComposerLinkStateTone } {
+  switch (state) {
+    case "linked_clean":
+      return { label: "Linked", tone: "success" };
+    case "linked_modified":
+      return { label: "Modified after insert", tone: "warning" };
+    case "linked_missing":
+      return { label: "Link missing", tone: "danger" };
+    case "not_linked":
+    default:
+      return { label: "Not inserted", tone: "neutral" };
+  }
 }
 
 export function stripComposerMarkers(text: string): string {

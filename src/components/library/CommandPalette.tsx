@@ -60,14 +60,14 @@ export function CommandPalette({
       const start = editor.selectionStart;
       const before = state.editorText.slice(0, start);
       const after = state.editorText.slice(editor.selectionEnd);
-      dispatch({ type: "SET_EDITOR_TEXT", text: before + text + after });
+      dispatch({ type: "SET_EDITOR_TEXT_WITH_HISTORY", text: before + text + after });
       dispatch({ type: "ADD_RECENT_INSERT", snippetId });
       setTimeout(() => {
         editor.focus();
         editor.setSelectionRange(start + text.length, start + text.length);
       }, 0);
     } else {
-      dispatch({ type: "SET_EDITOR_TEXT", text: state.editorText + text });
+      dispatch({ type: "SET_EDITOR_TEXT_WITH_HISTORY", text: state.editorText + text });
       dispatch({ type: "ADD_RECENT_INSERT", snippetId });
     }
   };
@@ -75,7 +75,7 @@ export function CommandPalette({
   return (
     <>
       <CommandDialog open={open} onOpenChange={(v) => !v && onClose()}>
-        <CommandInput placeholder="Search snippets across all topics…" />
+        <CommandInput placeholder="Search snippets across all topics..." />
         <CommandList>
           <CommandEmpty>No snippets found.</CommandEmpty>
           {allTopics.map((topic) => (
@@ -109,3 +109,4 @@ export function CommandPalette({
     </>
   );
 }
+

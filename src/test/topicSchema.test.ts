@@ -1,6 +1,6 @@
 import { describe, it, expect } from "vitest";
-import { normalizeTopic } from "@/lib/topicSchema";
-import type { TopicV1, TopicV2 } from "@/types/topic";
+import { normalizeTopic, validateTopic } from "@/lib/topicSchema";
+import type { TopicSource, TopicV1, TopicV2 } from "@/types/topic";
 
 describe("topic schema normalization", () => {
   it("normalizes v1 topic to runtime with review/jitl/ddx defaults", () => {
@@ -46,5 +46,36 @@ describe("topic schema normalization", () => {
     expect(runtime.jitl.termMap[0].term).toBe("X");
     expect(runtime.ddx.compareEnabled).toBe(false);
   });
-});
 
+  it("rejects v2.1 topics missing review completeness minimums", () => {
+    const incomplete: TopicSource = {
+      version: "2.1",
+      metadata: { id: "x", slug: "x", displayName: "X", specialty: "GP", triggers: [] },
+      snippets: [],
+      reasoning: { discriminators: [], mustNotMiss: [], redFlags: [], references: [] },
+      structuredFields: [],
+      outputTemplate: { sections: [] },
+      review: {
+        illnessScript: { summary: "summary" },
+        mustNotMiss: [],
+        discriminators: [],
+        historyPrompts: [],
+        examSections: [],
+        diagnoses: { common: [], mustNotMiss: [], oftenMissed: [] },
+        investigations: { whenHelpful: [], whenNotNeeded: [], limitations: [] },
+        managementConsiderations: { selfCare: [], pharmacologicalConcepts: [], delayedStrategies: [], followUpLogic: [] },
+        safetyNetting: { returnAdvice: [], escalationTriggers: [] },
+      },
+      jitl: { termMap: [], linkProviders: [] },
+      ddx: { evidencePrompts: [], compareEnabled: true },
+      qa: {
+        status: "approved",
+        clinicalReviewer: "reviewer",
+        reviewedAt: "2026-02-15",
+        version: "1.0.0",
+      },
+    };
+    const result = validateTopic(incomplete);
+    expect(result.valid).toBe(false);
+  });
+});

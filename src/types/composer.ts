@@ -6,6 +6,18 @@ export type ComposerLinkState =
   | "linked_modified"
   | "linked_missing";
 
+export type ComposerDisplayLinkState =
+  | "Not inserted"
+  | "Linked"
+  | "Modified after insert"
+  | "Link missing";
+
+export type ComposerLinkStateTone =
+  | "neutral"
+  | "success"
+  | "warning"
+  | "danger";
+
 export interface ComposerSection {
   id: string;
   title: string;

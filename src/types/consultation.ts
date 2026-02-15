@@ -39,6 +39,10 @@ export interface JitlOutboundEvent {
 export interface ConsultationSessionState {
   activeTopicId: string;
   editorText: string;
+  editorHistory: {
+    past: string[];
+    future: string[];
+  };
   structuredResponses: Record<string, string | number | boolean | string[]>;
   reasoningChecks: {
     redFlagsConfirmed: Record<string, boolean>;
@@ -70,6 +74,9 @@ export interface UiPrefs {
   compactStructured: boolean;
   composerTrayCollapsed: boolean;
   lastTopicId: string;
+  onboardingDismissed: boolean;
+  librarySearchCollapsed: boolean;
+  hintDismissals: Record<string, boolean>;
 }
 
 export interface FeatureFlags {
@@ -94,6 +101,10 @@ export interface ConsultationState extends ConsultationSessionState {
 export const DEFAULT_CONSULTATION_SESSION_STATE: ConsultationSessionState = {
   activeTopicId: "sore-throat",
   editorText: "",
+  editorHistory: {
+    past: [],
+    future: [],
+  },
   structuredResponses: {},
   reasoningChecks: {
     redFlagsConfirmed: {},
@@ -131,6 +142,9 @@ export const DEFAULT_USER_PREFS_STATE: UserPrefsState = {
     compactStructured: false,
     composerTrayCollapsed: false,
     lastTopicId: "sore-throat",
+    onboardingDismissed: false,
+    librarySearchCollapsed: true,
+    hintDismissals: {},
   },
   featureFlags: {
     composerBridge: true,
@@ -151,6 +165,9 @@ export const DEFAULT_CONSULTATION_STATE: ConsultationState = {
 export type SessionAction =
   | { type: "SET_TOPIC"; topicId: string }
   | { type: "SET_EDITOR_TEXT"; text: string }
+  | { type: "SET_EDITOR_TEXT_WITH_HISTORY"; text: string }
+  | { type: "UNDO_EDITOR_TEXT" }
+  | { type: "REDO_EDITOR_TEXT" }
   | { type: "SET_STRUCTURED_RESPONSE"; fieldId: string; value: string | number | boolean | string[] }
   | { type: "SET_STRUCTURED_SECTION_DEFAULTS"; values: Record<string, string | number | boolean | string[]> }
   | { type: "TOGGLE_RED_FLAG"; flagId: string }

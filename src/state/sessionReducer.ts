@@ -1,9 +1,76 @@
 import type {
   ConsultationSessionState,
+  EditorAnchor,
   EvidenceEntry,
   SessionAction,
 } from "@/types/consultation";
 import { DEFAULT_CONSULTATION_SESSION_STATE } from "@/types/consultation";
+import { hashString } from "@/lib/editorBridge";
+
+const MAX_EDITOR_HISTORY = 50;
+
+function trimEdgeNewlines(value: string): string {
+  return value.replace(/^\n/, "").replace(/\n$/, "");
+}
+
+function recomputeAnchorDetachState(
+  text: string,
+  anchors: Record<string, EditorAnchor>
+): Record<string, EditorAnchor> {
+  const next: Record<string, EditorAnchor> = {};
+  for (const [sectionId, anchor] of Object.entries(anchors)) {
+    const start = text.indexOf(anchor.startTag);
+    if (start === -1) {
+      next[sectionId] = { ...anchor, detached: true };
+      continue;
+    }
+    const end = text.indexOf(anchor.endTag, start + anchor.startTag.length);
+    if (end === -1) {
+      next[sectionId] = { ...anchor, detached: true };
+      continue;
+    }
+    const body = trimEdgeNewlines(
+      text.slice(start + anchor.startTag.length, end)
+    );
+    next[sectionId] = {
+      ...anchor,
+      detached: hashString(body) !== anchor.lastHash,
+    };
+  }
+  return next;
+}
+
+function setEditorText(
+  state: ConsultationSessionState,
+  nextText: string,
+  withHistory: boolean
+): ConsultationSessionState {
+  if (state.editorText === nextText) return state;
+  const nextAnchors = recomputeAnchorDetachState(nextText, state.editorAnchors);
+  if (!withHistory) {
+    return {
+      ...state,
+      editorText: nextText,
+      editorAnchors: nextAnchors,
+      editorHistory: {
+        past: [],
+        future: [],
+      },
+    };
+  }
+  const nextPast = [...state.editorHistory.past, state.editorText].slice(
+    -MAX_EDITOR_HISTORY
+  );
+  return {
+    ...state,
+    editorText: nextText,
+    editorAnchors: nextAnchors,
+    editorHistory: {
+      past: nextPast,
+      future: [],
+    },
+  };
+}
 
 function upsertEvidence(
   entries: EvidenceEntry[],
@@ -44,7 +111,42 @@ export function sessionReducer(
         activeTopicId: action.topicId,
       };
     case "SET_EDITOR_TEXT":
-      return { ...state, editorText: action.text };
+      return setEditorText(state, action.text, false);
+    case "SET_EDITOR_TEXT_WITH_HISTORY":
+      return setEditorText(state, action.text, true);
+    case "UNDO_EDITOR_TEXT": {
+      if (state.editorHistory.past.length === 0) return state;
+      const nextPast = [...state.editorHistory.past];
+      const previous = nextPast.pop();
+      if (previous === undefined) return state;
+      return {
+        ...state,
+        editorText: previous,
+        editorAnchors: recomputeAnchorDetachState(previous, state.editorAnchors),
+        editorHistory: {
+          past: nextPast,
+          future: [state.editorText, ...state.editorHistory.future].slice(
+            0,
+            MAX_EDITOR_HISTORY
+          ),
+        },
+      };
+    }
+    case "REDO_EDITOR_TEXT": {
+      if (state.editorHistory.future.length === 0) return state;
+      const [nextText, ...remainingFuture] = state.editorHistory.future;
+      return {
+        ...state,
+        editorText: nextText,
+        editorAnchors: recomputeAnchorDetachState(nextText, state.editorAnchors),
+        editorHistory: {
+          past: [...state.editorHistory.past, state.editorText].slice(
+            -MAX_EDITOR_HISTORY
+          ),
+          future: remainingFuture,
+        },
+      };
+    }
     case "SET_STRUCTURED_RESPONSE":
       return {
         ...state,

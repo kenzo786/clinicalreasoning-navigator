@@ -5,7 +5,7 @@ import { parseTokens } from "@/lib/tokenParser";
 import type { UnresolvedToken } from "@/lib/tokenParser";
 import { TokenResolverModal } from "./TokenResolverModal";
 import { TriggerSuggest } from "./TriggerSuggest";
-import { Copy, Check } from "lucide-react";
+import { Copy, Check, RotateCcw, RotateCw } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { getDetachedAnchorIds } from "@/lib/editorBridge";
 
@@ -55,7 +55,7 @@ export function EditorPane({ topic, editorRef }: EditorPaneProps) {
   const handleChange = useCallback(
     (e: React.ChangeEvent<HTMLTextAreaElement>) => {
       const text = e.target.value;
-      dispatch({ type: "SET_EDITOR_TEXT", text });
+      dispatch({ type: "SET_EDITOR_TEXT_WITH_HISTORY", text });
       const detached = getDetachedAnchorIds(text, state.editorAnchors);
       for (const sectionId of detached) {
         dispatch({ type: "MARK_EDITOR_ANCHOR_DETACHED", sectionId });
@@ -95,7 +95,7 @@ export function EditorPane({ topic, editorRef }: EditorPaneProps) {
         });
       } else {
         const newText = before + textWithDatesResolved + after;
-        dispatch({ type: "SET_EDITOR_TEXT", text: newText });
+        dispatch({ type: "SET_EDITOR_TEXT_WITH_HISTORY", text: newText });
         dispatch({ type: "ADD_RECENT_INSERT", snippetId: snippet.id });
         setTimeout(() => {
           textarea.focus();
@@ -120,24 +120,48 @@ export function EditorPane({ topic, editorRef }: EditorPaneProps) {
     }
   }, [state.editorText, toast]);
 
+  const canUndo = state.editorHistory.past.length > 0;
+  const canRedo = state.editorHistory.future.length > 0;
+
   return (
     <div className="flex flex-col h-full bg-card relative">
       <div className="flex items-center justify-between px-3 h-9 border-b shrink-0">
         <span className="text-xs font-medium text-muted-foreground uppercase tracking-wider">
           Editor
         </span>
-        <button
-          onClick={handleCopy}
-          className="flex items-center gap-1 text-xs px-2 py-1 rounded border bg-secondary text-secondary-foreground hover:bg-accent transition-colors"
-        >
-          {copied ? <Check className="h-3 w-3" /> : <Copy className="h-3 w-3" />}
-          {copied ? "Copied" : "Copy"}
-        </button>
+        <div className="flex items-center gap-1">
+          <button
+            onClick={() => dispatch({ type: "UNDO_EDITOR_TEXT" })}
+            disabled={!canUndo}
+            className="flex items-center gap-1 text-xs px-2 py-1 rounded border bg-secondary text-secondary-foreground hover:bg-accent transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+            aria-label="Undo editor change"
+          >
+            <RotateCcw className="h-3 w-3" />
+            Undo
+          </button>
+          <button
+            onClick={() => dispatch({ type: "REDO_EDITOR_TEXT" })}
+            disabled={!canRedo}
+            className="flex items-center gap-1 text-xs px-2 py-1 rounded border bg-secondary text-secondary-foreground hover:bg-accent transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+            aria-label="Redo editor change"
+          >
+            <RotateCw className="h-3 w-3" />
+            Redo
+          </button>
+          <button
+            onClick={handleCopy}
+            className="flex items-center gap-1 text-xs px-2 py-1 rounded border bg-secondary text-secondary-foreground hover:bg-accent transition-colors"
+          >
+            {copied ? <Check className="h-3 w-3" /> : <Copy className="h-3 w-3" />}
+            {copied ? "Copied" : "Copy"}
+          </button>
+        </div>
       </div>
 
       <div className="flex-1 relative">
         <textarea
           ref={textareaRef}
+          data-crx-editor="true"
           value={state.editorText}
           onChange={handleChange}
           onKeyDown={(e) => {
@@ -182,7 +206,7 @@ export function EditorPane({ topic, editorRef }: EditorPaneProps) {
 
       <div className="flex items-center justify-between px-3 h-7 border-t bg-muted/50 text-xs text-muted-foreground shrink-0">
         <span>{wordCount} words | {charCount} chars</span>
-        <span className="text-xs">Ctrl+S to copy</span>
+        <span className="text-xs">Session only - no PHI saved locally</span>
       </div>
 
       {resolverData && (
@@ -191,7 +215,7 @@ export function EditorPane({ topic, editorRef }: EditorPaneProps) {
           tokens={resolverData.tokens}
           onResolve={(resolved) => {
             const newText = resolverData.before + resolved + resolverData.after;
-            dispatch({ type: "SET_EDITOR_TEXT", text: newText });
+            dispatch({ type: "SET_EDITOR_TEXT_WITH_HISTORY", text: newText });
             dispatch({ type: "ADD_RECENT_INSERT", snippetId: resolverData.snippetId });
             setResolverData(null);
           }}

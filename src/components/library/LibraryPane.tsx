@@ -1,10 +1,10 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect, useRef } from "react";
 import type { TopicRuntime } from "@/types/topic";
 import { useConsultation } from "@/context/ConsultationProvider";
 import { parseTokens } from "@/lib/tokenParser";
 import type { UnresolvedToken } from "@/lib/tokenParser";
 import { TokenResolverModal } from "@/components/editor/TokenResolverModal";
-import { Search, ChevronDown } from "lucide-react";
+import { Search, ChevronDown, ChevronUp } from "lucide-react";
 
 interface LibraryPaneProps {
   topic: TopicRuntime;
@@ -15,6 +15,8 @@ interface LibraryPaneProps {
 export function LibraryPane({ topic, editorRef, availableTopics }: LibraryPaneProps) {
   const { state, dispatch } = useConsultation();
   const [search, setSearch] = useState("");
+  const rootRef = useRef<HTMLDivElement | null>(null);
+  const searchInputRef = useRef<HTMLInputElement | null>(null);
   const [resolverData, setResolverData] = useState<{
     text: string;
     tokens: UnresolvedToken[];
@@ -29,7 +31,7 @@ export function LibraryPane({ topic, editorRef, availableTopics }: LibraryPanePr
         s.label.toLowerCase().includes(q) ||
         s.trigger.toLowerCase().includes(q) ||
         s.category.toLowerCase().includes(q) ||
-        (s.tags?.some((t) => t.toLowerCase().includes(q)))
+        s.tags?.some((t) => t.toLowerCase().includes(q))
     );
   }, [topic.snippets, search]);
 
@@ -41,7 +43,7 @@ export function LibraryPane({ topic, editorRef, availableTopics }: LibraryPanePr
     return groups;
   }, [filtered]);
 
-  const handleInsertSnippet = (snippet: typeof topic.snippets[0]) => {
+  const handleInsertSnippet = (snippet: (typeof topic.snippets)[number]) => {
     const { textWithDatesResolved, unresolvedTokens } = parseTokens(snippet.content);
     if (unresolvedTokens.length > 0) {
       setResolverData({ text: textWithDatesResolved, tokens: unresolvedTokens, snippetId: snippet.id });
@@ -57,7 +59,7 @@ export function LibraryPane({ topic, editorRef, availableTopics }: LibraryPanePr
       const before = state.editorText.slice(0, start);
       const after = state.editorText.slice(editor.selectionEnd);
       const newText = before + text + after;
-      dispatch({ type: "SET_EDITOR_TEXT", text: newText });
+      dispatch({ type: "SET_EDITOR_TEXT_WITH_HISTORY", text: newText });
       dispatch({ type: "ADD_RECENT_INSERT", snippetId });
       setTimeout(() => {
         editor.focus();
@@ -65,14 +67,29 @@ export function LibraryPane({ topic, editorRef, availableTopics }: LibraryPanePr
         editor.setSelectionRange(pos, pos);
       }, 0);
     } else {
-      dispatch({ type: "SET_EDITOR_TEXT", text: state.editorText + text });
+      dispatch({ type: "SET_EDITOR_TEXT_WITH_HISTORY", text: state.editorText + text });
       dispatch({ type: "ADD_RECENT_INSERT", snippetId });
     }
   };
 
+  useEffect(() => {
+    const onKeyDown = (e: KeyboardEvent) => {
+      if (e.key !== "/") return;
+      const root = rootRef.current;
+      if (!root) return;
+      const active = document.activeElement;
+      if (!active || !root.contains(active)) return;
+      if (active instanceof HTMLInputElement || active instanceof HTMLTextAreaElement) return;
+      e.preventDefault();
+      dispatch({ type: "SET_UI_PREF", key: "librarySearchCollapsed", value: false });
+      setTimeout(() => searchInputRef.current?.focus(), 0);
+    };
+    document.addEventListener("keydown", onKeyDown);
+    return () => document.removeEventListener("keydown", onKeyDown);
+  }, [dispatch]);
+
   return (
-    <div className="flex flex-col h-full bg-card">
-      {/* Topic selector */}
+    <div ref={rootRef} className="flex flex-col h-full bg-card" tabIndex={0}>
       <div className="p-3 border-b space-y-2">
         <label className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Topic</label>
         <div className="relative">
@@ -89,21 +106,44 @@ export function LibraryPane({ topic, editorRef, availableTopics }: LibraryPanePr
         </div>
       </div>
 
-      {/* Search */}
       <div className="p-3 border-b">
-        <div className="relative">
-          <Search className="absolute left-2 top-2 h-3.5 w-3.5 text-muted-foreground" />
-          <input
-            type="text"
-            placeholder="Search snippets…"
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-            className="w-full h-7 pl-7 pr-2 text-sm rounded border bg-background text-foreground placeholder:text-muted-foreground"
-          />
+        <div className="flex items-center justify-between">
+          <button
+            onClick={() =>
+              dispatch({
+                type: "SET_UI_PREF",
+                key: "librarySearchCollapsed",
+                value: !state.uiPrefs.librarySearchCollapsed,
+              })
+            }
+            className="inline-flex items-center gap-1 rounded border bg-secondary px-2 py-1 text-xs hover:bg-accent"
+            aria-label="Toggle snippet search"
+          >
+            <Search className="h-3.5 w-3.5 text-muted-foreground" />
+            Search snippets
+            {state.uiPrefs.librarySearchCollapsed ? (
+              <ChevronDown className="h-3.5 w-3.5" />
+            ) : (
+              <ChevronUp className="h-3.5 w-3.5" />
+            )}
+          </button>
+          <span className="text-[10px] text-muted-foreground">Press / to search</span>
         </div>
+        {!state.uiPrefs.librarySearchCollapsed && (
+          <div className="relative mt-2">
+            <Search className="absolute left-2 top-2 h-3.5 w-3.5 text-muted-foreground" />
+            <input
+              ref={searchInputRef}
+              type="text"
+              placeholder="Search snippets..."
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              className="w-full h-7 pl-7 pr-2 text-sm rounded border bg-background text-foreground placeholder:text-muted-foreground"
+            />
+          </div>
+        )}
       </div>
 
-      {/* Snippet list */}
       <div className="flex-1 overflow-y-auto p-2 space-y-3">
         {Object.entries(grouped).map(([category, snippets]) => (
           <div key={category}>
@@ -133,7 +173,6 @@ export function LibraryPane({ topic, editorRef, availableTopics }: LibraryPanePr
         )}
       </div>
 
-      {/* Token resolver modal */}
       {resolverData && (
         <TokenResolverModal
           text={resolverData.text}

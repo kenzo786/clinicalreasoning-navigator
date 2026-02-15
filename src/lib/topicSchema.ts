@@ -217,6 +217,28 @@ export function validateTopic(data: unknown):
     if (!t.jitl || !t.ddx || !t.qa) {
       return { valid: false, error: "v2.1 topic missing jitl, ddx, or qa metadata" };
     }
+    const review = t.review as TopicV2_1["review"] | undefined;
+    if (!review) {
+      return { valid: false, error: "v2.1 topic missing review section" };
+    }
+    if (!Array.isArray(review.historyPrompts) || review.historyPrompts.length < 1) {
+      return { valid: false, error: "v2.1 topic requires at least one history prompt group" };
+    }
+    if (!Array.isArray(review.examSections) || review.examSections.length < 1) {
+      return { valid: false, error: "v2.1 topic requires at least one exam section" };
+    }
+    if (
+      !Array.isArray(review.investigations?.whenHelpful) ||
+      review.investigations.whenHelpful.length < 1
+    ) {
+      return { valid: false, error: "v2.1 topic requires at least one investigation suggestion" };
+    }
+    if (
+      !Array.isArray(review.managementConsiderations?.followUpLogic) ||
+      review.managementConsiderations.followUpLogic.length < 1
+    ) {
+      return { valid: false, error: "v2.1 topic requires follow-up guidance" };
+    }
   }
 
   return { valid: true, topic: t as TopicSource };

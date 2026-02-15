@@ -197,8 +197,42 @@
         "clinicalValue": "Supports safer triage and disposition decisions."
       }
     ],
-    "historyPrompts": [],
-    "examSections": [],
+    "historyPrompts": [
+      {
+        "category": "History",
+        "prompts": [
+          {
+            "id": "hx-duration",
+            "label": "Duration",
+            "mode": "text",
+            "placeholder": "e.g., 3 days"
+          },
+          {
+            "id": "hx-severity",
+            "label": "Severity",
+            "mode": "text"
+          },
+          {
+            "id": "hx-red-flag-screen",
+            "label": "Red flags screened",
+            "mode": "text"
+          }
+        ]
+      }
+    ],
+    "examSections": [
+      {
+        "id": "exam",
+        "title": "Examination",
+        "prompts": [
+          {
+            "id": "ex-focused-exam",
+            "label": "Focused exam summary",
+            "significance": "Supports narrowing differential and immediate safety decisions."
+          }
+        ]
+      }
+    ],
     "diagnoses": {
       "common": [
         {
@@ -210,15 +244,35 @@
           "name": "Serious pathology"
         }
       ],
-      "oftenMissed": []
+      "oftenMissed": [
+        {
+          "name": "Atypical presentation of Serious pathology"
+        }
+      ]
     },
     "investigations": {
-      "whenHelpful": [],
+      "whenHelpful": [
+        {
+          "test": "Point-of-care observations",
+          "rationale": "Helps detect physiological instability during consultation."
+        },
+        {
+          "test": "Targeted bedside test",
+          "rationale": "Used when findings will change immediate management."
+        },
+        {
+          "test": "Selective laboratory test",
+          "rationale": "Reserve for diagnostic uncertainty or higher risk presentations."
+        }
+      ],
       "whenNotNeeded": [],
       "limitations": []
     },
     "managementConsiderations": {
-      "selfCare": [],
+      "selfCare": [
+        "Provide symptom-control advice tailored to current severity.",
+        "Confirm patient understands red-flag escalation instructions."
+      ],
       "pharmacologicalConcepts": [],
       "delayedStrategies": [],
       "followUpLogic": [

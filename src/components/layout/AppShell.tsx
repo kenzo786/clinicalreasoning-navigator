@@ -22,6 +22,7 @@ import { getDetachedAnchorIds, refreshAnchoredBlock } from "@/lib/editorBridge";
 import { upsertLinkedSection } from "@/lib/insertionService";
 import { buildComposerSections, buildExportText } from "@/lib/composer";
 import { SectionInsertPicker } from "@/components/editor/SectionInsertPicker";
+import { QuickStartCard } from "@/components/onboarding/QuickStartCard";
 
 export default function AppShell() {
   const { state, dispatch } = useConsultation();
@@ -41,10 +42,11 @@ export default function AppShell() {
     () => (topic ? buildExportText(topic, state) : ""),
     [topic, state]
   );
+  const hasLinkedSections = Object.keys(state.editorAnchors).length > 0;
 
   const updateEditorText = useCallback(
     (text: string) => {
-      dispatch({ type: "SET_EDITOR_TEXT", text });
+      dispatch({ type: "SET_EDITOR_TEXT_WITH_HISTORY", text });
       const detached = getDetachedAnchorIds(text, state.editorAnchors);
       for (const sectionId of detached) {
         dispatch({ type: "MARK_EDITOR_ANCHOR_DETACHED", sectionId });
@@ -128,19 +130,62 @@ export default function AppShell() {
 
   const refreshAnchorsFromState = useCallback(() => {
     if (!topic) return;
+    if (!hasLinkedSections) {
+      toast({
+        title: "No linked sections",
+        description: "Insert a section into the editor before refreshing links.",
+      });
+      return;
+    }
+    const counts = {
+      updated: 0,
+      unchanged: 0,
+      detached: 0,
+      missing: 0,
+      notLinked: 0,
+    };
     let nextText = state.editorText;
+    counts.notLinked = composedSections.filter((section) => !state.editorAnchors[section.id]).length;
     for (const section of composedSections) {
       const anchor = state.editorAnchors[section.id];
       if (!anchor) continue;
+      if (anchor.detached) {
+        counts.detached += 1;
+        continue;
+      }
+      const hadStart = nextText.includes(anchor.startTag);
+      const hadEnd = nextText.includes(anchor.endTag);
       const refreshed = refreshAnchoredBlock(nextText, anchor, section.content);
-      nextText = refreshed.nextText;
+      if (refreshed.updated) {
+        if (refreshed.nextText === nextText) counts.unchanged += 1;
+        else {
+          counts.updated += 1;
+          nextText = refreshed.nextText;
+        }
+      } else if (!hadStart || !hadEnd) {
+        counts.missing += 1;
+      } else {
+        counts.detached += 1;
+      }
       dispatch({ type: "SET_EDITOR_ANCHOR", sectionId: section.id, anchor: refreshed.anchor });
     }
     if (nextText !== state.editorText) {
       updateEditorText(nextText);
-      toast({ title: "Linked sections refreshed", description: "Editor synced from composer." });
     }
-  }, [topic, composedSections, state.editorAnchors, state.editorText, dispatch, updateEditorText, toast]);
+    toast({
+      title: "Refresh links complete",
+      description: `Updated ${counts.updated}, unchanged ${counts.unchanged}, detached ${counts.detached}, missing ${counts.missing}, not linked ${counts.notLinked}.`,
+    });
+  }, [
+    topic,
+    composedSections,
+    state.editorAnchors,
+    state.editorText,
+    dispatch,
+    updateEditorText,
+    toast,
+    hasLinkedSections,
+  ]);
 
   const focusStructured = useCallback(() => {
     dispatch({ type: "SET_UI_PREF", key: "rightPaneTab", value: "structured" });
@@ -189,6 +234,8 @@ export default function AppShell() {
     onFocusDdx: focusReason,
     onInsertRightSection: insertCurrentRightSection,
     onShowShortcuts: () => setShowShortcuts(true),
+    onUndoEditor: () => dispatch({ type: "UNDO_EDITOR_TEXT" }),
+    onRedoEditor: () => dispatch({ type: "REDO_EDITOR_TEXT" }),
   });
 
   if (loading) {
@@ -223,8 +270,9 @@ export default function AppShell() {
         <div className="flex items-center gap-2">
           <button
             onClick={refreshAnchorsFromState}
-            className="text-xs px-2 py-1 rounded border bg-secondary text-secondary-foreground hover:bg-accent transition-colors"
-            title="Refresh linked editor sections from current state"
+            disabled={!hasLinkedSections}
+            className="text-xs px-2 py-1 rounded border bg-secondary text-secondary-foreground hover:bg-accent transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+            title="Refresh linked editor sections. Modified blocks stay untouched."
           >
             Refresh Links
           </button>
@@ -248,6 +296,17 @@ export default function AppShell() {
           </button>
         </div>
       </header>
+      {!state.uiPrefs.onboardingDismissed && (
+        <QuickStartCard
+          onDismiss={() =>
+            dispatch({
+              type: "SET_UI_PREF",
+              key: "onboardingDismissed",
+              value: true,
+            })
+          }
+        />
+      )}
 
       <div className="flex-1 overflow-hidden">
         {isMobile ? (

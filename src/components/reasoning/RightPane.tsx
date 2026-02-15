@@ -57,6 +57,11 @@ export function RightPane({ topic, onPromoteToEditor }: RightPaneProps) {
               Structured
             </TabsTrigger>
           </TabsList>
+          <p className="mt-1 pb-2 text-[10px] text-muted-foreground">
+            {state.uiPrefs.rightPaneTab === "review" && "Checklist and safety review"}
+            {state.uiPrefs.rightPaneTab === "reason" && "Differential and evidence"}
+            {state.uiPrefs.rightPaneTab === "structured" && "Fast data capture"}
+          </p>
         </div>
 
         {reviewEnabled && (

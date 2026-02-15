@@ -471,8 +471,82 @@
         "clinicalValue": "Supports safer and faster primary-care decision making."
       }
     ],
-    "historyPrompts": [],
-    "examSections": [],
+    "historyPrompts": [
+      {
+        "category": "History",
+        "prompts": [
+          {
+            "id": "hx-duration",
+            "label": "Duration",
+            "mode": "text",
+            "placeholder": "e.g., 5 days"
+          },
+          {
+            "id": "hx-onset",
+            "label": "Onset",
+            "mode": "text"
+          },
+          {
+            "id": "hx-radiation",
+            "label": "Leg radiation",
+            "mode": "text"
+          },
+          {
+            "id": "hx-neuro-symptoms",
+            "label": "Neurological symptoms",
+            "mode": "text"
+          },
+          {
+            "id": "hx-bladder-bowel",
+            "label": "Bladder/bowel disturbance",
+            "mode": "text"
+          },
+          {
+            "id": "hx-night-pain",
+            "label": "Night pain",
+            "mode": "text"
+          }
+        ]
+      }
+    ],
+    "examSections": [
+      {
+        "id": "exam",
+        "title": "Examination",
+        "prompts": [
+          {
+            "id": "ex-tenderness",
+            "label": "Tenderness location",
+            "significance": "Supports narrowing differential and immediate safety decisions."
+          },
+          {
+            "id": "ex-rom",
+            "label": "Range of movement",
+            "significance": "Supports narrowing differential and immediate safety decisions."
+          },
+          {
+            "id": "ex-slr",
+            "label": "Straight leg raise",
+            "significance": "Supports narrowing differential and immediate safety decisions."
+          },
+          {
+            "id": "ex-slr-degrees",
+            "label": "SLR degrees (if positive)",
+            "significance": "Supports narrowing differential and immediate safety decisions."
+          },
+          {
+            "id": "ex-power",
+            "label": "Lower limb power",
+            "significance": "Supports narrowing differential and immediate safety decisions."
+          },
+          {
+            "id": "ex-perianal",
+            "label": "Perianal sensation",
+            "significance": "Supports narrowing differential and immediate safety decisions."
+          }
+        ]
+      }
+    ],
     "diagnoses": {
       "common": [
         {
@@ -502,18 +576,42 @@
           "name": "Abdominal aortic aneurysm (AAA)"
         }
       ],
-      "oftenMissed": []
+      "oftenMissed": [
+        {
+          "name": "Atypical presentation of Cauda equina syndrome"
+        }
+      ]
     },
     "investigations": {
-      "whenHelpful": [],
+      "whenHelpful": [
+        {
+          "test": "Point-of-care observations",
+          "rationale": "Helps detect physiological instability during consultation."
+        },
+        {
+          "test": "Targeted bedside test",
+          "rationale": "Used when findings will change immediate management."
+        },
+        {
+          "test": "Selective laboratory test",
+          "rationale": "Reserve for diagnostic uncertainty or higher risk presentations."
+        }
+      ],
       "whenNotNeeded": [],
       "limitations": []
     },
     "managementConsiderations": {
-      "selfCare": [],
+      "selfCare": [
+        "Provide symptom-control advice tailored to current severity.",
+        "Confirm patient understands red-flag escalation instructions."
+      ],
       "pharmacologicalConcepts": [],
       "delayedStrategies": [],
-      "followUpLogic": []
+      "followUpLogic": [
+        "Seek urgent review for: Saddle anaesthesia",
+        "Seek urgent review for: Bladder or bowel dysfunction",
+        "Arrange reassessment if symptoms persist or diagnostic uncertainty remains."
+      ]
     },
     "safetyNetting": {
       "returnAdvice": [

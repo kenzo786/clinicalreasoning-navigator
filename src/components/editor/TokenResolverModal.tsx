@@ -34,6 +34,18 @@ export function TokenResolverModal({ text, tokens, onResolve, onCancel }: TokenR
     onResolve(applyResolutions(text, values));
   };
 
+  const handleInsertWithDefaults = () => {
+    const defaults = new Map<string, string>();
+    for (const token of tokens) {
+      if (token.type === "choice") {
+        defaults.set(token.raw, token.options[token.defaultIndex] ?? token.options[0] ?? "");
+      } else {
+        defaults.set(token.raw, token.raw);
+      }
+    }
+    onResolve(applyResolutions(text, defaults));
+  };
+
   return (
     <Dialog open onOpenChange={(v) => !v && onCancel()}>
       <DialogContent className="sm:max-w-md">
@@ -94,6 +106,9 @@ export function TokenResolverModal({ text, tokens, onResolve, onCancel }: TokenR
         <DialogFooter>
           <Button variant="outline" size="sm" onClick={onCancel}>
             Cancel
+          </Button>
+          <Button variant="outline" size="sm" onClick={handleInsertWithDefaults}>
+            Insert with defaults
           </Button>
           <Button size="sm" onClick={handleSubmit}>
             Insert

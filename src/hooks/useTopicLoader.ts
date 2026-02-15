@@ -1,9 +1,9 @@
 import { useState, useEffect, useCallback } from "react";
-import type { TopicV1 } from "@/types/topic";
+import type { TopicRuntime } from "@/types/topic";
 import { loadTopic, AVAILABLE_TOPICS } from "@/lib/topicSchema";
 
 export function useTopicLoader(topicId: string) {
-  const [topic, setTopic] = useState<TopicV1 | null>(null);
+  const [topic, setTopic] = useState<TopicRuntime | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 

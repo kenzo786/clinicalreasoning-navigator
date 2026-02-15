@@ -27,7 +27,7 @@ export function parseTokens(content: string): {
   unresolvedTokens: UnresolvedToken[];
 } {
   // 1. Resolve date tokens first
-  let text = content.replace(DATE_RE, (match) => resolveDateToken(match));
+  const text = content.replace(DATE_RE, (match) => resolveDateToken(match));
 
   // 2. Extract choice tokens
   const unresolvedTokens: UnresolvedToken[] = [];

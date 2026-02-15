@@ -5,6 +5,8 @@ interface ShortcutHandlers {
   onCopyExport: () => void;
   onFocusEditor: () => void;
   onFocusStructured: () => void;
+  onFocusDdx: () => void;
+  onInsertRightSection: () => void;
   onShowShortcuts: () => void;
 }
 
@@ -38,6 +40,16 @@ export function useKeyboardShortcuts(handlers: ShortcutHandlers) {
         case "2":
           e.preventDefault();
           handlers.onFocusStructured();
+          break;
+        case "3":
+          e.preventDefault();
+          handlers.onFocusDdx();
+          break;
+        case "i":
+          if (e.shiftKey) {
+            e.preventDefault();
+            handlers.onInsertRightSection();
+          }
           break;
       }
     },

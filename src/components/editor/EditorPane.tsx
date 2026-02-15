@@ -1,14 +1,16 @@
 import { useState, useRef, useCallback, useMemo, useEffect } from "react";
-import type { TopicV1 } from "@/types/topic";
+import type { TopicRuntime, TopicSnippet } from "@/types/topic";
 import { useConsultation } from "@/context/ConsultationProvider";
 import { parseTokens } from "@/lib/tokenParser";
+import type { UnresolvedToken } from "@/lib/tokenParser";
 import { TokenResolverModal } from "./TokenResolverModal";
 import { TriggerSuggest } from "./TriggerSuggest";
 import { Copy, Check } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { getDetachedAnchorIds } from "@/lib/editorBridge";
 
 interface EditorPaneProps {
-  topic: TopicV1;
+  topic: TopicRuntime;
   editorRef: { current: HTMLTextAreaElement | null };
 }
 
@@ -18,10 +20,15 @@ export function EditorPane({ topic, editorRef }: EditorPaneProps) {
   const [copied, setCopied] = useState(false);
   const [triggerQuery, setTriggerQuery] = useState<string | null>(null);
   const [triggerPos, setTriggerPos] = useState(0);
-  const [resolverData, setResolverData] = useState<any>(null);
+  const [resolverData, setResolverData] = useState<{
+    text: string;
+    tokens: UnresolvedToken[];
+    snippetId: string;
+    before: string;
+    after: string;
+  } | null>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
-  // Sync ref
   useEffect(() => {
     editorRef.current = textareaRef.current;
   });
@@ -37,8 +44,11 @@ export function EditorPane({ topic, editorRef }: EditorPaneProps) {
     (e: React.ChangeEvent<HTMLTextAreaElement>) => {
       const text = e.target.value;
       dispatch({ type: "SET_EDITOR_TEXT", text });
+      const detached = getDetachedAnchorIds(text, state.editorAnchors);
+      for (const sectionId of detached) {
+        dispatch({ type: "MARK_EDITOR_ANCHOR_DETACHED", sectionId });
+      }
 
-      // Check for trigger
       const cursorPos = e.target.selectionStart;
       const textBefore = text.slice(0, cursorPos);
       const triggerMatch = textBefore.match(/\/(\w*)$/);
@@ -50,11 +60,11 @@ export function EditorPane({ topic, editorRef }: EditorPaneProps) {
         setTriggerQuery(null);
       }
     },
-    [dispatch]
+    [dispatch, state.editorAnchors]
   );
 
   const handleTriggerSelect = useCallback(
-    (snippet: typeof topic.snippets[0]) => {
+    (snippet: TopicSnippet) => {
       const textarea = textareaRef.current;
       if (!textarea) return;
 
@@ -99,7 +109,6 @@ export function EditorPane({ topic, editorRef }: EditorPaneProps) {
 
   return (
     <div className="flex flex-col h-full bg-card relative">
-      {/* Editor header */}
       <div className="flex items-center justify-between px-3 h-9 border-b shrink-0">
         <span className="text-xs font-medium text-muted-foreground uppercase tracking-wider">
           Editor
@@ -113,7 +122,6 @@ export function EditorPane({ topic, editorRef }: EditorPaneProps) {
         </button>
       </div>
 
-      {/* Editor textarea */}
       <div className="flex-1 relative">
         <textarea
           ref={textareaRef}
@@ -122,12 +130,11 @@ export function EditorPane({ topic, editorRef }: EditorPaneProps) {
           onKeyDown={(e) => {
             if (e.key === "Escape") setTriggerQuery(null);
           }}
-          placeholder="Start typing your clinical note…&#10;&#10;Type / to trigger snippet insertion"
+          placeholder={"Start typing your clinical note...\n\nType / to trigger snippet insertion"}
           className="w-full h-full resize-none border-0 bg-transparent p-4 font-mono text-sm leading-relaxed text-foreground placeholder:text-muted-foreground focus:outline-none"
           spellCheck={false}
         />
 
-        {/* Trigger suggest dropdown */}
         {triggerQuery !== null && (
           <TriggerSuggest
             topic={topic}
@@ -138,13 +145,11 @@ export function EditorPane({ topic, editorRef }: EditorPaneProps) {
         )}
       </div>
 
-      {/* Footer */}
       <div className="flex items-center justify-between px-3 h-7 border-t bg-muted/50 text-xs text-muted-foreground shrink-0">
-        <span>{wordCount} words · {charCount} chars</span>
+        <span>{wordCount} words | {charCount} chars</span>
         <span className="text-xs">Ctrl+S to copy</span>
       </div>
 
-      {/* Token resolver */}
       {resolverData && (
         <TokenResolverModal
           text={resolverData.text}

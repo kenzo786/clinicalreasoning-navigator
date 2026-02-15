@@ -1,0 +1,73 @@
+{
+  "version": "2.0",
+  "metadata": {
+    "id": "example-topic",
+    "slug": "example-topic",
+    "displayName": "Example Topic",
+    "specialty": "General Practice",
+    "triggers": ["/example"]
+  },
+  "snippets": [
+    {
+      "id": "ex-hx",
+      "trigger": "example",
+      "label": "Example history",
+      "category": "History",
+      "content": "Example complaint for [Duration]. No red flags reported."
+    }
+  ],
+  "reasoning": {
+    "discriminators": ["Onset and progression"],
+    "mustNotMiss": ["Serious pathology"],
+    "redFlags": ["Severe systemic illness"],
+    "references": []
+  },
+  "structuredFields": [
+    {
+      "id": "history",
+      "title": "History",
+      "fields": [
+        { "id": "duration", "label": "Duration", "type": "text" }
+      ]
+    }
+  ],
+  "outputTemplate": {
+    "sections": [
+      { "id": "editor", "title": "Clinical Notes", "source": "editor", "includeByDefault": true },
+      { "id": "history", "title": "History", "source": "structured", "structuredSectionId": "history", "includeByDefault": true },
+      { "id": "ddx-assessment", "title": "Working Differential", "source": "ddx", "includeByDefault": true }
+    ]
+  },
+  "review": {
+    "illnessScript": { "summary": "Short illness script summary." },
+    "mustNotMiss": [
+      {
+        "condition": "Serious pathology",
+        "redFlags": ["Severe systemic illness"],
+        "whyDangerous": "Can deteriorate quickly.",
+        "escalationConcern": "Urgent same-day escalation."
+      }
+    ],
+    "discriminators": [
+      {
+        "question": "Onset and progression?",
+        "reasoning": "Helps differentiate benign versus serious causes.",
+        "clinicalValue": "Guides urgency and management."
+      }
+    ],
+    "historyPrompts": [],
+    "examSections": [],
+    "diagnoses": { "common": [], "mustNotMiss": [], "oftenMissed": [] },
+    "investigations": { "whenHelpful": [], "whenNotNeeded": [], "limitations": [] },
+    "managementConsiderations": { "selfCare": [], "pharmacologicalConcepts": [], "delayedStrategies": [], "followUpLogic": [] },
+    "safetyNetting": { "returnAdvice": [], "escalationTriggers": [] }
+  },
+  "jitl": {
+    "termMap": [],
+    "linkProviders": []
+  },
+  "ddx": {
+    "evidencePrompts": [],
+    "compareEnabled": true
+  }
+}

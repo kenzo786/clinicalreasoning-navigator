@@ -5,9 +5,17 @@ interface DynamicFieldProps {
   field: StructuredField;
   value: string | number | boolean | string[] | undefined;
   onChange: (val: string | number | boolean | string[]) => void;
+  compact?: boolean;
 }
 
-export function DynamicField({ field, value, onChange }: DynamicFieldProps) {
+export function DynamicField({ field, value, onChange, compact = false }: DynamicFieldProps) {
+  const options = field.options ?? [];
+  const lowerOptions = options.map((o) => o.toLowerCase());
+  const yesNoMode =
+    field.type === "select" &&
+    options.length > 0 &&
+    lowerOptions.every((o) => ["yes", "no", "unknown", "n/a", "na"].includes(o));
+
   const labelEl = (
     <label className="text-xs font-medium text-foreground">
       {field.label}
@@ -38,7 +46,7 @@ export function DynamicField({ field, value, onChange }: DynamicFieldProps) {
             value={(value as string) ?? ""}
             onChange={(e) => onChange(e.target.value)}
             placeholder={field.placeholder}
-            rows={2}
+            rows={compact ? 1 : 2}
             className="w-full px-2 py-1 text-sm rounded border bg-background text-foreground placeholder:text-muted-foreground resize-y"
           />
         </div>
@@ -59,6 +67,31 @@ export function DynamicField({ field, value, onChange }: DynamicFieldProps) {
       );
 
     case "select":
+      if (yesNoMode) {
+        return (
+          <div className="space-y-1">
+            {labelEl}
+            <div className="flex flex-wrap gap-1">
+              {options.map((opt) => {
+                const selected = (value as string) === opt;
+                return (
+                  <button
+                    key={opt}
+                    onClick={() => onChange(opt)}
+                    className={`px-2 py-1 text-xs rounded border transition-colors ${
+                      selected
+                        ? "bg-primary text-primary-foreground border-primary"
+                        : "bg-secondary text-secondary-foreground hover:bg-accent"
+                    }`}
+                  >
+                    {opt}
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+        );
+      }
       return (
         <div className="space-y-1">
           {labelEl}

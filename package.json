@@ -10,7 +10,10 @@
     "lint": "eslint .",
     "preview": "vite preview",
     "test": "vitest run",
-    "test:watch": "vitest"
+    "test:watch": "vitest",
+    "generate-topic-v2": "node scripts/generate-topic-v2.mjs topic-author.yml public/topics",
+    "import-compass-condition": "node scripts/import-compass-condition.mjs",
+    "import-quicknotes-library": "node scripts/import-quicknotes-library.mjs"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.10.0",

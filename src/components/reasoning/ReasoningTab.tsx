@@ -1,9 +1,9 @@
-import type { TopicV1 } from "@/types/topic";
+import type { TopicRuntime } from "@/types/topic";
 import { useConsultation } from "@/context/ConsultationProvider";
 import { AlertTriangle, ExternalLink, ShieldAlert, Target, Eye } from "lucide-react";
 
 interface ReasoningTabProps {
-  topic: TopicV1;
+  topic: TopicRuntime;
 }
 
 export function ReasoningTab({ topic }: ReasoningTabProps) {

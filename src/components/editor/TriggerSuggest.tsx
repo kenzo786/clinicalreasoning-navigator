@@ -1,8 +1,8 @@
 import { useMemo } from "react";
-import type { TopicV1, TopicSnippet } from "@/types/topic";
+import type { TopicRuntime, TopicSnippet } from "@/types/topic";
 
 interface TriggerSuggestProps {
-  topic: TopicV1;
+  topic: TopicRuntime;
   query: string;
   onSelect: (snippet: TopicSnippet) => void;
   onClose: () => void;

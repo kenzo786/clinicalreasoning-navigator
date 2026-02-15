@@ -8,7 +8,7 @@ export function MobileNav() {
   const tabs = [
     { id: "library" as const, label: "Library", icon: BookOpen },
     { id: "editor" as const, label: "Editor", icon: Edit3 },
-    { id: "reasoning" as const, label: "Reasoning", icon: Brain },
+    { id: "reasoning" as const, label: "Reason", icon: Brain },
   ];
 
   return (

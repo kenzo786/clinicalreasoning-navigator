@@ -1,8 +1,9 @@
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect } from "react";
 import { AVAILABLE_TOPICS, loadTopic } from "@/lib/topicSchema";
 import { useConsultation } from "@/context/ConsultationProvider";
 import { parseTokens } from "@/lib/tokenParser";
-import type { TopicV1, TopicSnippet } from "@/types/topic";
+import type { UnresolvedToken } from "@/lib/tokenParser";
+import type { TopicRuntime, TopicSnippet } from "@/types/topic";
 import {
   CommandDialog,
   CommandInput,
@@ -21,17 +22,17 @@ interface CommandPaletteProps {
 
 export function CommandPalette({ open, onClose, editorRef }: CommandPaletteProps) {
   const { state, dispatch } = useConsultation();
-  const [allTopics, setAllTopics] = useState<TopicV1[]>([]);
+  const [allTopics, setAllTopics] = useState<TopicRuntime[]>([]);
   const [resolverData, setResolverData] = useState<{
     text: string;
-    tokens: any[];
+    tokens: UnresolvedToken[];
     snippetId: string;
   } | null>(null);
 
   useEffect(() => {
     if (open) {
       Promise.all(AVAILABLE_TOPICS.map((t) => loadTopic(t.id).catch(() => null))).then((topics) =>
-        setAllTopics(topics.filter(Boolean) as TopicV1[])
+        setAllTopics(topics.filter(Boolean) as TopicRuntime[])
       );
     }
   }, [open]);

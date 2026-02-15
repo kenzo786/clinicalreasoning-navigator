@@ -1,13 +1,14 @@
 import { useState, useMemo } from "react";
-import type { TopicV1 } from "@/types/topic";
+import type { TopicRuntime } from "@/types/topic";
 import { useConsultation } from "@/context/ConsultationProvider";
 import { AVAILABLE_TOPICS } from "@/lib/topicSchema";
 import { parseTokens } from "@/lib/tokenParser";
+import type { UnresolvedToken } from "@/lib/tokenParser";
 import { TokenResolverModal } from "@/components/editor/TokenResolverModal";
 import { Search, ChevronDown } from "lucide-react";
 
 interface LibraryPaneProps {
-  topic: TopicV1;
+  topic: TopicRuntime;
   editorRef: { current: HTMLTextAreaElement | null };
 }
 
@@ -16,7 +17,7 @@ export function LibraryPane({ topic, editorRef }: LibraryPaneProps) {
   const [search, setSearch] = useState("");
   const [resolverData, setResolverData] = useState<{
     text: string;
-    tokens: any[];
+    tokens: UnresolvedToken[];
     snippetId: string;
   } | null>(null);
 

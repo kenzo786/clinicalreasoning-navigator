@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 import fs from "node:fs";
 import path from "node:path";
+import { parse as parseYaml } from "yaml";
 
 const sourcePath = process.argv[2] ?? "topic-author.yml";
 const outputDir = process.argv[3] ?? "public/topics";
@@ -8,16 +9,24 @@ const outputDir = process.argv[3] ?? "public/topics";
 function readSource(filePath) {
   const raw = fs.readFileSync(filePath, "utf8");
   try {
-    return JSON.parse(raw);
+    return parseYaml(raw);
   } catch (error) {
-    throw new Error(
-      `Failed to parse ${filePath}. Use JSON-compatible YAML content for now. ${String(error)}`
-    );
+    throw new Error(`Failed to parse ${filePath} as YAML. ${String(error)}`);
   }
 }
 
 function assertRequired(topic) {
-  const required = ["metadata", "snippets", "reasoning", "structuredFields", "outputTemplate", "review"];
+  const required = [
+    "metadata",
+    "snippets",
+    "reasoning",
+    "structuredFields",
+    "outputTemplate",
+    "review",
+    "jitl",
+    "ddx",
+    "qa",
+  ];
   for (const key of required) {
     if (!topic[key]) throw new Error(`Missing required root key: ${key}`);
   }
@@ -59,7 +68,7 @@ function lintTopic(topic) {
 
 function ensureVersion(topic) {
   return {
-    version: "2.0",
+    version: "2.1",
     ddx: {
       evidencePrompts: topic.ddx?.evidencePrompts ?? [],
       compareEnabled: topic.ddx?.compareEnabled ?? true,
@@ -68,8 +77,14 @@ function ensureVersion(topic) {
       termMap: topic.jitl?.termMap ?? [],
       linkProviders: topic.jitl?.linkProviders ?? [],
     },
+    qa: {
+      status: topic.qa?.status ?? "draft",
+      clinicalReviewer: topic.qa?.clinicalReviewer ?? "unassigned",
+      reviewedAt: topic.qa?.reviewedAt ?? "1970-01-01",
+      version: topic.qa?.version ?? "0.0.0",
+    },
     ...topic,
-    version: "2.0",
+    version: "2.1",
   };
 }
 
@@ -94,4 +109,3 @@ function main() {
 }
 
 main();
-

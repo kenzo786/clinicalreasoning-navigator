@@ -18,7 +18,7 @@ const shortcuts = [
   { keys: "Ctrl/Cmd + 1", description: "Focus editor" },
   { keys: "Ctrl/Cmd + 2", description: "Focus structured" },
   { keys: "Ctrl/Cmd + 3", description: "Focus reason tab" },
-  { keys: "Ctrl/Cmd + Shift + I", description: "Insert current right-pane section" },
+  { keys: "Ctrl/Cmd + Shift + I", description: "Open composer section insert picker" },
   { keys: "/", description: "Trigger snippet insertion" },
   { keys: "?", description: "Show this help" },
 ];

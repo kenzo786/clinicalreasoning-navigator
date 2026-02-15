@@ -1,7 +1,6 @@
 import { useState, useMemo } from "react";
 import type { TopicRuntime } from "@/types/topic";
 import { useConsultation } from "@/context/ConsultationProvider";
-import { AVAILABLE_TOPICS } from "@/lib/topicSchema";
 import { parseTokens } from "@/lib/tokenParser";
 import type { UnresolvedToken } from "@/lib/tokenParser";
 import { TokenResolverModal } from "@/components/editor/TokenResolverModal";
@@ -10,9 +9,10 @@ import { Search, ChevronDown } from "lucide-react";
 interface LibraryPaneProps {
   topic: TopicRuntime;
   editorRef: { current: HTMLTextAreaElement | null };
+  availableTopics: Array<{ id: string; displayName: string }>;
 }
 
-export function LibraryPane({ topic, editorRef }: LibraryPaneProps) {
+export function LibraryPane({ topic, editorRef, availableTopics }: LibraryPaneProps) {
   const { state, dispatch } = useConsultation();
   const [search, setSearch] = useState("");
   const [resolverData, setResolverData] = useState<{
@@ -81,7 +81,7 @@ export function LibraryPane({ topic, editorRef }: LibraryPaneProps) {
             onChange={(e) => dispatch({ type: "SET_TOPIC", topicId: e.target.value })}
             className="w-full h-8 pl-2 pr-8 text-sm rounded border bg-background text-foreground appearance-none cursor-pointer"
           >
-            {AVAILABLE_TOPICS.map((t) => (
+            {availableTopics.map((t) => (
               <option key={t.id} value={t.id}>{t.displayName}</option>
             ))}
           </select>

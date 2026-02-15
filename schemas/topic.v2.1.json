@@ -1,0 +1,55 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "CRx Topic v2.1",
+  "type": "object",
+  "required": [
+    "version",
+    "metadata",
+    "snippets",
+    "reasoning",
+    "structuredFields",
+    "outputTemplate",
+    "review",
+    "jitl",
+    "ddx",
+    "qa"
+  ],
+  "properties": {
+    "version": { "const": "2.1" },
+    "metadata": {
+      "type": "object",
+      "required": ["id", "slug", "displayName"],
+      "properties": {
+        "id": { "type": "string" },
+        "slug": { "type": "string" },
+        "displayName": { "type": "string" },
+        "specialty": { "type": "string" },
+        "triggers": { "type": "array", "items": { "type": "string" } }
+      }
+    },
+    "snippets": { "type": "array" },
+    "reasoning": { "type": "object" },
+    "structuredFields": { "type": "array" },
+    "outputTemplate": { "type": "object" },
+    "review": { "type": "object" },
+    "jitl": { "type": "object" },
+    "ddx": {
+      "type": "object",
+      "required": ["evidencePrompts", "compareEnabled"],
+      "properties": {
+        "evidencePrompts": { "type": "array", "items": { "type": "string" } },
+        "compareEnabled": { "type": "boolean" }
+      }
+    },
+    "qa": {
+      "type": "object",
+      "required": ["status", "clinicalReviewer", "reviewedAt", "version"],
+      "properties": {
+        "status": { "enum": ["approved", "draft", "deprecated"] },
+        "clinicalReviewer": { "type": "string" },
+        "reviewedAt": { "type": "string" },
+        "version": { "type": "string" }
+      }
+    }
+  }
+}

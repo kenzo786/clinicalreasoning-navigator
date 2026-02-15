@@ -1,7 +1,7 @@
 import { useState, useMemo, useCallback } from "react";
 import type { TopicRuntime } from "@/types/topic";
 import { useConsultation } from "@/context/ConsultationProvider";
-import { composeOutput, getComposedSections } from "@/lib/outputComposer";
+import { buildComposerSections, buildExportText } from "@/lib/composer";
 import { useToast } from "@/hooks/use-toast";
 import { Copy, Check, X, RotateCcw, Eye, EyeOff, ClipboardPlus } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -25,10 +25,10 @@ export function PreviewPane({ topic, onClose, onInsertSection, onAppendSection }
   const { toast } = useToast();
   const [copied, setCopied] = useState(false);
 
-  const computedOutput = useMemo(() => composeOutput(topic, state), [topic, state]);
-  const displayText = state.outputOverrideText ?? computedOutput;
-  const isOverridden = state.outputOverrideText !== null;
-  const composedSections = useMemo(() => getComposedSections(topic, state), [topic, state]);
+  const computedOutput = useMemo(() => buildExportText(topic, state), [topic, state]);
+  const displayText = state.exportDraft.isDerived ? computedOutput : state.exportDraft.text;
+  const isOverridden = !state.exportDraft.isDerived;
+  const composedSections = useMemo(() => buildComposerSections(topic, state), [topic, state]);
 
   const handleCopy = useCallback(async () => {
     try {
@@ -53,7 +53,7 @@ export function PreviewPane({ topic, onClose, onInsertSection, onAppendSection }
               variant="ghost"
               size="sm"
               className="h-6 text-xs gap-1"
-              onClick={() => dispatch({ type: "SET_OUTPUT_OVERRIDE", text: null })}
+              onClick={() => dispatch({ type: "SET_EXPORT_DRAFT", text: null })}
             >
               <RotateCcw className="h-3 w-3" />
               Reset
@@ -98,6 +98,19 @@ export function PreviewPane({ topic, onClose, onInsertSection, onAppendSection }
                   <span className="text-[10px] px-1.5 py-0.5 rounded border bg-muted text-muted-foreground">
                     {sourceLabel(section.source)}
                   </span>
+                  <span
+                    className={`text-[10px] px-1.5 py-0.5 rounded border ${
+                      section.linkState === "linked_clean"
+                        ? "bg-emerald-100 text-emerald-700 border-emerald-300"
+                        : section.linkState === "linked_modified"
+                        ? "bg-amber-100 text-amber-700 border-amber-300"
+                        : section.linkState === "linked_missing"
+                        ? "bg-red-100 text-red-700 border-red-300"
+                        : "bg-secondary text-muted-foreground"
+                    }`}
+                  >
+                    {section.linkState}
+                  </span>
                 </div>
                 <div className="flex items-center gap-1">
                   <button
@@ -130,7 +143,7 @@ export function PreviewPane({ topic, onClose, onInsertSection, onAppendSection }
       <div className="flex-1 overflow-y-auto">
         <textarea
           value={displayText}
-          onChange={(e) => dispatch({ type: "SET_OUTPUT_OVERRIDE", text: e.target.value })}
+          onChange={(e) => dispatch({ type: "SET_EXPORT_DRAFT", text: e.target.value })}
           className="w-full h-full resize-none border-0 bg-transparent p-4 font-mono text-sm leading-relaxed text-foreground focus:outline-none"
           spellCheck={false}
         />
@@ -138,4 +151,3 @@ export function PreviewPane({ topic, onClose, onInsertSection, onAppendSection }
     </div>
   );
 }
-

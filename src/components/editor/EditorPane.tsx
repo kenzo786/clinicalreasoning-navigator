@@ -20,6 +20,7 @@ export function EditorPane({ topic, editorRef }: EditorPaneProps) {
   const [copied, setCopied] = useState(false);
   const [triggerQuery, setTriggerQuery] = useState<string | null>(null);
   const [triggerPos, setTriggerPos] = useState(0);
+  const [triggerIndex, setTriggerIndex] = useState(0);
   const [resolverData, setResolverData] = useState<{
     text: string;
     tokens: UnresolvedToken[];
@@ -39,6 +40,17 @@ export function EditorPane({ topic, editorRef }: EditorPaneProps) {
   }, [state.editorText]);
 
   const charCount = state.editorText.length;
+  const triggerMatches = useMemo(() => {
+    if (triggerQuery === null) return [];
+    if (!triggerQuery) return topic.snippets.slice(0, 8);
+    const q = triggerQuery.toLowerCase();
+    return topic.snippets
+      .filter(
+        (s) =>
+          s.trigger.toLowerCase().includes(q) || s.label.toLowerCase().includes(q)
+      )
+      .slice(0, 8);
+  }, [triggerQuery, topic.snippets]);
 
   const handleChange = useCallback(
     (e: React.ChangeEvent<HTMLTextAreaElement>) => {
@@ -56,6 +68,7 @@ export function EditorPane({ topic, editorRef }: EditorPaneProps) {
       if (triggerMatch) {
         setTriggerQuery(triggerMatch[1]);
         setTriggerPos(cursorPos - triggerMatch[0].length);
+        setTriggerIndex(0);
       } else {
         setTriggerQuery(null);
       }
@@ -128,6 +141,27 @@ export function EditorPane({ topic, editorRef }: EditorPaneProps) {
           value={state.editorText}
           onChange={handleChange}
           onKeyDown={(e) => {
+            if (triggerQuery !== null) {
+              if (e.key === "ArrowDown") {
+                e.preventDefault();
+                if (triggerMatches.length) {
+                  setTriggerIndex((v) => (v + 1) % triggerMatches.length);
+                }
+                return;
+              }
+              if (e.key === "ArrowUp") {
+                e.preventDefault();
+                if (triggerMatches.length) {
+                  setTriggerIndex((v) => (v - 1 + triggerMatches.length) % triggerMatches.length);
+                }
+                return;
+              }
+              if (e.key === "Enter" && triggerMatches.length) {
+                e.preventDefault();
+                handleTriggerSelect(triggerMatches[triggerIndex] ?? triggerMatches[0]);
+                return;
+              }
+            }
             if (e.key === "Escape") setTriggerQuery(null);
           }}
           placeholder={"Start typing your clinical note...\n\nType / to trigger snippet insertion"}
@@ -139,6 +173,7 @@ export function EditorPane({ topic, editorRef }: EditorPaneProps) {
           <TriggerSuggest
             topic={topic}
             query={triggerQuery}
+            selectedIndex={triggerIndex}
             onSelect={handleTriggerSelect}
             onClose={() => setTriggerQuery(null)}
           />

@@ -1,24 +1,14 @@
 import type { JitlConfig, JitlContextType, JitlTermMap } from "@/types/topic";
 
 export const JIT_CONTEXT_STORAGE_KEY = "crx-navigator-jitl-context";
+let runtimeContext = "Target audience: [Primary Care Clinician] in [UK General Practice].";
 
 export function getAiContext(): string {
-  try {
-    return (
-      localStorage.getItem(JIT_CONTEXT_STORAGE_KEY) ??
-      "Target audience: [Primary Care Clinician] in [UK General Practice]."
-    );
-  } catch {
-    return "Target audience: [Primary Care Clinician] in [UK General Practice].";
-  }
+  return runtimeContext;
 }
 
 export function saveAiContext(context: string): void {
-  try {
-    localStorage.setItem(JIT_CONTEXT_STORAGE_KEY, context);
-  } catch {
-    // no-op
-  }
+  runtimeContext = context || runtimeContext;
 }
 
 export function buildPresetPhrase(term: string, preset: JitlContextType): string {
@@ -56,4 +46,3 @@ export function getJitlTermConfig(config: JitlConfig, term: string): JitlTermMap
     return (entry.aliases ?? []).some((a) => normalizeTerm(a) === key);
   });
 }
-

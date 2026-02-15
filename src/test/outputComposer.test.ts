@@ -22,6 +22,7 @@ const mockTopic: TopicRuntime = {
   },
   jitl: { termMap: [], linkProviders: [] },
   ddx: { evidencePrompts: [], compareEnabled: true },
+  qa: { status: "approved", clinicalReviewer: "tester", reviewedAt: "2026-01-01", version: "1.0.0" },
   structuredFields: [
     {
       id: "history",
@@ -117,4 +118,3 @@ describe("outputComposer", () => {
     expect(text).toContain("Against UTI");
   });
 });
-

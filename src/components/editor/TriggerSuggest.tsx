@@ -4,11 +4,18 @@ import type { TopicRuntime, TopicSnippet } from "@/types/topic";
 interface TriggerSuggestProps {
   topic: TopicRuntime;
   query: string;
+  selectedIndex?: number;
   onSelect: (snippet: TopicSnippet) => void;
   onClose: () => void;
 }
 
-export function TriggerSuggest({ topic, query, onSelect, onClose }: TriggerSuggestProps) {
+export function TriggerSuggest({
+  topic,
+  query,
+  selectedIndex = 0,
+  onSelect,
+  onClose,
+}: TriggerSuggestProps) {
   const matches = useMemo(() => {
     if (!query) return topic.snippets.slice(0, 8);
     const q = query.toLowerCase();
@@ -29,7 +36,9 @@ export function TriggerSuggest({ topic, query, onSelect, onClose }: TriggerSugge
               e.preventDefault();
               onSelect(s);
             }}
-            className="w-full flex items-center justify-between px-3 py-1.5 text-sm hover:bg-accent transition-colors text-left"
+            className={`w-full flex items-center justify-between px-3 py-1.5 text-sm transition-colors text-left ${
+              matches[selectedIndex]?.id === s.id ? "bg-accent" : "hover:bg-accent"
+            }`}
           >
             <span className="text-foreground">{s.label}</span>
             <code className="text-xs text-muted-foreground">/{s.trigger}</code>

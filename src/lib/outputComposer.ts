@@ -52,9 +52,14 @@ export function composeDDx(state: ConsultationState): string {
     ...others,
   ];
 
-  const lines: string[] = ["Working differentials:"];
+  const lines: string[] = ["Working differentials (ranked):"];
   ranked.forEach((d, i) => {
-    lines.push(`${i + 1}. ${d.name}${d.isPrimary ? " *" : ""}`);
+    const supports = state.ddx.evidenceFor.find((e) => e.diagnosis === d.name)?.items.length ?? 0;
+    const against = state.ddx.evidenceAgainst.find((e) => e.diagnosis === d.name)?.items.length ?? 0;
+    const confidence = supports > against ? "higher confidence" : supports === against ? "balanced" : "lower confidence";
+    lines.push(
+      `${i + 1}. ${d.name}${d.isPrimary ? " (primary)" : ""} [${confidence}]`
+    );
   });
 
   for (const e of state.ddx.evidenceFor) {
@@ -118,4 +123,3 @@ export function composeOutput(topic: TopicRuntime, state: ConsultationState): st
 
   return sections.join("\n\n");
 }
-

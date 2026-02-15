@@ -10,24 +10,24 @@ import {
 import { Button } from "@/components/ui/button";
 
 export function RestoreModal() {
-  const { hasAutosave, restoreAutosave, discardAutosave } = useConsultation();
+  const { hasPrefsBackup, restorePrefsBackup, discardPrefsBackup } = useConsultation();
 
-  if (!hasAutosave) return null;
+  if (!hasPrefsBackup) return null;
 
   return (
-    <Dialog open onOpenChange={(v) => !v && discardAutosave()}>
+    <Dialog open onOpenChange={(v) => !v && discardPrefsBackup()}>
       <DialogContent className="sm:max-w-sm">
         <DialogHeader>
-          <DialogTitle>Restore previous draft?</DialogTitle>
+          <DialogTitle>Restore saved workspace preferences?</DialogTitle>
           <DialogDescription>
-            A previous autosaved draft was found. Would you like to restore it or start fresh?
+            Saved layout and workflow preferences were found. Restore them or start with defaults.
           </DialogDescription>
         </DialogHeader>
         <DialogFooter>
-          <Button variant="outline" onClick={discardAutosave}>
+          <Button variant="outline" onClick={discardPrefsBackup}>
             Discard
           </Button>
-          <Button onClick={restoreAutosave}>
+          <Button onClick={restorePrefsBackup}>
             Restore
           </Button>
         </DialogFooter>

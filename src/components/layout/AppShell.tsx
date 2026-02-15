@@ -1,7 +1,11 @@
 import { useConsultation } from "@/context/ConsultationProvider";
 import { useTopicLoader } from "@/hooks/useTopicLoader";
 import { useIsMobile } from "@/hooks/use-mobile";
-import { ResizablePanelGroup, ResizablePanel, ResizableHandle } from "@/components/ui/resizable";
+import {
+  ResizablePanelGroup,
+  ResizablePanel,
+  ResizableHandle,
+} from "@/components/ui/resizable";
 import { LibraryPane } from "@/components/library/LibraryPane";
 import { EditorPane } from "@/components/editor/EditorPane";
 import { RightPane } from "@/components/reasoning/RightPane";
@@ -13,80 +17,83 @@ import { MobileNav } from "@/components/layout/MobileNav";
 import { useKeyboardShortcuts } from "@/hooks/useKeyboardShortcuts";
 import { useCallback, useMemo, useRef, useState } from "react";
 import { Stethoscope } from "lucide-react";
-import {
-  composeDDx,
-  composeOutput,
-  composeReasoningSummary,
-  composeStructuredSection,
-  getComposedSections,
-} from "@/lib/outputComposer";
 import { useToast } from "@/hooks/use-toast";
-import {
-  appendAnchored,
-  getDetachedAnchorIds,
-  insertAnchoredAtCursor,
-  refreshAnchoredBlock,
-} from "@/lib/editorBridge";
+import { getDetachedAnchorIds, refreshAnchoredBlock } from "@/lib/editorBridge";
+import { upsertLinkedSection } from "@/lib/insertionService";
+import { buildComposerSections, buildExportText } from "@/lib/composer";
+import { SectionInsertPicker } from "@/components/editor/SectionInsertPicker";
 
 export default function AppShell() {
   const { state, dispatch } = useConsultation();
-  const { topic, loading, error } = useTopicLoader(state.activeTopicId);
+  const { topic, loading, error, availableTopics } = useTopicLoader(state.activeTopicId);
   const isMobile = useIsMobile();
   const { toast } = useToast();
-  const [showPreview, setShowPreview] = useState(false);
   const [showShortcuts, setShowShortcuts] = useState(false);
   const [showPalette, setShowPalette] = useState(false);
+  const [showInsertPicker, setShowInsertPicker] = useState(false);
   const editorRef = useRef<HTMLTextAreaElement | null>(null);
   const rightPaneRef = useRef<HTMLDivElement | null>(null);
-  const computedOutput = useMemo(() => (topic ? composeOutput(topic, state) : ""), [topic, state]);
-  const composedSections = useMemo(() => (topic ? getComposedSections(topic, state) : []), [topic, state]);
+  const composedSections = useMemo(
+    () => (topic ? buildComposerSections(topic, state) : []),
+    [topic, state]
+  );
+  const exportText = useMemo(
+    () => (topic ? buildExportText(topic, state) : ""),
+    [topic, state]
+  );
 
-  const updateEditorText = useCallback((text: string) => {
-    dispatch({ type: "SET_EDITOR_TEXT", text });
-    const detached = getDetachedAnchorIds(text, state.editorAnchors);
-    for (const sectionId of detached) {
-      dispatch({ type: "MARK_EDITOR_ANCHOR_DETACHED", sectionId });
-    }
-  }, [dispatch, state.editorAnchors]);
-
-  const insertEditorSection = useCallback((sectionId: string, content: string, mode: "cursor" | "append" = "cursor") => {
-    if (!content.trim()) return;
-    const existingAnchor = state.editorAnchors[sectionId];
-    if (existingAnchor && !existingAnchor.detached) {
-      const refreshed = refreshAnchoredBlock(state.editorText, existingAnchor, content);
-      dispatch({ type: "SET_EDITOR_ANCHOR", sectionId, anchor: refreshed.anchor });
-      if (refreshed.updated) {
-        updateEditorText(refreshed.nextText);
-        return;
+  const updateEditorText = useCallback(
+    (text: string) => {
+      dispatch({ type: "SET_EDITOR_TEXT", text });
+      const detached = getDetachedAnchorIds(text, state.editorAnchors);
+      for (const sectionId of detached) {
+        dispatch({ type: "MARK_EDITOR_ANCHOR_DETACHED", sectionId });
       }
-    }
+    },
+    [dispatch, state.editorAnchors]
+  );
 
-    const editor = editorRef.current;
+  const insertComposerSection = useCallback(
+    (
+      sectionId: string,
+      title: string,
+      source: string,
+      content: string,
+      mode: "cursor" | "append" = "cursor"
+    ) => {
+      const editor = editorRef.current;
+      const result = upsertLinkedSection(
+        state,
+        {
+          sectionId,
+          sectionTitle: title,
+          source,
+          content,
+          mode,
+        },
+        editor
+          ? {
+              start: editor.selectionStart,
+              end: editor.selectionEnd,
+            }
+          : undefined
+      );
+      if (!result) return;
 
-    if (mode === "append" || !editor) {
-      const { nextText, anchor } = appendAnchored(state.editorText, sectionId, content);
-      updateEditorText(nextText);
-      dispatch({ type: "SET_EDITOR_ANCHOR", sectionId, anchor });
-      return;
-    }
-
-    const { nextText, nextCursor, anchor } = insertAnchoredAtCursor(
-      state.editorText,
-      sectionId,
-      content,
-      editor.selectionStart,
-      editor.selectionEnd
-    );
-    updateEditorText(nextText);
-    dispatch({ type: "SET_EDITOR_ANCHOR", sectionId, anchor });
-    setTimeout(() => {
-      editor.focus();
-      editor.setSelectionRange(nextCursor, nextCursor);
-    }, 0);
-  }, [state.editorText, state.editorAnchors, dispatch, updateEditorText]);
+      updateEditorText(result.nextText);
+      dispatch({ type: "SET_EDITOR_ANCHOR", sectionId, anchor: result.anchor });
+      if (editor && result.nextCursor !== null) {
+        setTimeout(() => {
+          editor.focus();
+          editor.setSelectionRange(result.nextCursor, result.nextCursor);
+        }, 0);
+      }
+    },
+    [dispatch, state, updateEditorText]
+  );
 
   const handleCopyExport = useCallback(async () => {
-    const text = (state.outputOverrideText ?? computedOutput).trim();
+    const text = exportText.trim();
     if (!text) {
       toast({ title: "Nothing to copy", description: "No note output to copy yet." });
       return;
@@ -95,16 +102,29 @@ export default function AppShell() {
       await navigator.clipboard.writeText(text);
       toast({ title: "Output copied", description: "Final note copied to clipboard." });
     } catch {
-      toast({ title: "Copy failed", description: "Unable to copy output.", variant: "destructive" });
+      toast({
+        title: "Copy failed",
+        description: "Unable to copy output.",
+        variant: "destructive",
+      });
     }
-  }, [computedOutput, state.outputOverrideText, toast]);
+  }, [exportText, toast]);
 
-  const promoteToEditor = useCallback((title: string, text: string) => {
-    if (!text.trim()) return;
-    const sectionId = `promote-${title.toLowerCase().replace(/\s+/g, "-")}`;
-    insertEditorSection(sectionId, `${title}\n${text}`, "cursor");
-    toast({ title: "Inserted into editor", description: `${title} sent to note editor.` });
-  }, [insertEditorSection, toast]);
+  const promoteToEditor = useCallback(
+    (title: string, text: string) => {
+      if (!text.trim()) return;
+      const sectionId = `promote-${title.toLowerCase().replace(/\s+/g, "-")}`;
+      insertComposerSection(sectionId, title, "review", `${title}\n${text}`, "cursor");
+      dispatch({
+        type: "SET_REVIEW_ITEM_STATUS",
+        id: title.toLowerCase().replace(/\s+/g, "-"),
+        source: "management",
+        status: "inserted",
+      });
+      toast({ title: "Inserted into editor", description: `${title} sent to note editor.` });
+    },
+    [insertComposerSection, dispatch, toast]
+  );
 
   const refreshAnchorsFromState = useCallback(() => {
     if (!topic) return;
@@ -118,7 +138,7 @@ export default function AppShell() {
     }
     if (nextText !== state.editorText) {
       updateEditorText(nextText);
-      toast({ title: "Anchors refreshed", description: "Editor sections synced from current state." });
+      toast({ title: "Linked sections refreshed", description: "Editor synced from composer." });
     }
   }, [topic, composedSections, state.editorAnchors, state.editorText, dispatch, updateEditorText, toast]);
 
@@ -153,37 +173,8 @@ export default function AppShell() {
   }, [dispatch, isMobile]);
 
   const insertCurrentRightSection = useCallback(() => {
-    if (!topic) return;
-
-    if (state.uiPrefs.rightPaneTab === "structured") {
-      const firstNonEmpty = topic.structuredFields
-        .map((s) => ({ id: s.id, content: composeStructuredSection(topic, state, s.id), title: s.title }))
-        .find((s) => s.content.trim().length > 0);
-      if (!firstNonEmpty) {
-        toast({ title: "No structured content", description: "Complete structured fields first." });
-        return;
-      }
-      insertEditorSection(`structured-${firstNonEmpty.id}`, `${firstNonEmpty.title}\n${firstNonEmpty.content}`);
-      return;
-    }
-
-    if (state.uiPrefs.rightPaneTab === "reason") {
-      const reasonText = [composeDDx(state), composeReasoningSummary(topic, state)].filter(Boolean).join("\n\n");
-      if (!reasonText.trim()) {
-        toast({ title: "No reasoning content", description: "Add DDx or red-flag checks first." });
-        return;
-      }
-      insertEditorSection("reason-assessment", `Assessment\n${reasonText}`);
-      return;
-    }
-
-    const illness = topic.review.illnessScript.summary;
-    if (!illness.trim()) {
-      toast({ title: "No review content", description: "Nothing to insert from review." });
-      return;
-    }
-    insertEditorSection("review-illness-script", `Illness Script\n${illness}`);
-  }, [topic, state, toast, insertEditorSection]);
+    setShowInsertPicker(true);
+  }, []);
 
   useKeyboardShortcuts({
     onCommandPalette: () => setShowPalette(true),
@@ -203,7 +194,7 @@ export default function AppShell() {
   if (loading) {
     return (
       <div className="flex h-screen items-center justify-center bg-background">
-        <div className="text-muted-foreground animate-pulse">Loading topic…</div>
+        <div className="text-muted-foreground animate-pulse">Loading topic...</div>
       </div>
     );
   }
@@ -223,26 +214,31 @@ export default function AppShell() {
 
   return (
     <div className="flex flex-col h-screen bg-background overflow-hidden">
-      {/* Header */}
       <header className="flex items-center justify-between h-11 px-4 border-b bg-card shrink-0">
         <div className="flex items-center gap-2">
           <Stethoscope className="h-4 w-4 text-primary" />
           <span className="font-semibold text-sm">CRx Navigator</span>
-          <span className="text-xs text-muted-foreground">v0.2</span>
+          <span className="text-xs text-muted-foreground">v1.0-pilot</span>
         </div>
         <div className="flex items-center gap-2">
           <button
             onClick={refreshAnchorsFromState}
             className="text-xs px-2 py-1 rounded border bg-secondary text-secondary-foreground hover:bg-accent transition-colors"
-            title="Refresh anchored editor sections from current state"
+            title="Refresh linked editor sections from current state"
           >
-            Refresh Anchors
+            Refresh Links
           </button>
           <button
-            onClick={() => setShowPreview(!showPreview)}
+            onClick={() =>
+              dispatch({
+                type: "SET_UI_PREF",
+                key: "composerTrayCollapsed",
+                value: !state.uiPrefs.composerTrayCollapsed,
+              })
+            }
             className="text-xs px-2 py-1 rounded border bg-secondary text-secondary-foreground hover:bg-accent transition-colors"
           >
-            {showPreview ? "Hide Preview" : "Preview"}
+            {state.uiPrefs.composerTrayCollapsed ? "Show Composer" : "Hide Composer"}
           </button>
           <button
             onClick={() => setShowShortcuts(true)}
@@ -253,19 +249,17 @@ export default function AppShell() {
         </div>
       </header>
 
-      {/* Main content */}
       <div className="flex-1 overflow-hidden">
-        {showPreview ? (
-          <PreviewPane
-            topic={topic}
-            onClose={() => setShowPreview(false)}
-            onInsertSection={(sectionId, content) => insertEditorSection(sectionId, content, "cursor")}
-            onAppendSection={(sectionId, content) => insertEditorSection(sectionId, content, "append")}
-          />
-        ) : isMobile ? (
+        {isMobile ? (
           <div className="flex flex-col h-full">
             <div className="flex-1 overflow-auto">
-              {activePane === "library" && <LibraryPane topic={topic} editorRef={editorRef} />}
+              {activePane === "library" && (
+                <LibraryPane
+                  topic={topic}
+                  editorRef={editorRef}
+                  availableTopics={availableTopics}
+                />
+              )}
               {activePane === "editor" && <EditorPane topic={topic} editorRef={editorRef} />}
               {activePane === "reasoning" && (
                 <div ref={rightPaneRef} className="h-full">
@@ -293,20 +287,44 @@ export default function AppShell() {
               minSize={15}
               maxSize={30}
             >
-              <LibraryPane topic={topic} editorRef={editorRef} />
+              <LibraryPane
+                topic={topic}
+                editorRef={editorRef}
+                availableTopics={availableTopics}
+              />
             </ResizablePanel>
             <ResizableHandle withHandle />
-            <ResizablePanel
-              defaultSize={state.uiPrefs.desktopPaneSizes[1]}
-              minSize={30}
-            >
-              <EditorPane topic={topic} editorRef={editorRef} />
+            <ResizablePanel defaultSize={state.uiPrefs.desktopPaneSizes[1]} minSize={30}>
+              <div className="h-full flex flex-col">
+                <div className="flex-1 min-h-0">
+                  <EditorPane topic={topic} editorRef={editorRef} />
+                </div>
+                {!state.uiPrefs.composerTrayCollapsed && (
+                  <div className="h-[38%] min-h-[220px] border-t">
+                    <PreviewPane
+                      topic={topic}
+                      onClose={() =>
+                        dispatch({
+                          type: "SET_UI_PREF",
+                          key: "composerTrayCollapsed",
+                          value: true,
+                        })
+                      }
+                      onInsertSection={(sectionId, content) => {
+                        const title = content.split("\n")[0] || sectionId;
+                        insertComposerSection(sectionId, title, "composer", content, "cursor");
+                      }}
+                      onAppendSection={(sectionId, content) => {
+                        const title = content.split("\n")[0] || sectionId;
+                        insertComposerSection(sectionId, title, "composer", content, "append");
+                      }}
+                    />
+                  </div>
+                )}
+              </div>
             </ResizablePanel>
             <ResizableHandle withHandle />
-            <ResizablePanel
-              defaultSize={state.uiPrefs.desktopPaneSizes[2]}
-              minSize={20}
-            >
+            <ResizablePanel defaultSize={state.uiPrefs.desktopPaneSizes[2]} minSize={20}>
               <div ref={rightPaneRef} className="h-full">
                 <RightPane topic={topic} onPromoteToEditor={promoteToEditor} />
               </div>
@@ -321,6 +339,30 @@ export default function AppShell() {
         open={showPalette}
         onClose={() => setShowPalette(false)}
         editorRef={editorRef}
+        availableTopics={availableTopics}
+      />
+      <SectionInsertPicker
+        open={showInsertPicker}
+        onClose={() => setShowInsertPicker(false)}
+        sections={composedSections}
+        onInsert={(section) =>
+          insertComposerSection(
+            section.id,
+            section.title,
+            section.source,
+            `${section.title}\n${section.content}`,
+            "cursor"
+          )
+        }
+        onAppend={(section) =>
+          insertComposerSection(
+            section.id,
+            section.title,
+            section.source,
+            `${section.title}\n${section.content}`,
+            "append"
+          )
+        }
       />
     </div>
   );

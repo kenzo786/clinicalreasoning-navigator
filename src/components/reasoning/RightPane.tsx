@@ -14,6 +14,8 @@ interface RightPaneProps {
 
 export function RightPane({ topic, onPromoteToEditor }: RightPaneProps) {
   const { state, dispatch } = useConsultation();
+  const reviewEnabled = state.featureFlags.reviewEnabled && state.featureFlags.reviewJitl;
+  const jitlEnabled = state.featureFlags.jitlEnabled && state.featureFlags.reviewJitl;
   const [jitlState, setJitlState] = useState<{
     open: boolean;
     term: string;
@@ -37,13 +39,13 @@ export function RightPane({ topic, onPromoteToEditor }: RightPaneProps) {
       <Tabs
         value={state.uiPrefs.rightPaneTab}
         onValueChange={(v) =>
-          dispatch({ type: "SET_UI_PREF", key: "rightPaneTab", value: v })
-        }
+            dispatch({ type: "SET_UI_PREF", key: "rightPaneTab", value: v })
+          }
         className="flex flex-col h-full"
       >
         <div className="px-3 pt-2 border-b shrink-0">
           <TabsList className="h-8 w-full">
-            {state.featureFlags.reviewJitl && (
+            {reviewEnabled && (
               <TabsTrigger value="review" className="flex-1 text-xs">
                 Review
               </TabsTrigger>
@@ -57,7 +59,7 @@ export function RightPane({ topic, onPromoteToEditor }: RightPaneProps) {
           </TabsList>
         </div>
 
-        {state.featureFlags.reviewJitl && (
+        {reviewEnabled && (
           <TabsContent value="review" className="flex-1 overflow-y-auto m-0 p-0">
             <ReviewTab topic={topic} onPromote={onPromoteToEditor} onOpenJitl={openJitl} />
           </TabsContent>
@@ -72,13 +74,26 @@ export function RightPane({ topic, onPromoteToEditor }: RightPaneProps) {
         </TabsContent>
       </Tabs>
 
-      <JitlModal
-        open={jitlState.open}
-        onClose={() => setJitlState((prev) => ({ ...prev, open: false }))}
-        term={jitlState.term}
-        initialContextType={jitlState.contextType}
-        config={topic.jitl}
-      />
+      {jitlEnabled && (
+        <JitlModal
+          open={jitlState.open}
+          onClose={() => setJitlState((prev) => ({ ...prev, open: false }))}
+          term={jitlState.term}
+          initialContextType={jitlState.contextType}
+          config={topic.jitl}
+          onOutbound={(provider) => {
+            dispatch({
+              type: "ADD_JITL_OUTBOUND_EVENT",
+              event: {
+                term: jitlState.term,
+                contextType: jitlState.contextType,
+                provider,
+                timestamp: Date.now(),
+              },
+            });
+          }}
+        />
+      )}
     </div>
   );
 }

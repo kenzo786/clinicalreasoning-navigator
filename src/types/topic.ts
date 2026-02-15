@@ -155,7 +155,33 @@ export interface TopicV2 {
   };
 }
 
-export type TopicSource = TopicV1 | TopicV2;
+export interface TopicQaMeta {
+  status: "approved" | "draft" | "deprecated";
+  clinicalReviewer: string;
+  reviewedAt: string;
+  version: string;
+}
+
+export interface TopicV2_1 {
+  version: "2.1";
+  metadata: TopicMetadata;
+  snippets: TopicSnippet[];
+  reasoning: TopicReasoning;
+  structuredFields: StructuredSection[];
+  outputTemplate: OutputTemplate;
+  review: ReviewContent;
+  jitl: {
+    termMap: JitlTermMap[];
+    linkProviders: Array<{ label: string; hrefTemplate: string; row: number }>;
+  };
+  ddx: {
+    evidencePrompts: string[];
+    compareEnabled: boolean;
+  };
+  qa: TopicQaMeta;
+}
+
+export type TopicSource = TopicV1 | TopicV2 | TopicV2_1;
 
 export interface TopicRuntime {
   version: "runtime";
@@ -167,6 +193,7 @@ export interface TopicRuntime {
   review: ReviewContent;
   jitl: JitlConfig;
   ddx: DdxConfig;
+  qa: TopicQaMeta;
 }
 
 export interface TopicSnippet {

@@ -157,7 +157,7 @@ export function ReasonTab({ topic, onPromote, onOpenJitl }: ReasonTabProps) {
       <section className="space-y-2">
         <div className="flex items-center justify-between">
           <h3 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Working Diagnosis Builder</h3>
-          {state.ddx.compareSelection.length === 2 && (
+          {topic.ddx.compareEnabled && state.ddx.compareSelection.length === 2 && (
             <button
               onClick={() => setCompareOpen(true)}
               className="text-xs px-2 py-1 rounded border bg-secondary hover:bg-accent"
@@ -196,12 +196,14 @@ export function ReasonTab({ topic, onPromote, onOpenJitl }: ReasonTabProps) {
                 <button onClick={() => dispatch({ type: "DDX_SET_PRIMARY", name: d.name })}>
                   <Star className={`h-3.5 w-3.5 ${d.isPrimary ? "text-primary fill-primary" : "text-muted-foreground"}`} />
                 </button>
-                <button
-                  onClick={() => dispatch({ type: "DDX_TOGGLE_COMPARE", name: d.name })}
-                  className={state.ddx.compareSelection.includes(d.name) ? "text-primary" : "text-muted-foreground"}
-                >
-                  <GitCompareArrows className="h-3.5 w-3.5" />
-                </button>
+                {topic.ddx.compareEnabled && (
+                  <button
+                    onClick={() => dispatch({ type: "DDX_TOGGLE_COMPARE", name: d.name })}
+                    className={state.ddx.compareSelection.includes(d.name) ? "text-primary" : "text-muted-foreground"}
+                  >
+                    <GitCompareArrows className="h-3.5 w-3.5" />
+                  </button>
+                )}
                 <button onClick={() => dispatch({ type: "DDX_REMOVE", name: d.name })}>
                   <X className="h-3.5 w-3.5 text-muted-foreground hover:text-destructive" />
                 </button>
@@ -399,7 +401,7 @@ export function ReasonTab({ topic, onPromote, onOpenJitl }: ReasonTabProps) {
         </section>
       )}
 
-      {state.ddx.compareSelection.length === 2 && (
+      {topic.ddx.compareEnabled && state.ddx.compareSelection.length === 2 && (
         <DiagnosisCompareDialog
           open={compareOpen}
           onClose={() => setCompareOpen(false)}

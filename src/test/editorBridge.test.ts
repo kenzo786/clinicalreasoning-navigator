@@ -9,7 +9,7 @@ import {
 describe("editor bridge anchors", () => {
   it("inserts anchored content at cursor", () => {
     const result = insertAnchoredAtCursor("abc", "history", "History text", 3, 3);
-    expect(result.nextText).toContain("<!-- CRX:history:start -->");
+    expect(result.nextText).toContain("[CRx linked:");
     expect(result.nextText).toContain("History text");
   });
 
@@ -27,4 +27,3 @@ describe("editor bridge anchors", () => {
     expect(detachedIds).toEqual(["assessment"]);
   });
 });
-

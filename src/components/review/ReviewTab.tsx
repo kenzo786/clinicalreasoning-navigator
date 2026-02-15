@@ -101,7 +101,24 @@ function Section({
 }
 
 export function ReviewTab({ topic, onPromote, onOpenJitl }: ReviewTabProps) {
+  const { state, dispatch } = useConsultation();
   const review = topic.review;
+
+  const markReviewed = (id: string, source: "must-not-miss" | "discriminator" | "safety" | "investigation" | "management") => {
+    dispatch({ type: "SET_REVIEW_ITEM_STATUS", id, source, status: "reviewed" });
+  };
+
+  const markInserted = (id: string, source: "must-not-miss" | "discriminator" | "safety" | "investigation" | "management") => {
+    dispatch({ type: "SET_REVIEW_ITEM_STATUS", id, source, status: "inserted" });
+  };
+
+  const statusLabel = (id: string) => state.reviewChecklist[id]?.status ?? "pending";
+  const statusClass = (status: string) =>
+    status === "inserted"
+      ? "bg-emerald-100 text-emerald-700 border-emerald-300"
+      : status === "reviewed"
+      ? "bg-amber-100 text-amber-700 border-amber-300"
+      : "bg-secondary text-muted-foreground border-border";
 
   return (
     <div className="p-3 space-y-3">
@@ -109,8 +126,17 @@ export function ReviewTab({ topic, onPromote, onOpenJitl }: ReviewTabProps) {
         id="illness"
         title="Illness Script"
         icon={<BookOpen className="h-3.5 w-3.5" />}
-        onPromote={() => onPromote("Illness Script", formatReviewSummary(topic, "illness"))}
+        onPromote={() => {
+          onPromote("Illness Script", formatReviewSummary(topic, "illness"));
+          markInserted("illness", "management");
+        }}
       >
+        <div className="flex justify-between items-center mb-2">
+          <span className={`text-[10px] px-1.5 py-0.5 rounded border ${statusClass(statusLabel("illness"))}`}>
+            {statusLabel("illness")}
+          </span>
+          <button onClick={() => markReviewed("illness", "management")} className="text-[10px] px-2 py-1 rounded border bg-secondary hover:bg-accent">Mark reviewed</button>
+        </div>
         <p className="text-sm leading-relaxed">{review.illnessScript.summary}</p>
       </Section>
 
@@ -118,8 +144,17 @@ export function ReviewTab({ topic, onPromote, onOpenJitl }: ReviewTabProps) {
         id="must-not-miss"
         title="Must Not Miss"
         icon={<AlertTriangle className="h-3.5 w-3.5 text-destructive" />}
-        onPromote={() => onPromote("Must Not Miss", formatReviewSummary(topic, "must-not-miss"))}
+        onPromote={() => {
+          onPromote("Must Not Miss", formatReviewSummary(topic, "must-not-miss"));
+          markInserted("must-not-miss", "must-not-miss");
+        }}
       >
+        <div className="flex justify-between items-center mb-2">
+          <span className={`text-[10px] px-1.5 py-0.5 rounded border ${statusClass(statusLabel("must-not-miss"))}`}>
+            {statusLabel("must-not-miss")}
+          </span>
+          <button onClick={() => markReviewed("must-not-miss", "must-not-miss")} className="text-[10px] px-2 py-1 rounded border bg-secondary hover:bg-accent">Mark reviewed</button>
+        </div>
         <div className="space-y-2">
           {review.mustNotMiss.map((item) => (
             <div key={item.condition} className="rounded border bg-destructive/5 p-2">
@@ -137,8 +172,17 @@ export function ReviewTab({ topic, onPromote, onOpenJitl }: ReviewTabProps) {
         id="discriminators"
         title="Key Discriminators"
         icon={<Lightbulb className="h-3.5 w-3.5" />}
-        onPromote={() => onPromote("Discriminators", formatReviewSummary(topic, "discriminators"))}
+        onPromote={() => {
+          onPromote("Discriminators", formatReviewSummary(topic, "discriminators"));
+          markInserted("discriminators", "discriminator");
+        }}
       >
+        <div className="flex justify-between items-center mb-2">
+          <span className={`text-[10px] px-1.5 py-0.5 rounded border ${statusClass(statusLabel("discriminators"))}`}>
+            {statusLabel("discriminators")}
+          </span>
+          <button onClick={() => markReviewed("discriminators", "discriminator")} className="text-[10px] px-2 py-1 rounded border bg-secondary hover:bg-accent">Mark reviewed</button>
+        </div>
         <div className="space-y-2">
           {review.discriminators.map((d) => (
             <div key={d.question} className="rounded border p-2">
@@ -209,6 +253,12 @@ export function ReviewTab({ topic, onPromote, onOpenJitl }: ReviewTabProps) {
       </Section>
 
       <Section id="investigations" title="Investigations" icon={<TestTube className="h-3.5 w-3.5" />}>
+        <div className="flex justify-between items-center mb-2">
+          <span className={`text-[10px] px-1.5 py-0.5 rounded border ${statusClass(statusLabel("investigations"))}`}>
+            {statusLabel("investigations")}
+          </span>
+          <button onClick={() => markReviewed("investigations", "investigation")} className="text-[10px] px-2 py-1 rounded border bg-secondary hover:bg-accent">Mark reviewed</button>
+        </div>
         <div className="space-y-2">
           {review.investigations.whenHelpful.map((item) => (
             <div key={item.test} className="rounded border p-2">
@@ -220,6 +270,12 @@ export function ReviewTab({ topic, onPromote, onOpenJitl }: ReviewTabProps) {
       </Section>
 
       <Section id="management" title="Management" icon={<Pill className="h-3.5 w-3.5" />}>
+        <div className="flex justify-between items-center mb-2">
+          <span className={`text-[10px] px-1.5 py-0.5 rounded border ${statusClass(statusLabel("management"))}`}>
+            {statusLabel("management")}
+          </span>
+          <button onClick={() => markReviewed("management", "management")} className="text-[10px] px-2 py-1 rounded border bg-secondary hover:bg-accent">Mark reviewed</button>
+        </div>
         <ul className="space-y-1">
           {review.managementConsiderations.followUpLogic.map((x) => (
             <li key={x} className="text-xs text-muted-foreground">{x}</li>
@@ -231,8 +287,17 @@ export function ReviewTab({ topic, onPromote, onOpenJitl }: ReviewTabProps) {
         id="safety"
         title="Safety Net"
         icon={<AlertTriangle className="h-3.5 w-3.5 text-destructive" />}
-        onPromote={() => onPromote("Safety Net", formatReviewSummary(topic, "safety"))}
+        onPromote={() => {
+          onPromote("Safety Net", formatReviewSummary(topic, "safety"));
+          markInserted("safety", "safety");
+        }}
       >
+        <div className="flex justify-between items-center mb-2">
+          <span className={`text-[10px] px-1.5 py-0.5 rounded border ${statusClass(statusLabel("safety"))}`}>
+            {statusLabel("safety")}
+          </span>
+          <button onClick={() => markReviewed("safety", "safety")} className="text-[10px] px-2 py-1 rounded border bg-secondary hover:bg-accent">Mark reviewed</button>
+        </div>
         <ul className="space-y-1">
           {review.safetyNetting.returnAdvice.map((x) => (
             <li key={x} className="text-xs text-muted-foreground">{x}</li>

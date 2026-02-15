@@ -1,11 +1,15 @@
 {
-  "version": "1.0",
+  "version": "2.1",
   "metadata": {
     "id": "low-back-pain",
     "slug": "low-back-pain",
     "displayName": "Low Back Pain",
     "specialty": "General Practice",
-    "triggers": ["/backpain", "/lbp", "/sciatica"]
+    "triggers": [
+      "/backpain",
+      "/lbp",
+      "/sciatica"
+    ]
   },
   "snippets": [
     {
@@ -79,8 +83,14 @@
       "Thoracic spine pain"
     ],
     "references": [
-      { "label": "NICE NG59 – Low Back Pain", "url": "https://www.nice.org.uk/guidance/ng59" },
-      { "label": "NICE CKS – Sciatica", "url": "https://cks.nice.org.uk/topics/sciatica-lumbar-radiculopathy/" }
+      {
+        "label": "NICE NG59 – Low Back Pain",
+        "url": "https://www.nice.org.uk/guidance/ng59"
+      },
+      {
+        "label": "NICE CKS – Sciatica",
+        "url": "https://cks.nice.org.uk/topics/sciatica-lumbar-radiculopathy/"
+      }
     ]
   },
   "structuredFields": [
@@ -88,63 +98,500 @@
       "id": "history",
       "title": "History",
       "fields": [
-        { "id": "duration", "label": "Duration", "type": "text", "placeholder": "e.g., 5 days" },
-        { "id": "onset", "label": "Onset", "type": "select", "options": ["sudden", "gradual", "post-trauma"] },
-        { "id": "radiation", "label": "Leg radiation", "type": "select", "options": ["none", "left leg", "right leg", "bilateral"] },
-        { "id": "neuro-symptoms", "label": "Neurological symptoms", "type": "multi", "options": ["numbness", "tingling", "weakness", "none"] },
-        { "id": "bladder-bowel", "label": "Bladder/bowel disturbance", "type": "select", "options": ["no", "yes — urinary", "yes — bowel", "yes — both"] },
-        { "id": "night-pain", "label": "Night pain", "type": "toggle" }
+        {
+          "id": "duration",
+          "label": "Duration",
+          "type": "text",
+          "placeholder": "e.g., 5 days"
+        },
+        {
+          "id": "onset",
+          "label": "Onset",
+          "type": "select",
+          "options": [
+            "sudden",
+            "gradual",
+            "post-trauma"
+          ]
+        },
+        {
+          "id": "radiation",
+          "label": "Leg radiation",
+          "type": "select",
+          "options": [
+            "none",
+            "left leg",
+            "right leg",
+            "bilateral"
+          ]
+        },
+        {
+          "id": "neuro-symptoms",
+          "label": "Neurological symptoms",
+          "type": "multi",
+          "options": [
+            "numbness",
+            "tingling",
+            "weakness",
+            "none"
+          ]
+        },
+        {
+          "id": "bladder-bowel",
+          "label": "Bladder/bowel disturbance",
+          "type": "select",
+          "options": [
+            "no",
+            "yes — urinary",
+            "yes — bowel",
+            "yes — both"
+          ]
+        },
+        {
+          "id": "night-pain",
+          "label": "Night pain",
+          "type": "toggle"
+        }
       ]
     },
     {
       "id": "exam",
       "title": "Examination",
       "fields": [
-        { "id": "tenderness", "label": "Tenderness location", "type": "text", "placeholder": "e.g., L4/5 paravertebral" },
-        { "id": "rom", "label": "Range of movement", "type": "select", "options": ["full", "reduced flexion", "reduced extension", "globally reduced"] },
-        { "id": "slr", "label": "Straight leg raise", "type": "select", "options": ["negative bilaterally", "positive left", "positive right", "positive bilateral"] },
-        { "id": "slr-degrees", "label": "SLR degrees (if positive)", "type": "number", "showIf": "slr != negative bilaterally", "placeholder": "45" },
-        { "id": "power", "label": "Lower limb power", "type": "select", "options": ["normal", "reduced — specify"] },
-        { "id": "perianal", "label": "Perianal sensation", "type": "select", "options": ["intact", "reduced", "not tested"] }
+        {
+          "id": "tenderness",
+          "label": "Tenderness location",
+          "type": "text",
+          "placeholder": "e.g., L4/5 paravertebral"
+        },
+        {
+          "id": "rom",
+          "label": "Range of movement",
+          "type": "select",
+          "options": [
+            "full",
+            "reduced flexion",
+            "reduced extension",
+            "globally reduced"
+          ]
+        },
+        {
+          "id": "slr",
+          "label": "Straight leg raise",
+          "type": "select",
+          "options": [
+            "negative bilaterally",
+            "positive left",
+            "positive right",
+            "positive bilateral"
+          ]
+        },
+        {
+          "id": "slr-degrees",
+          "label": "SLR degrees (if positive)",
+          "type": "number",
+          "showIf": "slr != negative bilaterally",
+          "placeholder": "45"
+        },
+        {
+          "id": "power",
+          "label": "Lower limb power",
+          "type": "select",
+          "options": [
+            "normal",
+            "reduced — specify"
+          ]
+        },
+        {
+          "id": "perianal",
+          "label": "Perianal sensation",
+          "type": "select",
+          "options": [
+            "intact",
+            "reduced",
+            "not tested"
+          ]
+        }
       ]
     },
     {
       "id": "assessment",
       "title": "Assessment",
       "fields": [
-        { "id": "diagnosis", "label": "Working diagnosis", "type": "select", "options": ["mechanical LBP", "sciatica/radiculopathy", "query cauda equina", "inflammatory", "other"] },
-        { "id": "impression", "label": "Impression details", "type": "textarea", "placeholder": "Additional assessment detail" }
+        {
+          "id": "diagnosis",
+          "label": "Working diagnosis",
+          "type": "select",
+          "options": [
+            "mechanical LBP",
+            "sciatica/radiculopathy",
+            "query cauda equina",
+            "inflammatory",
+            "other"
+          ]
+        },
+        {
+          "id": "impression",
+          "label": "Impression details",
+          "type": "textarea",
+          "placeholder": "Additional assessment detail"
+        }
       ]
     },
     {
       "id": "plan",
       "title": "Plan",
       "fields": [
-        { "id": "analgesia", "label": "Analgesia", "type": "multi", "options": ["paracetamol", "ibuprofen", "naproxen", "codeine", "amitriptyline", "gabapentin"] },
-        { "id": "physio", "label": "Physiotherapy referral", "type": "toggle" },
-        { "id": "imaging", "label": "Imaging requested", "type": "select", "options": ["none", "X-ray", "MRI — routine", "MRI — urgent"] },
-        { "id": "follow-up", "label": "Follow-up plan", "type": "text", "placeholder": "e.g., Review in 2 weeks" }
+        {
+          "id": "analgesia",
+          "label": "Analgesia",
+          "type": "multi",
+          "options": [
+            "paracetamol",
+            "ibuprofen",
+            "naproxen",
+            "codeine",
+            "amitriptyline",
+            "gabapentin"
+          ]
+        },
+        {
+          "id": "physio",
+          "label": "Physiotherapy referral",
+          "type": "toggle"
+        },
+        {
+          "id": "imaging",
+          "label": "Imaging requested",
+          "type": "select",
+          "options": [
+            "none",
+            "X-ray",
+            "MRI — routine",
+            "MRI — urgent"
+          ]
+        },
+        {
+          "id": "follow-up",
+          "label": "Follow-up plan",
+          "type": "text",
+          "placeholder": "e.g., Review in 2 weeks"
+        }
       ]
     },
     {
       "id": "safety-net",
       "title": "Safety Net",
       "fields": [
-        { "id": "cauda-equina-screened", "label": "Cauda equina screen done", "type": "toggle" },
-        { "id": "safety-advice", "label": "Safety net advice given", "type": "toggle" },
-        { "id": "safety-details", "label": "Specific advice", "type": "textarea", "showIf": "safety-advice == true" }
+        {
+          "id": "cauda-equina-screened",
+          "label": "Cauda equina screen done",
+          "type": "toggle"
+        },
+        {
+          "id": "safety-advice",
+          "label": "Safety net advice given",
+          "type": "toggle"
+        },
+        {
+          "id": "safety-details",
+          "label": "Specific advice",
+          "type": "textarea",
+          "showIf": "safety-advice == true"
+        }
       ]
     }
   ],
   "outputTemplate": {
     "sections": [
-      { "id": "editor", "title": "Clinical Notes", "source": "editor", "includeByDefault": true },
-      { "id": "history", "title": "History", "source": "structured", "structuredSectionId": "history", "includeByDefault": true },
-      { "id": "exam", "title": "Examination", "source": "structured", "structuredSectionId": "exam", "includeByDefault": true },
-      { "id": "assessment", "title": "Assessment", "source": "structured", "structuredSectionId": "assessment", "includeByDefault": true },
-      { "id": "plan", "title": "Plan", "source": "structured", "structuredSectionId": "plan", "includeByDefault": true },
-      { "id": "safety-net", "title": "Safety Net", "source": "structured", "structuredSectionId": "safety-net", "includeByDefault": true },
-      { "id": "reasoning", "title": "Clinical Reasoning", "source": "reasoning", "includeByDefault": false }
+      {
+        "id": "editor",
+        "title": "Clinical Notes",
+        "source": "editor",
+        "includeByDefault": true
+      },
+      {
+        "id": "history",
+        "title": "History",
+        "source": "structured",
+        "structuredSectionId": "history",
+        "includeByDefault": true
+      },
+      {
+        "id": "exam",
+        "title": "Examination",
+        "source": "structured",
+        "structuredSectionId": "exam",
+        "includeByDefault": true
+      },
+      {
+        "id": "assessment",
+        "title": "Assessment",
+        "source": "structured",
+        "structuredSectionId": "assessment",
+        "includeByDefault": true
+      },
+      {
+        "id": "plan",
+        "title": "Plan",
+        "source": "structured",
+        "structuredSectionId": "plan",
+        "includeByDefault": true
+      },
+      {
+        "id": "safety-net",
+        "title": "Safety Net",
+        "source": "structured",
+        "structuredSectionId": "safety-net",
+        "includeByDefault": true
+      },
+      {
+        "id": "reasoning",
+        "title": "Clinical Reasoning",
+        "source": "reasoning",
+        "includeByDefault": false
+      }
     ]
+  },
+  "review": {
+    "illnessScript": {
+      "summary": "Low Back Pain in primary care: structured history, focused exam, and safety-netting for deterioration."
+    },
+    "mustNotMiss": [
+      {
+        "condition": "Cauda equina syndrome",
+        "redFlags": [
+          "Saddle anaesthesia",
+          "Bladder or bowel dysfunction",
+          "Progressive bilateral leg weakness",
+          "Age <20 or >55 with new onset",
+          "History of cancer",
+          "Unexplained weight loss",
+          "Night pain unrelieved by position",
+          "Fever or systemic illness",
+          "IV drug use or immunosuppression",
+          "Thoracic spine pain"
+        ],
+        "whyDangerous": "Potential for significant harm if missed.",
+        "escalationConcern": "Escalate urgently if suspected based on assessment."
+      },
+      {
+        "condition": "Spinal fracture",
+        "redFlags": [
+          "Saddle anaesthesia",
+          "Bladder or bowel dysfunction",
+          "Progressive bilateral leg weakness",
+          "Age <20 or >55 with new onset",
+          "History of cancer",
+          "Unexplained weight loss",
+          "Night pain unrelieved by position",
+          "Fever or systemic illness",
+          "IV drug use or immunosuppression",
+          "Thoracic spine pain"
+        ],
+        "whyDangerous": "Potential for significant harm if missed.",
+        "escalationConcern": "Escalate urgently if suspected based on assessment."
+      },
+      {
+        "condition": "Spinal malignancy/metastasis",
+        "redFlags": [
+          "Saddle anaesthesia",
+          "Bladder or bowel dysfunction",
+          "Progressive bilateral leg weakness",
+          "Age <20 or >55 with new onset",
+          "History of cancer",
+          "Unexplained weight loss",
+          "Night pain unrelieved by position",
+          "Fever or systemic illness",
+          "IV drug use or immunosuppression",
+          "Thoracic spine pain"
+        ],
+        "whyDangerous": "Potential for significant harm if missed.",
+        "escalationConcern": "Escalate urgently if suspected based on assessment."
+      },
+      {
+        "condition": "Spinal infection (discitis/epidural abscess)",
+        "redFlags": [
+          "Saddle anaesthesia",
+          "Bladder or bowel dysfunction",
+          "Progressive bilateral leg weakness",
+          "Age <20 or >55 with new onset",
+          "History of cancer",
+          "Unexplained weight loss",
+          "Night pain unrelieved by position",
+          "Fever or systemic illness",
+          "IV drug use or immunosuppression",
+          "Thoracic spine pain"
+        ],
+        "whyDangerous": "Potential for significant harm if missed.",
+        "escalationConcern": "Escalate urgently if suspected based on assessment."
+      },
+      {
+        "condition": "Abdominal aortic aneurysm (AAA)",
+        "redFlags": [
+          "Saddle anaesthesia",
+          "Bladder or bowel dysfunction",
+          "Progressive bilateral leg weakness",
+          "Age <20 or >55 with new onset",
+          "History of cancer",
+          "Unexplained weight loss",
+          "Night pain unrelieved by position",
+          "Fever or systemic illness",
+          "IV drug use or immunosuppression",
+          "Thoracic spine pain"
+        ],
+        "whyDangerous": "Potential for significant harm if missed.",
+        "escalationConcern": "Escalate urgently if suspected based on assessment."
+      }
+    ],
+    "discriminators": [
+      {
+        "question": "Mechanical vs inflammatory pattern",
+        "reasoning": "Key discriminator for narrowing the differential.",
+        "clinicalValue": "Supports safer and faster primary-care decision making."
+      },
+      {
+        "question": "Presence of radiculopathy",
+        "reasoning": "Key discriminator for narrowing the differential.",
+        "clinicalValue": "Supports safer and faster primary-care decision making."
+      },
+      {
+        "question": "Duration: acute (<6w) vs chronic (>12w)",
+        "reasoning": "Key discriminator for narrowing the differential.",
+        "clinicalValue": "Supports safer and faster primary-care decision making."
+      },
+      {
+        "question": "Neurological deficit — progressive vs stable",
+        "reasoning": "Key discriminator for narrowing the differential.",
+        "clinicalValue": "Supports safer and faster primary-care decision making."
+      },
+      {
+        "question": "Psychosocial yellow flags (fear avoidance, catastrophising)",
+        "reasoning": "Key discriminator for narrowing the differential.",
+        "clinicalValue": "Supports safer and faster primary-care decision making."
+      }
+    ],
+    "historyPrompts": [],
+    "examSections": [],
+    "diagnoses": {
+      "common": [
+        {
+          "name": "Mechanical vs inflammatory pattern"
+        },
+        {
+          "name": "Presence of radiculopathy"
+        },
+        {
+          "name": "Duration: acute (<6w) vs chronic (>12w)"
+        }
+      ],
+      "mustNotMiss": [
+        {
+          "name": "Cauda equina syndrome"
+        },
+        {
+          "name": "Spinal fracture"
+        },
+        {
+          "name": "Spinal malignancy/metastasis"
+        },
+        {
+          "name": "Spinal infection (discitis/epidural abscess)"
+        },
+        {
+          "name": "Abdominal aortic aneurysm (AAA)"
+        }
+      ],
+      "oftenMissed": []
+    },
+    "investigations": {
+      "whenHelpful": [],
+      "whenNotNeeded": [],
+      "limitations": []
+    },
+    "managementConsiderations": {
+      "selfCare": [],
+      "pharmacologicalConcepts": [],
+      "delayedStrategies": [],
+      "followUpLogic": []
+    },
+    "safetyNetting": {
+      "returnAdvice": [
+        "Seek urgent review for: Saddle anaesthesia",
+        "Seek urgent review for: Bladder or bowel dysfunction",
+        "Seek urgent review for: Progressive bilateral leg weakness",
+        "Seek urgent review for: Age <20 or >55 with new onset",
+        "Seek urgent review for: History of cancer",
+        "Seek urgent review for: Unexplained weight loss",
+        "Seek urgent review for: Night pain unrelieved by position",
+        "Seek urgent review for: Fever or systemic illness",
+        "Seek urgent review for: IV drug use or immunosuppression",
+        "Seek urgent review for: Thoracic spine pain"
+      ],
+      "escalationTriggers": [
+        "Saddle anaesthesia",
+        "Bladder or bowel dysfunction",
+        "Progressive bilateral leg weakness",
+        "Age <20 or >55 with new onset",
+        "History of cancer",
+        "Unexplained weight loss",
+        "Night pain unrelieved by position",
+        "Fever or systemic illness",
+        "IV drug use or immunosuppression",
+        "Thoracic spine pain"
+      ]
+    },
+    "mindset": "Clarify risk and safety-net while keeping documentation concise."
+  },
+  "jitl": {
+    "termMap": [],
+    "linkProviders": [
+      {
+        "row": 1,
+        "label": "Perplexity",
+        "hrefTemplate": "https://www.perplexity.ai/search?q=SEARCH_TERM"
+      },
+      {
+        "row": 1,
+        "label": "NICE",
+        "hrefTemplate": "https://www.google.com/search?q=SEARCH_TERM+site:nice.org.uk"
+      },
+      {
+        "row": 2,
+        "label": "CKS",
+        "hrefTemplate": "https://www.google.com/search?q=SEARCH_TERM+site:cks.nice.org.uk"
+      },
+      {
+        "row": 2,
+        "label": "BNF",
+        "hrefTemplate": "https://www.google.com/search?q=SEARCH_TERM+site:bnf.nice.org.uk"
+      },
+      {
+        "row": 3,
+        "label": "BMJ",
+        "hrefTemplate": "https://www.google.com/search?q=SEARCH_TERM+site:bestpractice.bmj.com"
+      },
+      {
+        "row": 3,
+        "label": "Google",
+        "hrefTemplate": "https://www.google.com/search?q=SEARCH_TERM"
+      }
+    ]
+  },
+  "ddx": {
+    "evidencePrompts": [
+      "Mechanical vs inflammatory pattern",
+      "Presence of radiculopathy",
+      "Duration: acute (<6w) vs chronic (>12w)",
+      "Neurological deficit — progressive vs stable",
+      "Psychosocial yellow flags (fear avoidance, catastrophising)"
+    ],
+    "compareEnabled": true
+  },
+  "qa": {
+    "status": "approved",
+    "clinicalReviewer": "Pilot Clinical QA",
+    "reviewedAt": "2026-02-15",
+    "version": "1.0.0"
   }
 }

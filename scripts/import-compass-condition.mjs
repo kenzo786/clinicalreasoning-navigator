@@ -65,7 +65,7 @@ function mapConditionToTopicV2(condition) {
   ];
 
   return {
-    version: "2.0",
+    version: "2.1",
     metadata: {
       id: slug,
       slug,
@@ -146,6 +146,12 @@ function mapConditionToTopicV2(condition) {
     ddx: {
       evidencePrompts: [...new Set(ddxEvidencePrompts)],
       compareEnabled: true,
+    },
+    qa: {
+      status: "draft",
+      clinicalReviewer: "unassigned",
+      reviewedAt: "1970-01-01",
+      version: "0.0.0",
     },
   };
 }

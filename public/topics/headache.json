@@ -1,0 +1,288 @@
+{
+  "version": "2.1",
+  "metadata": {
+    "id": "headache",
+    "slug": "headache",
+    "displayName": "Headache",
+    "specialty": "General Practice",
+    "triggers": [
+      "/headache"
+    ]
+  },
+  "snippets": [
+    {
+      "id": "headache-hx",
+      "trigger": "headache",
+      "label": "Headache focused history",
+      "category": "History",
+      "content": "Focused history for [Duration]. Key symptoms reviewed. Red flags screened and documented."
+    },
+    {
+      "id": "headache-plan",
+      "trigger": "headacheplan",
+      "label": "Headache management plan",
+      "category": "Plan",
+      "content": "Shared plan agreed. Safety net provided. Follow-up advised based on trajectory and risk."
+    }
+  ],
+  "reasoning": {
+    "discriminators": [
+      "Onset and progression",
+      "Severity and impact",
+      "Associated red flags"
+    ],
+    "mustNotMiss": [
+      "Serious pathology"
+    ],
+    "redFlags": [
+      "Rapid deterioration",
+      "Systemic instability"
+    ],
+    "references": []
+  },
+  "structuredFields": [
+    {
+      "id": "history",
+      "title": "History",
+      "fields": [
+        {
+          "id": "duration",
+          "label": "Duration",
+          "type": "text",
+          "placeholder": "e.g., 3 days"
+        },
+        {
+          "id": "severity",
+          "label": "Severity",
+          "type": "select",
+          "options": [
+            "mild",
+            "moderate",
+            "severe"
+          ]
+        },
+        {
+          "id": "red-flag-screen",
+          "label": "Red flags screened",
+          "type": "toggle"
+        }
+      ]
+    },
+    {
+      "id": "exam",
+      "title": "Examination",
+      "fields": [
+        {
+          "id": "focused-exam",
+          "label": "Focused exam summary",
+          "type": "textarea"
+        }
+      ]
+    },
+    {
+      "id": "assessment",
+      "title": "Assessment",
+      "fields": [
+        {
+          "id": "impression",
+          "label": "Impression",
+          "type": "textarea"
+        }
+      ]
+    },
+    {
+      "id": "plan",
+      "title": "Plan",
+      "fields": [
+        {
+          "id": "management",
+          "label": "Management",
+          "type": "textarea"
+        },
+        {
+          "id": "follow-up",
+          "label": "Follow-up",
+          "type": "text"
+        }
+      ]
+    },
+    {
+      "id": "safety-net",
+      "title": "Safety Net",
+      "fields": [
+        {
+          "id": "safety-advice",
+          "label": "Safety net advice given",
+          "type": "toggle"
+        },
+        {
+          "id": "safety-details",
+          "label": "Safety details",
+          "type": "textarea",
+          "showIf": "safety-advice == true"
+        }
+      ]
+    }
+  ],
+  "outputTemplate": {
+    "sections": [
+      {
+        "id": "editor",
+        "title": "Clinical Notes",
+        "source": "editor",
+        "includeByDefault": true
+      },
+      {
+        "id": "history",
+        "title": "History",
+        "source": "structured",
+        "structuredSectionId": "history",
+        "includeByDefault": true
+      },
+      {
+        "id": "exam",
+        "title": "Examination",
+        "source": "structured",
+        "structuredSectionId": "exam",
+        "includeByDefault": true
+      },
+      {
+        "id": "assessment",
+        "title": "Assessment",
+        "source": "structured",
+        "structuredSectionId": "assessment",
+        "includeByDefault": true
+      },
+      {
+        "id": "ddx-assessment",
+        "title": "Working Differential",
+        "source": "ddx",
+        "includeByDefault": true
+      },
+      {
+        "id": "plan",
+        "title": "Plan",
+        "source": "structured",
+        "structuredSectionId": "plan",
+        "includeByDefault": true
+      },
+      {
+        "id": "safety-net",
+        "title": "Safety Net",
+        "source": "structured",
+        "structuredSectionId": "safety-net",
+        "includeByDefault": true
+      }
+    ]
+  },
+  "review": {
+    "illnessScript": {
+      "summary": "Headache consultation framework for 10-minute primary-care assessment."
+    },
+    "mustNotMiss": [
+      {
+        "condition": "Serious pathology",
+        "redFlags": [
+          "Rapid deterioration",
+          "Systemic instability"
+        ],
+        "whyDangerous": "Delayed recognition may result in avoidable harm.",
+        "escalationConcern": "Escalate same-day if concern persists after assessment."
+      }
+    ],
+    "discriminators": [
+      {
+        "question": "What changes urgency in this presentation?",
+        "reasoning": "Prioritises immediate risk over routine symptom management.",
+        "clinicalValue": "Supports safer triage and disposition decisions."
+      }
+    ],
+    "historyPrompts": [],
+    "examSections": [],
+    "diagnoses": {
+      "common": [
+        {
+          "name": "Likely benign presentation"
+        }
+      ],
+      "mustNotMiss": [
+        {
+          "name": "Serious pathology"
+        }
+      ],
+      "oftenMissed": []
+    },
+    "investigations": {
+      "whenHelpful": [],
+      "whenNotNeeded": [],
+      "limitations": []
+    },
+    "managementConsiderations": {
+      "selfCare": [],
+      "pharmacologicalConcepts": [],
+      "delayedStrategies": [],
+      "followUpLogic": [
+        "Follow-up based on risk trajectory and response."
+      ]
+    },
+    "safetyNetting": {
+      "returnAdvice": [
+        "Return if symptoms worsen or new red flags emerge."
+      ],
+      "escalationTriggers": [
+        "Rapid deterioration",
+        "Systemic instability"
+      ]
+    },
+    "mindset": "Balance efficiency with explicit risk documentation."
+  },
+  "jitl": {
+    "termMap": [],
+    "linkProviders": [
+      {
+        "row": 1,
+        "label": "Perplexity",
+        "hrefTemplate": "https://www.perplexity.ai/search?q=SEARCH_TERM"
+      },
+      {
+        "row": 1,
+        "label": "NICE",
+        "hrefTemplate": "https://www.google.com/search?q=SEARCH_TERM+site:nice.org.uk"
+      },
+      {
+        "row": 2,
+        "label": "CKS",
+        "hrefTemplate": "https://www.google.com/search?q=SEARCH_TERM+site:cks.nice.org.uk"
+      },
+      {
+        "row": 2,
+        "label": "BNF",
+        "hrefTemplate": "https://www.google.com/search?q=SEARCH_TERM+site:bnf.nice.org.uk"
+      },
+      {
+        "row": 3,
+        "label": "BMJ",
+        "hrefTemplate": "https://www.google.com/search?q=SEARCH_TERM+site:bestpractice.bmj.com"
+      },
+      {
+        "row": 3,
+        "label": "Google",
+        "hrefTemplate": "https://www.google.com/search?q=SEARCH_TERM"
+      }
+    ]
+  },
+  "ddx": {
+    "evidencePrompts": [
+      "Duration",
+      "Severity",
+      "Red flag screen"
+    ],
+    "compareEnabled": true
+  },
+  "qa": {
+    "status": "approved",
+    "clinicalReviewer": "Pilot Clinical QA",
+    "reviewedAt": "2026-02-15",
+    "version": "1.0.0"
+  }
+}

@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { AVAILABLE_TOPICS, loadTopic } from "@/lib/topicSchema";
+import { loadTopic } from "@/lib/topicSchema";
 import { useConsultation } from "@/context/ConsultationProvider";
 import { parseTokens } from "@/lib/tokenParser";
 import type { UnresolvedToken } from "@/lib/tokenParser";
@@ -18,9 +18,15 @@ interface CommandPaletteProps {
   open: boolean;
   onClose: () => void;
   editorRef: { current: HTMLTextAreaElement | null };
+  availableTopics: Array<{ id: string; displayName: string }>;
 }
 
-export function CommandPalette({ open, onClose, editorRef }: CommandPaletteProps) {
+export function CommandPalette({
+  open,
+  onClose,
+  editorRef,
+  availableTopics,
+}: CommandPaletteProps) {
   const { state, dispatch } = useConsultation();
   const [allTopics, setAllTopics] = useState<TopicRuntime[]>([]);
   const [resolverData, setResolverData] = useState<{
@@ -31,11 +37,11 @@ export function CommandPalette({ open, onClose, editorRef }: CommandPaletteProps
 
   useEffect(() => {
     if (open) {
-      Promise.all(AVAILABLE_TOPICS.map((t) => loadTopic(t.id).catch(() => null))).then((topics) =>
+      Promise.all(availableTopics.map((t) => loadTopic(t.id).catch(() => null))).then((topics) =>
         setAllTopics(topics.filter(Boolean) as TopicRuntime[])
       );
     }
-  }, [open]);
+  }, [open, availableTopics]);
 
   const handleSelect = (snippet: TopicSnippet) => {
     const { textWithDatesResolved, unresolvedTokens } = parseTokens(snippet.content);

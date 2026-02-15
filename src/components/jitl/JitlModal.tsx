@@ -9,6 +9,7 @@ interface JitlModalProps {
   term: string;
   initialContextType?: JitlContextType;
   config: JitlConfig;
+  onOutbound?: (provider: string, query: string) => void;
 }
 
 const PRESETS: Array<{ key: JitlContextType; label: string }> = [
@@ -20,7 +21,14 @@ const PRESETS: Array<{ key: JitlContextType; label: string }> = [
   { key: "prescribing", label: "Prescribing" },
 ];
 
-export function JitlModal({ open, onClose, term, initialContextType = "title", config }: JitlModalProps) {
+export function JitlModal({
+  open,
+  onClose,
+  term,
+  initialContextType = "title",
+  config,
+  onOutbound,
+}: JitlModalProps) {
   const [contextType, setContextType] = useState<JitlContextType>(initialContextType);
   const [searchInput, setSearchInput] = useState(term);
   const [contextEnabled, setContextEnabled] = useState(false);
@@ -123,6 +131,7 @@ export function JitlModal({ open, onClose, term, initialContextType = "title", c
                     onClick={() => {
                       if (!query) return;
                       const url = link.hrefTemplate.replace("SEARCH_TERM", encodeURIComponent(query));
+                      onOutbound?.(link.label, query);
                       window.open(url, "_blank", "noopener");
                     }}
                     className="px-2 py-1 rounded border text-xs bg-secondary hover:bg-accent"
@@ -138,4 +147,3 @@ export function JitlModal({ open, onClose, term, initialContextType = "title", c
     </div>
   );
 }
-

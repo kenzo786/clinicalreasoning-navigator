@@ -1,0 +1,72 @@
+[
+  {
+    "id": "abdominal-pain",
+    "displayName": "Abdominal Pain",
+    "version": "2.1",
+    "qaStatus": "approved",
+    "updatedAt": "2026-02-15"
+  },
+  {
+    "id": "chest-pain",
+    "displayName": "Chest Pain",
+    "version": "2.1",
+    "qaStatus": "approved",
+    "updatedAt": "2026-02-15"
+  },
+  {
+    "id": "cough",
+    "displayName": "Cough",
+    "version": "2.1",
+    "qaStatus": "approved",
+    "updatedAt": "2026-02-15"
+  },
+  {
+    "id": "headache",
+    "displayName": "Headache",
+    "version": "2.1",
+    "qaStatus": "approved",
+    "updatedAt": "2026-02-15"
+  },
+  {
+    "id": "hypertension",
+    "displayName": "Hypertension Review",
+    "version": "2.1",
+    "qaStatus": "approved",
+    "updatedAt": "2026-02-15"
+  },
+  {
+    "id": "low-back-pain",
+    "displayName": "Low Back Pain",
+    "version": "2.1",
+    "qaStatus": "approved",
+    "updatedAt": "2026-02-15"
+  },
+  {
+    "id": "otitis-media",
+    "displayName": "Otitis Media",
+    "version": "2.1",
+    "qaStatus": "approved",
+    "updatedAt": "2026-02-15"
+  },
+  {
+    "id": "sinusitis",
+    "displayName": "Sinusitis",
+    "version": "2.1",
+    "qaStatus": "approved",
+    "updatedAt": "2026-02-15"
+  },
+  {
+    "id": "sore-throat",
+    "displayName": "Sore Throat",
+    "version": "2.1",
+    "qaStatus": "approved",
+    "updatedAt": "2026-02-15"
+  },
+  {
+    "id": "uti",
+    "displayName": "UTI",
+    "version": "2.1",
+    "qaStatus": "approved",
+    "updatedAt": "2026-02-15"
+  }
+]

@@ -3,11 +3,14 @@ import type {
   TopicRuntime,
   TopicV1,
   TopicV2,
+  TopicV2_1,
   ReviewContent,
   JitlConfig,
   DdxConfig,
   OutputTemplate,
+  TopicQaMeta,
 } from "@/types/topic";
+import { releaseFlags } from "@/config/releaseFlags";
 
 const DEFAULT_JITL_LINKS: JitlConfig["linkProviders"] = [
   { row: 1, label: "Perplexity", hrefTemplate: "https://www.perplexity.ai/search?q=SEARCH_TERM" },
@@ -17,6 +20,21 @@ const DEFAULT_JITL_LINKS: JitlConfig["linkProviders"] = [
   { row: 3, label: "BMJ", hrefTemplate: "https://www.google.com/search?q=SEARCH_TERM+site:bestpractice.bmj.com" },
   { row: 3, label: "Google", hrefTemplate: "https://www.google.com/search?q=SEARCH_TERM" },
 ];
+
+const DEFAULT_QA: TopicQaMeta = {
+  status: "draft",
+  clinicalReviewer: "unassigned",
+  reviewedAt: "1970-01-01",
+  version: "0.0.0",
+};
+
+export interface TopicManifestEntry {
+  id: string;
+  displayName: string;
+  version: string;
+  qaStatus: TopicQaMeta["status"];
+  updatedAt: string;
+}
 
 function defaultReviewFromV1(topic: TopicV1): ReviewContent {
   const reviewDiscriminators = topic.reasoning.discriminators.map((q) => ({
@@ -94,6 +112,38 @@ function defaultReviewFromV1(topic: TopicV1): ReviewContent {
   };
 }
 
+function ensureDdxSection(template: OutputTemplate): OutputTemplate {
+  const hasDdx = template.sections.some((s) => s.source === "ddx");
+  if (hasDdx) return template;
+  return {
+    ...template,
+    sections: [
+      ...template.sections,
+      {
+        id: "ddx-assessment",
+        title: "Working Differential",
+        source: "ddx",
+        includeByDefault: true,
+      },
+    ],
+  };
+}
+
+function normalizeV21(topic: TopicV2_1): TopicRuntime {
+  return {
+    version: "runtime",
+    metadata: topic.metadata,
+    snippets: topic.snippets,
+    reasoning: topic.reasoning,
+    structuredFields: topic.structuredFields,
+    outputTemplate: ensureDdxSection(topic.outputTemplate),
+    review: topic.review,
+    jitl: topic.jitl,
+    ddx: topic.ddx,
+    qa: topic.qa,
+  };
+}
+
 function normalizeV2(topic: TopicV2): TopicRuntime {
   const jitl: JitlConfig = {
     termMap: topic.jitl?.termMap ?? [],
@@ -115,6 +165,7 @@ function normalizeV2(topic: TopicV2): TopicRuntime {
     review: topic.review,
     jitl,
     ddx,
+    qa: DEFAULT_QA,
   };
 }
 
@@ -135,23 +186,7 @@ function normalizeV1(topic: TopicV1): TopicRuntime {
       evidencePrompts: [],
       compareEnabled: true,
     },
-  };
-}
-
-function ensureDdxSection(template: OutputTemplate): OutputTemplate {
-  const hasDdx = template.sections.some((s) => s.source === "ddx");
-  if (hasDdx) return template;
-  return {
-    ...template,
-    sections: [
-      ...template.sections,
-      {
-        id: "ddx-assessment",
-        title: "Working Differential",
-        source: "ddx",
-        includeByDefault: true,
-      },
-    ],
+    qa: DEFAULT_QA,
   };
 }
 
@@ -162,9 +197,10 @@ export function validateTopic(data: unknown):
   const t = data as Partial<TopicSource> & {
     metadata?: { id?: string; slug?: string; displayName?: string };
     outputTemplate?: { sections?: unknown };
+    qa?: TopicQaMeta;
   };
 
-  if (t.version !== "1.0" && t.version !== "2.0") {
+  if (t.version !== "1.0" && t.version !== "2.0" && t.version !== "2.1") {
     return { valid: false, error: `Invalid version: ${t.version}` };
   }
   if (!t.metadata?.id || !t.metadata?.slug || !t.metadata?.displayName) {
@@ -174,12 +210,20 @@ export function validateTopic(data: unknown):
   if (!t.reasoning) return { valid: false, error: "Missing reasoning section" };
   if (!Array.isArray(t.structuredFields)) return { valid: false, error: "structuredFields must be an array" };
   if (!t.outputTemplate?.sections) return { valid: false, error: "Missing outputTemplate.sections" };
-  if (t.version === "2.0" && !t.review) return { valid: false, error: "v2 topic missing review section" };
+  if ((t.version === "2.0" || t.version === "2.1") && !t.review) {
+    return { valid: false, error: "v2+ topic missing review section" };
+  }
+  if (t.version === "2.1") {
+    if (!t.jitl || !t.ddx || !t.qa) {
+      return { valid: false, error: "v2.1 topic missing jitl, ddx, or qa metadata" };
+    }
+  }
 
   return { valid: true, topic: t as TopicSource };
 }
 
 export function normalizeTopic(topic: TopicSource): TopicRuntime {
+  if (topic.version === "2.1") return normalizeV21(topic);
   return topic.version === "2.0" ? normalizeV2(topic) : normalizeV1(topic);
 }
 
@@ -189,11 +233,21 @@ export async function loadTopic(slug: string): Promise<TopicRuntime> {
   const data = await resp.json();
   const result = validateTopic(data);
   if (!result.valid) throw new Error(`Invalid topic ${slug}: ${(result as { valid: false; error: string }).error}`);
+  if (releaseFlags.strictTopicV21 && (result as { valid: true; topic: TopicSource }).topic.version !== "2.1") {
+    throw new Error(`Topic ${slug} must be version 2.1 for pilot release`);
+  }
   return normalizeTopic((result as { valid: true; topic: TopicSource }).topic);
 }
 
-export const AVAILABLE_TOPICS = [
-  { id: "sore-throat", displayName: "Sore Throat" },
-  { id: "uti", displayName: "UTI" },
-  { id: "low-back-pain", displayName: "Low Back Pain" },
-];
+export async function loadTopicManifest(): Promise<TopicManifestEntry[]> {
+  const resp = await fetch("/topics/index.json");
+  if (!resp.ok) {
+    return [];
+  }
+  const data = (await resp.json()) as unknown;
+  if (!Array.isArray(data)) return [];
+  return data
+    .filter((x) => x && typeof x === "object")
+    .map((x) => x as TopicManifestEntry)
+    .filter((x) => Boolean(x.id && x.displayName));
+}

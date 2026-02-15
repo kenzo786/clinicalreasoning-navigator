@@ -1,52 +1,32 @@
-import type { ConsultationState } from "@/types/consultation";
+import type { UserPrefsState } from "@/types/consultation";
 
-const STORAGE_KEY = "crx-navigator-consultation";
-const AUTOSAVE_KEY = "crx-navigator-autosave";
+const PREFS_KEY = "crx-navigator-prefs-v1";
+const LEGACY_KEYS = ["crx-navigator-consultation", "crx-navigator-autosave"];
 
-export function saveState(state: ConsultationState): void {
+export function savePrefs(prefs: UserPrefsState): void {
   try {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+    localStorage.setItem(PREFS_KEY, JSON.stringify(prefs));
   } catch {
-    // quota exceeded — silently fail
+    // Ignore storage failures.
   }
 }
 
-export function loadState(): ConsultationState | null {
+export function loadPrefs(): UserPrefsState | null {
   try {
-    const raw = localStorage.getItem(STORAGE_KEY);
+    const raw = localStorage.getItem(PREFS_KEY);
     if (!raw) return null;
-    return JSON.parse(raw) as ConsultationState;
+    return JSON.parse(raw) as UserPrefsState;
   } catch {
     return null;
   }
 }
 
-export function saveAutosave(state: ConsultationState): void {
-  try {
-    localStorage.setItem(
-      AUTOSAVE_KEY,
-      JSON.stringify({ ...state, autosaveMeta: { lastSavedAt: Date.now() } })
-    );
-  } catch {
-    // silently fail
+export function clearPrefs(): void {
+  localStorage.removeItem(PREFS_KEY);
+}
+
+export function purgeLegacyClinicalStorage(): void {
+  for (const key of LEGACY_KEYS) {
+    localStorage.removeItem(key);
   }
-}
-
-export function loadAutosave(): ConsultationState | null {
-  try {
-    const raw = localStorage.getItem(AUTOSAVE_KEY);
-    if (!raw) return null;
-    return JSON.parse(raw) as ConsultationState;
-  } catch {
-    return null;
-  }
-}
-
-export function clearAutosave(): void {
-  localStorage.removeItem(AUTOSAVE_KEY);
-}
-
-export function clearAllData(): void {
-  localStorage.removeItem(STORAGE_KEY);
-  localStorage.removeItem(AUTOSAVE_KEY);
 }

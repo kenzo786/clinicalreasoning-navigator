@@ -1,4 +1,4 @@
-# CRx Navigator (v0.2)
+# CRx Navigator (v1.0 Pilot)
 
 CRx Navigator is a hybrid clinical documentation app that combines:
 1. Fast free-text note writing,
@@ -10,13 +10,13 @@ CRx Navigator is a hybrid clinical documentation app that combines:
 1. Pick a topic in the left pane.
 2. Write in the center editor and insert snippets with `/trigger` or `Ctrl/Cmd + K`.
 3. Use the right pane tabs (`Review`, `Reason`, `Structured`) during the consultation.
-4. Review and optionally edit final output in Preview.
+4. Use the always-on Composer tray to review sections and insert non-destructively into editor.
 5. Copy final output with `Ctrl/Cmd + S`.
 
 ## Features Implemented
 - Three-pane desktop layout with resizable panels.
 - Mobile pane navigation (Library / Editor / Reason).
-- Topic JSON loader from `public/topics/*.json`.
+- Topic manifest loader from `public/topics/index.json`.
 - Trigger suggestions and command palette snippet insertion.
 - Token resolver modal for:
   - choice tokens: `{yes|no*|n/a}`
@@ -29,12 +29,12 @@ CRx Navigator is a hybrid clinical documentation app that combines:
   - custom diagnosis
   - evidence for/against
   - compare two diagnoses
-- Preview provenance chips (`editor`, `structured`, `ddx`, `reasoning`).
+- Composer provenance chips with link status (`not_linked`, `linked_clean`, `linked_modified`, `linked_missing`).
 - Canonical composer bridge with section-level insert/append into editor.
 - Editor anchors with refresh/detach behavior for inserted sections.
 - Composed output preview with section include/exclude toggles.
-- Output override mode (manual edit + reset to computed).
-- Local persistence + autosave restore modal.
+- Export draft mode (manual edit + reset to derived output).
+- Preferences-only persistence (no PHI note/session storage).
 
 ## Keyboard Shortcuts
 - `Ctrl/Cmd + K`: Open command palette
@@ -42,7 +42,7 @@ CRx Navigator is a hybrid clinical documentation app that combines:
 - `Ctrl/Cmd + 1`: Focus editor
 - `Ctrl/Cmd + 2`: Focus structured pane
 - `Ctrl/Cmd + 3`: Focus reason tab
-- `Ctrl/Cmd + Shift + I`: Insert current right-pane section into editor
+- `Ctrl/Cmd + Shift + I`: Open composer section insert picker
 - `?`: Show shortcuts modal
 
 ## Data Model
@@ -52,10 +52,8 @@ Topic schema is defined in:
 Consultation state schema is defined in:
 - `src/types/consultation.ts`
 
-Starter topics:
-- `public/topics/sore-throat.json`
-- `public/topics/uti.json`
-- `public/topics/low-back-pain.json`
+Pilot topics are listed in:
+- `public/topics/index.json`
 
 ## Dev Commands
 ```bash
@@ -63,7 +61,12 @@ npm install
 npm run dev
 npm run test
 npm run build
+npm run topics:build
+npm run release:check
 npm run generate-topic-v2
+node scripts/topics-manifest.mjs
+node scripts/topics-validate.mjs
+node scripts/topics-qa-report.mjs
 node scripts/import-compass-condition.mjs <path-to-condition.ts> [output.json]
 node scripts/import-quicknotes-library.mjs <quicknotes-export.json> <topic.json>
 ```

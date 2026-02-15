@@ -12,10 +12,20 @@ export function hashString(value: string): string {
   return (hash >>> 0).toString(36);
 }
 
-function makeTags(sectionId: string): { startTag: string; endTag: string } {
+function sanitizeForTag(value: string): string {
+  return value.replace(/[|[\]]/g, " ").trim();
+}
+
+function makeTags(
+  sectionId: string,
+  provenance?: { sectionTitle?: string; source?: string; timestamp?: number }
+): { startTag: string; endTag: string } {
+  const title = sanitizeForTag(provenance?.sectionTitle ?? sectionId);
+  const source = sanitizeForTag(provenance?.source ?? "composed");
+  const stamp = new Date(provenance?.timestamp ?? Date.now()).toISOString();
   return {
-    startTag: `<!-- CRX:${sectionId}:start -->`,
-    endTag: `<!-- CRX:${sectionId}:end -->`,
+    startTag: `[CRx linked: ${title} | ${source} | ${stamp}]`,
+    endTag: "[/CRx linked]",
   };
 }
 
@@ -65,9 +75,10 @@ export function insertAnchoredAtCursor(
   sectionId: string,
   sectionContent: string,
   selectionStart: number,
-  selectionEnd: number
+  selectionEnd: number,
+  provenance?: { sectionTitle?: string; source?: string; timestamp?: number }
 ): { nextText: string; nextCursor: number; anchor: EditorAnchor } {
-  const { startTag, endTag } = makeTags(sectionId);
+  const { startTag, endTag } = makeTags(sectionId, provenance);
   const block = `${startTag}\n${sectionContent}\n${endTag}\n`;
   const { nextText, nextCursor } = insertTextAtCursor(text, block, selectionStart, selectionEnd);
   return {
@@ -86,10 +97,11 @@ export function insertAnchoredAtCursor(
 export function appendAnchored(
   text: string,
   sectionId: string,
-  sectionContent: string
+  sectionContent: string,
+  provenance?: { sectionTitle?: string; source?: string; timestamp?: number }
 ): { nextText: string; anchor: EditorAnchor } {
   const spacer = text.trim().length > 0 ? "\n\n" : "";
-  const { startTag, endTag } = makeTags(sectionId);
+  const { startTag, endTag } = makeTags(sectionId, provenance);
   const block = `${spacer}${startTag}\n${sectionContent}\n${endTag}`;
   const nextText = `${text}${block}`;
   return {
@@ -143,4 +155,3 @@ export function removeAnchoredBlock(text: string, anchor: EditorAnchor): string 
   );
   return text.replace(pattern, "").replace(/\n{3,}/g, "\n\n");
 }
-

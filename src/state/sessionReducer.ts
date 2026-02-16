@@ -5,13 +5,9 @@ import type {
   SessionAction,
 } from "@/types/consultation";
 import { DEFAULT_CONSULTATION_SESSION_STATE } from "@/types/consultation";
-import { hashString } from "@/lib/editorBridge";
+import { findAnchorMatch, hashString } from "@/lib/editorBridge";
 
 const MAX_EDITOR_HISTORY = 50;
-
-function trimEdgeNewlines(value: string): string {
-  return value.replace(/^\n/, "").replace(/\n$/, "");
-}
 
 function recomputeAnchorDetachState(
   text: string,
@@ -19,22 +15,15 @@ function recomputeAnchorDetachState(
 ): Record<string, EditorAnchor> {
   const next: Record<string, EditorAnchor> = {};
   for (const [sectionId, anchor] of Object.entries(anchors)) {
-    const start = text.indexOf(anchor.startTag);
-    if (start === -1) {
+    const match = findAnchorMatch(text, anchor);
+    if (!match) {
       next[sectionId] = { ...anchor, detached: true };
       continue;
     }
-    const end = text.indexOf(anchor.endTag, start + anchor.startTag.length);
-    if (end === -1) {
-      next[sectionId] = { ...anchor, detached: true };
-      continue;
-    }
-    const body = trimEdgeNewlines(
-      text.slice(start + anchor.startTag.length, end)
-    );
     next[sectionId] = {
       ...anchor,
-      detached: hashString(body) !== anchor.lastHash,
+      detached: hashString(match.body) !== anchor.lastHash,
+      lastKnownIndex: match.start,
     };
   }
   return next;
@@ -232,7 +221,7 @@ export function sessionReducer(
         },
       };
     case "TOGGLE_REVIEW_SECTION": {
-      const current = state.reviewUi.expandedSections[action.sectionId] ?? true;
+      const current = action.expanded ?? (state.reviewUi.expandedSections[action.sectionId] ?? true);
       return {
         ...state,
         reviewUi: {

@@ -24,6 +24,7 @@ import { SectionInsertPicker } from "@/components/editor/SectionInsertPicker";
 import { QuickStartCard } from "@/components/onboarding/QuickStartCard";
 import { trackTelemetry } from "@/lib/telemetry";
 import { ONBOARDING_VERSION } from "@/config/onboarding";
+import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 
 export default function AppShell() {
   const { state, dispatch } = useConsultation();
@@ -155,8 +156,6 @@ export default function AppShell() {
         counts.detached += 1;
         continue;
       }
-      const hadStart = nextText.includes(anchor.startTag);
-      const hadEnd = nextText.includes(anchor.endTag);
       const refreshed = refreshAnchoredBlock(nextText, anchor, section.content);
       if (refreshed.updated) {
         if (refreshed.nextText === nextText) counts.unchanged += 1;
@@ -164,7 +163,7 @@ export default function AppShell() {
           counts.updated += 1;
           nextText = refreshed.nextText;
         }
-      } else if (!hadStart || !hadEnd) {
+      } else if (refreshed.status === "missing") {
         counts.missing += 1;
       } else {
         counts.detached += 1;
@@ -336,18 +335,22 @@ export default function AppShell() {
           <span className="text-xs text-muted-foreground">v1.0-pilot</span>
         </div>
         <div className="flex items-center gap-2">
-          <button
-            onClick={refreshAnchorsFromState}
-            disabled={!hasLinkedSections}
-            className="text-xs px-2 py-1 rounded border bg-secondary text-secondary-foreground hover:bg-accent transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-            title={
-              hasLinkedSections
-                ? "Refresh linked right-pane sections in the editor. Manually edited blocks are preserved."
-                : "Insert a section into the editor to enable sync."
-            }
-          >
-            Sync Inserted Sections
-          </button>
+          <Tooltip delayDuration={500}>
+            <TooltipTrigger asChild>
+              <button
+                onClick={refreshAnchorsFromState}
+                disabled={!hasLinkedSections}
+                className="text-xs px-2 py-1 rounded border bg-secondary text-secondary-foreground hover:bg-accent transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                Sync Inserted Sections
+              </button>
+            </TooltipTrigger>
+            <TooltipContent side="bottom">
+              {hasLinkedSections
+                ? "Update linked sections in the editor to match current composer content."
+                : "Insert a section into the editor to enable sync."}
+            </TooltipContent>
+          </Tooltip>
           {state.uiPrefs.onboardingDismissed && (
             <button
               onClick={reopenQuickStart}
@@ -446,33 +449,62 @@ export default function AppShell() {
             </ResizablePanel>
             <ResizableHandle withHandle />
             <ResizablePanel defaultSize={state.uiPrefs.desktopPaneSizes[1]} minSize={30}>
-              <div className="h-full flex flex-col">
-                <div className="flex-1 min-h-0">
-                  <EditorPane topic={topic} editorRef={editorRef} />
-                </div>
-                {!state.uiPrefs.composerTrayCollapsed && (
-                  <div className="h-[38%] min-h-[220px] border-t">
-                    <PreviewPane
-                      topic={topic}
-                      onClose={() =>
-                        dispatch({
-                          type: "SET_UI_PREF",
-                          key: "composerTrayCollapsed",
-                          value: true,
-                        })
-                      }
-                      onInsertSection={(sectionId, content) => {
-                        const title = content.split("\n")[0] || sectionId;
-                        insertComposerSection(sectionId, title, "composer", content, "cursor");
-                      }}
-                      onAppendSection={(sectionId, content) => {
-                        const title = content.split("\n")[0] || sectionId;
-                        insertComposerSection(sectionId, title, "composer", content, "append");
-                      }}
-                    />
+              {state.uiPrefs.composerTrayCollapsed ? (
+                <div className="h-full flex flex-col">
+                  <div className="flex-1 min-h-0">
+                    <EditorPane topic={topic} editorRef={editorRef} />
                   </div>
-                )}
-              </div>
+                </div>
+              ) : (
+                <ResizablePanelGroup
+                  direction="vertical"
+                  className="h-full"
+                  onLayout={(sizes: number[]) => {
+                    if (sizes.length === 2) {
+                      dispatch({
+                        type: "SET_UI_PREF",
+                        key: "editorPreviewPaneSizes",
+                        value: sizes as [number, number],
+                      });
+                    }
+                  }}
+                >
+                  <ResizablePanel
+                    defaultSize={state.uiPrefs.editorPreviewPaneSizes[0]}
+                    minSize={30}
+                  >
+                    <div className="h-full min-h-[200px]">
+                      <EditorPane topic={topic} editorRef={editorRef} />
+                    </div>
+                  </ResizablePanel>
+                  <ResizableHandle withHandle />
+                  <ResizablePanel
+                    defaultSize={state.uiPrefs.editorPreviewPaneSizes[1]}
+                    minSize={18}
+                  >
+                    <div className="h-full min-h-[150px] border-t">
+                      <PreviewPane
+                        topic={topic}
+                        onClose={() =>
+                          dispatch({
+                            type: "SET_UI_PREF",
+                            key: "composerTrayCollapsed",
+                            value: true,
+                          })
+                        }
+                        onInsertSection={(sectionId, content) => {
+                          const title = content.split("\n")[0] || sectionId;
+                          insertComposerSection(sectionId, title, "composer", content, "cursor");
+                        }}
+                        onAppendSection={(sectionId, content) => {
+                          const title = content.split("\n")[0] || sectionId;
+                          insertComposerSection(sectionId, title, "composer", content, "append");
+                        }}
+                      />
+                    </div>
+                  </ResizablePanel>
+                </ResizablePanelGroup>
+              )}
             </ResizablePanel>
             <ResizableHandle withHandle />
             <ResizablePanel defaultSize={state.uiPrefs.desktopPaneSizes[2]} minSize={20}>

@@ -76,7 +76,8 @@ function Section({
   const { state, dispatch } = useConsultation();
   const expanded = state.reviewUi.expandedSections[id] ?? (DEFAULT_REVIEW_EXPANDED[id] ?? false);
   const contentId = `review-section-content-${id}`;
-  const toggleSection = () => dispatch({ type: "TOGGLE_REVIEW_SECTION", sectionId: id });
+  const toggleSection = () =>
+    dispatch({ type: "TOGGLE_REVIEW_SECTION", sectionId: id, expanded });
   return (
     <section className="border rounded-md overflow-hidden">
       <div

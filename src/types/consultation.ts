@@ -10,10 +10,13 @@ export interface EvidenceEntry {
 
 export interface EditorAnchor {
   sectionId: string;
-  startTag: string;
-  endTag: string;
   detached: boolean;
   lastHash: string;
+  linkedText: string;
+  lastKnownIndex: number;
+  sectionTitle?: string;
+  source?: string;
+  linkedAt?: number;
 }
 
 export interface ReviewChecklistItem {
@@ -68,6 +71,7 @@ export interface ConsultationSessionState {
 
 export interface UiPrefs {
   desktopPaneSizes: [number, number, number];
+  editorPreviewPaneSizes: [number, number];
   mobileActivePane: "library" | "editor" | "reasoning";
   rightPaneTab: "review" | "reason" | "structured";
   theme: "light" | "dark";
@@ -138,6 +142,7 @@ export const DEFAULT_CONSULTATION_SESSION_STATE: ConsultationSessionState = {
 export const DEFAULT_USER_PREFS_STATE: UserPrefsState = {
   uiPrefs: {
     desktopPaneSizes: [20, 45, 35],
+    editorPreviewPaneSizes: [62, 38],
     mobileActivePane: "editor",
     rightPaneTab: "reason",
     theme: "light",
@@ -178,7 +183,7 @@ export type SessionAction =
   | { type: "TOGGLE_SECTION_INCLUSION"; sectionId: string }
   | { type: "ADD_RECENT_INSERT"; snippetId: string }
   | { type: "SET_EXPORT_DRAFT"; text: string | null; derivedHash?: string | null }
-  | { type: "TOGGLE_REVIEW_SECTION"; sectionId: string }
+  | { type: "TOGGLE_REVIEW_SECTION"; sectionId: string; expanded?: boolean }
   | { type: "DDX_TOGGLE_DIAGNOSIS"; name: string }
   | { type: "DDX_SET_PRIMARY"; name: string }
   | { type: "DDX_REORDER"; from: number; to: number }

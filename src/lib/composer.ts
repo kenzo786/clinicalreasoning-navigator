@@ -7,7 +7,7 @@ import type {
   ComposerSection,
 } from "@/types/composer";
 import { composeOutput, getComposedSections } from "@/lib/outputComposer";
-import { hashString } from "@/lib/editorBridge";
+import { findAnchorMatch, hashString } from "@/lib/editorBridge";
 
 const LINK_START_RE = /^\[CRx linked:.*?\]\n?/gm;
 const LINK_END_RE = /^\[\/CRx linked\]\n?/gm;
@@ -19,7 +19,7 @@ function deriveLinkState(
   const anchor = state.editorAnchors[sectionId];
   if (!anchor) return "not_linked";
   if (anchor.detached) return "linked_modified";
-  if (!state.editorText.includes(anchor.startTag) || !state.editorText.includes(anchor.endTag)) {
+  if (!findAnchorMatch(state.editorText, anchor)) {
     return "linked_missing";
   }
   return "linked_clean";

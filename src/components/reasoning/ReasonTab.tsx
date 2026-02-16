@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import type { JitlContextType, TopicRuntime } from "@/types/topic";
 import { useConsultation } from "@/context/ConsultationProvider";
 import { JitlTerm } from "@/components/jitl/JitlTerm";
@@ -34,7 +34,7 @@ interface SectionCardProps {
   id: ReasonSectionId;
   title: string;
   badge: string;
-  expandedSection: ReasonSectionId;
+  expandedSection: ReasonSectionId | null;
   onExpand: (id: ReasonSectionId) => void;
   children: React.ReactNode;
 }
@@ -52,6 +52,7 @@ function SectionCard({
     <section className="rounded-md border">
       <button
         onClick={() => onExpand(id)}
+        aria-expanded={expanded}
         className="flex w-full items-center justify-between gap-2 border-b bg-muted/30 px-3 py-2 text-left"
       >
         <span className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
@@ -83,7 +84,7 @@ export function ReasonTab({ topic, onPromote, onOpenJitl }: ReasonTabProps) {
   const [compareOpen, setCompareOpen] = useState(false);
   const [evidenceQuery, setEvidenceQuery] = useState("");
   const [showAssignedOnly, setShowAssignedOnly] = useState(false);
-  const [expandedSection, setExpandedSection] = useState<ReasonSectionId>("red-flags");
+  const [expandedSection, setExpandedSection] = useState<ReasonSectionId | null>("red-flags");
 
   const allDiagnoses = useMemo(
     () => [
@@ -179,8 +180,18 @@ export function ReasonTab({ topic, onPromote, onOpenJitl }: ReasonTabProps) {
     onPromote("Assessment", text);
   };
 
+  const handleExpandSection = useCallback((id: ReasonSectionId) => {
+    setExpandedSection((current) => (current === id ? null : id));
+  }, []);
+
   return (
     <div className="p-3 space-y-4">
+      <div className="rounded-md border border-primary/30 bg-primary/5 p-2">
+        <p className="text-xs font-semibold uppercase tracking-wider text-primary">Reasoning workspace</p>
+        <p className="mt-1 text-[11px] text-muted-foreground">
+          Build and rank your differential, then assign evidence for and against before inserting into the note.
+        </p>
+      </div>
       <div className="rounded-md border p-2 bg-muted/20">
         <div className="flex flex-wrap gap-1">
           <button onClick={markExamNormal} className="text-xs px-2 py-1 rounded border bg-secondary hover:bg-accent">
@@ -200,7 +211,7 @@ export function ReasonTab({ topic, onPromote, onOpenJitl }: ReasonTabProps) {
         title="Red Flags"
         badge={`${selectedRedFlags} selected`}
         expandedSection={expandedSection}
-        onExpand={setExpandedSection}
+        onExpand={handleExpandSection}
       >
         <div className="space-y-1 rounded-md border border-destructive/30 bg-destructive/5 p-2">
           {topic.reasoning.redFlags.map((flag, i) => {
@@ -226,7 +237,7 @@ export function ReasonTab({ topic, onPromote, onOpenJitl }: ReasonTabProps) {
         title="Working Diagnosis Builder"
         badge={`${workingDdxCount} active`}
         expandedSection={expandedSection}
-        onExpand={setExpandedSection}
+        onExpand={handleExpandSection}
       >
         <p className="mb-2 text-[10px] text-muted-foreground">
           Keyboard flow: Ctrl/Cmd+3 focus Reason, Ctrl/Cmd+Shift+I insert selected section.
@@ -261,16 +272,41 @@ export function ReasonTab({ topic, onPromote, onOpenJitl }: ReasonTabProps) {
                   onDragEnd={() => setDragIndex(null)}
                   className={`flex items-center gap-2 p-2 rounded border ${dragIndex === i ? "bg-primary/5 border-primary/30" : "bg-card"}`}
                 >
-                  <GripVertical className="h-3.5 w-3.5 text-muted-foreground" />
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <span className="inline-flex" aria-label="Drag to reorder diagnosis" title="Drag to reorder diagnosis">
+                        <GripVertical className="h-3.5 w-3.5 text-muted-foreground" />
+                      </span>
+                    </TooltipTrigger>
+                    <TooltipContent>Drag to reorder diagnosis</TooltipContent>
+                  </Tooltip>
                   <span className="text-sm flex-1">
                     <JitlTerm term={d.name} config={topic.jitl} defaultContextType="ddx" onOpen={onOpenJitl} />
                   </span>
-                  <span className="text-[10px] px-1 py-0.5 rounded border bg-emerald-50 text-emerald-700">
-                    +{state.ddx.evidenceFor.find((e) => e.diagnosis === d.name)?.items.length ?? 0}
-                  </span>
-                  <span className="text-[10px] px-1 py-0.5 rounded border bg-red-50 text-red-700">
-                    -{state.ddx.evidenceAgainst.find((e) => e.diagnosis === d.name)?.items.length ?? 0}
-                  </span>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <span
+                        className="text-[10px] px-1 py-0.5 rounded border bg-emerald-50 text-emerald-700"
+                        aria-label={`${d.name} supporting evidence count`}
+                        title="Supporting evidence count"
+                      >
+                        +{state.ddx.evidenceFor.find((e) => e.diagnosis === d.name)?.items.length ?? 0}
+                      </span>
+                    </TooltipTrigger>
+                    <TooltipContent>Supporting evidence count</TooltipContent>
+                  </Tooltip>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <span
+                        className="text-[10px] px-1 py-0.5 rounded border bg-red-50 text-red-700"
+                        aria-label={`${d.name} contrary evidence count`}
+                        title="Contrary evidence count"
+                      >
+                        -{state.ddx.evidenceAgainst.find((e) => e.diagnosis === d.name)?.items.length ?? 0}
+                      </span>
+                    </TooltipTrigger>
+                    <TooltipContent>Contrary evidence count</TooltipContent>
+                  </Tooltip>
                   <Tooltip>
                     <TooltipTrigger asChild>
                       <button
@@ -385,7 +421,7 @@ export function ReasonTab({ topic, onPromote, onOpenJitl }: ReasonTabProps) {
         title="Evidence For / Against"
         badge={`${assignedEvidenceCount} assigned`}
         expandedSection={expandedSection}
-        onExpand={setExpandedSection}
+        onExpand={handleExpandSection}
       >
         {state.ddx.workingDiagnoses.length === 0 ? (
           <p className="text-xs text-muted-foreground italic">Add a diagnosis to assign evidence.</p>
@@ -440,6 +476,8 @@ export function ReasonTab({ topic, onPromote, onOpenJitl }: ReasonTabProps) {
                               selected: !isFor,
                             })
                           }
+                          aria-label={`Mark "${prompt}" as supporting evidence`}
+                          title="Mark as supporting evidence"
                           className={`px-2 py-0.5 rounded border ${isFor ? "bg-emerald-100 border-emerald-300 text-emerald-700" : "bg-secondary"}`}
                         >
                           For
@@ -454,6 +492,8 @@ export function ReasonTab({ topic, onPromote, onOpenJitl }: ReasonTabProps) {
                               selected: !isAgainst,
                             })
                           }
+                          aria-label={`Mark "${prompt}" as contrary evidence`}
+                          title="Mark as contrary evidence"
                           className={`px-2 py-0.5 rounded border ${isAgainst ? "bg-red-100 border-red-300 text-red-700" : "bg-secondary"}`}
                         >
                           Against
@@ -490,6 +530,8 @@ export function ReasonTab({ topic, onPromote, onOpenJitl }: ReasonTabProps) {
                       });
                       setCustomFor("");
                     }}
+                    aria-label="Add custom supporting evidence"
+                    title="Add custom supporting evidence"
                     className="h-8 px-2 rounded border text-xs bg-secondary hover:bg-accent"
                   >
                     <Zap className="h-3.5 w-3.5" />
@@ -515,6 +557,8 @@ export function ReasonTab({ topic, onPromote, onOpenJitl }: ReasonTabProps) {
                       });
                       setCustomAgainst("");
                     }}
+                    aria-label="Add custom contrary evidence"
+                    title="Add custom contrary evidence"
                     className="h-8 px-2 rounded border text-xs bg-secondary hover:bg-accent"
                   >
                     <Zap className="h-3.5 w-3.5" />

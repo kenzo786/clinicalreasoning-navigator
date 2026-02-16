@@ -132,8 +132,8 @@ export default function AppShell() {
     if (!topic) return;
     if (!hasLinkedSections) {
       toast({
-        title: "No linked sections",
-        description: "Insert a section into the editor before refreshing links.",
+        title: "No inserted sections",
+        description: "Insert a composer section into the editor before running sync.",
       });
       return;
     }
@@ -173,7 +173,7 @@ export default function AppShell() {
       updateEditorText(nextText);
     }
     toast({
-      title: "Refresh links complete",
+      title: "Section sync complete",
       description: `Updated ${counts.updated}, unchanged ${counts.unchanged}, detached ${counts.detached}, missing ${counts.missing}, not linked ${counts.notLinked}.`,
     });
   }, [
@@ -272,9 +272,13 @@ export default function AppShell() {
             onClick={refreshAnchorsFromState}
             disabled={!hasLinkedSections}
             className="text-xs px-2 py-1 rounded border bg-secondary text-secondary-foreground hover:bg-accent transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-            title="Refresh linked editor sections. Modified blocks stay untouched."
+            title={
+              hasLinkedSections
+                ? "Sync inserted sections from the right pane. Manually edited blocks stay untouched."
+                : "Insert a section into the editor to enable sync."
+            }
           >
-            Refresh Links
+            Sync Inserted Sections
           </button>
           <button
             onClick={() =>

@@ -27,7 +27,7 @@ test("inserting a linked section enables refresh link workflow", async ({ page }
   await editor.click();
   await editor.type("Initial consultation text.");
 
-  const refreshButton = page.getByRole("button", { name: "Refresh Links" });
+  const refreshButton = page.getByRole("button", { name: "Sync Inserted Sections" });
   await expect(refreshButton).toBeDisabled();
 
   await page.keyboard.press(process.platform === "darwin" ? "Meta+Shift+I" : "Control+Shift+I");
@@ -36,7 +36,7 @@ test("inserting a linked section enables refresh link workflow", async ({ page }
 
   await expect(refreshButton).toBeEnabled();
   await refreshButton.click();
-  await expect(page.getByText("Refresh links complete").first()).toBeVisible();
+  await expect(page.getByText("Section sync complete").first()).toBeVisible();
 });
 
 test("desktop export format supports SOAP and file download", async ({ page }, testInfo) => {

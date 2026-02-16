@@ -124,7 +124,7 @@ describe("AppShell integration", () => {
 
   it("keeps refresh links disabled before any section is inserted", () => {
     renderShell();
-    expect(screen.getByRole("button", { name: "Refresh Links" })).toBeDisabled();
+    expect(screen.getByRole("button", { name: "Sync Inserted Sections" })).toBeDisabled();
   });
 
   it("supports collapsible library search and DDx control labels", () => {
@@ -132,7 +132,12 @@ describe("AppShell integration", () => {
     fireEvent.click(screen.getByRole("button", { name: "Toggle snippet search" }));
     expect(screen.getByPlaceholderText("Search snippets...")).toBeInTheDocument();
 
-    fireEvent.click(screen.getByRole("button", { name: /Working Diagnosis Builder/i }));
+    const ddxSectionToggle = screen.getByRole("button", { name: /Working Diagnosis Builder/i });
+    fireEvent.click(ddxSectionToggle);
+    expect(screen.getByText("Differential list")).toBeInTheDocument();
+    fireEvent.click(ddxSectionToggle);
+    expect(screen.queryByText("Differential list")).not.toBeInTheDocument();
+    fireEvent.click(ddxSectionToggle);
     fireEvent.click(screen.getAllByRole("button", { name: /Viral pharyngitis/i })[0]);
     expect(screen.getByLabelText("Set Viral pharyngitis as primary diagnosis")).toBeInTheDocument();
   });

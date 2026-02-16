@@ -150,6 +150,12 @@ export function ReviewTab({ topic, onPromote, onOpenJitl }: ReviewTabProps) {
 
   return (
     <div className="p-3 space-y-3">
+      <div className="rounded-md border border-amber-300 bg-amber-50/70 p-2">
+        <p className="text-xs font-semibold uppercase tracking-wider text-amber-800">Review checklist</p>
+        <p className="mt-1 text-[11px] text-amber-900/90">
+          Confirm safety-critical findings and mark what has been reviewed or inserted into documentation.
+        </p>
+      </div>
       <div className="grid grid-cols-3 gap-2 text-[10px]">
         <div className="rounded border bg-secondary px-2 py-1 text-muted-foreground">
           Pending: {progress.pending}

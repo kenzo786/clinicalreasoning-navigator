@@ -8,6 +8,7 @@ import { TriggerSuggest } from "./TriggerSuggest";
 import { Copy, Check, RotateCcw, RotateCw } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { getDetachedAnchorIds } from "@/lib/editorBridge";
+import { trackTelemetry } from "@/lib/telemetry";
 
 interface EditorPaneProps {
   topic: TopicRuntime;
@@ -93,6 +94,11 @@ export function EditorPane({ topic, editorRef }: EditorPaneProps) {
           before,
           after,
         });
+        trackTelemetry(
+          "token_modal_opened",
+          { source: "editor_trigger", token_count: unresolvedTokens.length },
+          { enabled: state.uiPrefs.telemetryEnabled }
+        );
       } else {
         const newText = before + textWithDatesResolved + after;
         dispatch({ type: "SET_EDITOR_TEXT_WITH_HISTORY", text: newText });
@@ -106,7 +112,7 @@ export function EditorPane({ topic, editorRef }: EditorPaneProps) {
 
       setTriggerQuery(null);
     },
-    [state.editorText, triggerPos, dispatch]
+    [state.editorText, triggerPos, dispatch, state.uiPrefs.telemetryEnabled]
   );
 
   const handleCopy = useCallback(async () => {
@@ -217,6 +223,11 @@ export function EditorPane({ topic, editorRef }: EditorPaneProps) {
             const newText = resolverData.before + resolved + resolverData.after;
             dispatch({ type: "SET_EDITOR_TEXT_WITH_HISTORY", text: newText });
             dispatch({ type: "ADD_RECENT_INSERT", snippetId: resolverData.snippetId });
+            trackTelemetry(
+              "token_modal_resolved",
+              { source: "editor_trigger" },
+              { enabled: state.uiPrefs.telemetryEnabled }
+            );
             setResolverData(null);
           }}
           onCancel={() => setResolverData(null)}

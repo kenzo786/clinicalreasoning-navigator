@@ -26,19 +26,26 @@ import {
   purgeLegacyClinicalStorage,
   savePrefs,
 } from "@/lib/persistence";
+import { ONBOARDING_VERSION } from "@/config/onboarding";
+import { trackTelemetry } from "@/lib/telemetry";
 
 function normalizeLoadedPrefs(raw: UserPrefsState | null): UserPrefsState {
   if (!raw) return { ...DEFAULT_USER_PREFS_STATE };
   const maybeOldTab = raw.uiPrefs?.rightPaneTab;
   const normalizedRightTab = maybeOldTab === "reasoning" ? "reason" : maybeOldTab;
+  const nextUiPrefs = {
+    ...DEFAULT_USER_PREFS_STATE.uiPrefs,
+    ...(raw.uiPrefs ?? {}),
+    rightPaneTab: normalizedRightTab ?? DEFAULT_USER_PREFS_STATE.uiPrefs.rightPaneTab,
+  };
+  if (nextUiPrefs.onboardingSeenVersion !== ONBOARDING_VERSION) {
+    nextUiPrefs.onboardingDismissed = false;
+    nextUiPrefs.onboardingSeenVersion = ONBOARDING_VERSION;
+  }
   return {
     ...DEFAULT_USER_PREFS_STATE,
     ...raw,
-    uiPrefs: {
-      ...DEFAULT_USER_PREFS_STATE.uiPrefs,
-      ...(raw.uiPrefs ?? {}),
-      rightPaneTab: normalizedRightTab ?? DEFAULT_USER_PREFS_STATE.uiPrefs.rightPaneTab,
-    },
+    uiPrefs: nextUiPrefs,
     featureFlags: {
       ...DEFAULT_USER_PREFS_STATE.featureFlags,
       ...(raw.featureFlags ?? {}),
@@ -64,6 +71,7 @@ export function ConsultationProvider({ children }: { children: React.ReactNode }
     activeTopicId: loadedPrefs.uiPrefs.lastTopicId,
   });
   const prefsRef = useRef(prefsState);
+  const sessionRef = useRef<ConsultationSessionState>(sessionState);
 
   useEffect(() => {
     purgeLegacyClinicalStorage();
@@ -73,11 +81,81 @@ export function ConsultationProvider({ children }: { children: React.ReactNode }
     prefsRef.current = prefsState;
   }, [prefsState]);
 
+  useEffect(() => {
+    sessionRef.current = sessionState;
+  }, [sessionState]);
+
+  useEffect(() => {
+    trackTelemetry(
+      "session_started",
+      {
+        topic_id: loadedPrefs.uiPrefs.lastTopicId,
+      },
+      {
+        enabled: prefsRef.current.uiPrefs.telemetryEnabled,
+      }
+    );
+  }, [loadedPrefs.uiPrefs.lastTopicId]);
+
   const dispatch = useCallback(
     (action: ConsultationAction) => {
       if (isPrefsAction(action)) {
+        if (action.type === "SET_UI_PREF" && action.key === "telemetryEnabled") {
+          trackTelemetry(
+            "telemetry_preference_changed",
+            { enabled: Boolean(action.value) },
+            { enabled: true }
+          );
+        }
         prefsDispatch(action);
         return;
+      }
+
+      const telemetryEnabled = prefsRef.current.uiPrefs.telemetryEnabled;
+      const session = sessionRef.current;
+      switch (action.type) {
+        case "ADD_RECENT_INSERT":
+          trackTelemetry(
+            "snippet_inserted",
+            { snippet_id: action.snippetId },
+            { enabled: telemetryEnabled }
+          );
+          break;
+        case "DDX_TOGGLE_DIAGNOSIS": {
+          const exists = session.ddx.workingDiagnoses.some((d) => d.name === action.name);
+          trackTelemetry(
+            exists ? "diagnosis_removed" : "diagnosis_added",
+            { source: "catalog" },
+            { enabled: telemetryEnabled }
+          );
+          break;
+        }
+        case "DDX_ADD_CUSTOM":
+          trackTelemetry("diagnosis_added", { source: "custom" }, { enabled: telemetryEnabled });
+          break;
+        case "DDX_REMOVE":
+          trackTelemetry("diagnosis_removed", { source: "list" }, { enabled: telemetryEnabled });
+          break;
+        case "DDX_ASSIGN_EVIDENCE":
+          trackTelemetry(
+            "evidence_assignment_updated",
+            {
+              side: action.side,
+              selected: action.selected,
+            },
+            { enabled: telemetryEnabled }
+          );
+          break;
+        case "SET_REVIEW_ITEM_STATUS":
+          trackTelemetry(
+            "review_status_updated",
+            {
+              source: action.source,
+              status: action.status,
+            },
+            { enabled: telemetryEnabled }
+          );
+          break;
       }
 
       sessionDispatch(action as SessionAction);

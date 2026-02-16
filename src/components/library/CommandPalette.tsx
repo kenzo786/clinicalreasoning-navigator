@@ -4,6 +4,7 @@ import { useConsultation } from "@/context/ConsultationProvider";
 import { parseTokens } from "@/lib/tokenParser";
 import type { UnresolvedToken } from "@/lib/tokenParser";
 import type { TopicRuntime, TopicSnippet } from "@/types/topic";
+import { trackTelemetry } from "@/lib/telemetry";
 import {
   CommandDialog,
   CommandInput,
@@ -34,6 +35,11 @@ export function CommandPalette({
     tokens: UnresolvedToken[];
     snippetId: string;
   } | null>(null);
+  const [pendingResolverData, setPendingResolverData] = useState<{
+    text: string;
+    tokens: UnresolvedToken[];
+    snippetId: string;
+  } | null>(null);
 
   useEffect(() => {
     if (open) {
@@ -43,15 +49,33 @@ export function CommandPalette({
     }
   }, [open, availableTopics]);
 
+  useEffect(() => {
+    if (open || !pendingResolverData) return;
+    const timeout = setTimeout(() => {
+      setResolverData(pendingResolverData);
+      setPendingResolverData(null);
+    }, 180);
+    return () => clearTimeout(timeout);
+  }, [open, pendingResolverData]);
+
   const handleSelect = (snippet: TopicSnippet) => {
     const { textWithDatesResolved, unresolvedTokens } = parseTokens(snippet.content);
-    onClose();
 
     if (unresolvedTokens.length > 0) {
-      setResolverData({ text: textWithDatesResolved, tokens: unresolvedTokens, snippetId: snippet.id });
+      setPendingResolverData({
+        text: textWithDatesResolved,
+        tokens: unresolvedTokens,
+        snippetId: snippet.id,
+      });
+      trackTelemetry(
+        "token_modal_opened",
+        { source: "command_palette", token_count: unresolvedTokens.length },
+        { enabled: state.uiPrefs.telemetryEnabled }
+      );
     } else {
       insertText(textWithDatesResolved, snippet.id);
     }
+    onClose();
   };
 
   const insertText = (text: string, snippetId: string) => {
@@ -101,6 +125,11 @@ export function CommandPalette({
           tokens={resolverData.tokens}
           onResolve={(resolved) => {
             insertText(resolved, resolverData.snippetId);
+            trackTelemetry(
+              "token_modal_resolved",
+              { source: "command_palette" },
+              { enabled: state.uiPrefs.telemetryEnabled }
+            );
             setResolverData(null);
           }}
           onCancel={() => setResolverData(null)}

@@ -2,6 +2,7 @@ import { X } from "lucide-react";
 
 interface QuickStartCardProps {
   onDismiss: () => void;
+  onShowShortcuts: () => void;
 }
 
 const STEPS = [
@@ -12,7 +13,7 @@ const STEPS = [
   "Copy or download final output in your preferred format.",
 ];
 
-export function QuickStartCard({ onDismiss }: QuickStartCardProps) {
+export function QuickStartCard({ onDismiss, onShowShortcuts }: QuickStartCardProps) {
   return (
     <div className="border-b bg-primary/5">
       <div className="mx-auto max-w-[1400px] px-4 py-3">
@@ -29,6 +30,12 @@ export function QuickStartCard({ onDismiss }: QuickStartCardProps) {
                   </li>
                 ))}
               </ol>
+              <button
+                onClick={onShowShortcuts}
+                className="mt-2 text-xs text-primary underline-offset-2 hover:underline"
+              >
+                View keyboard shortcuts (?)
+              </button>
             </div>
             <button
               onClick={onDismiss}

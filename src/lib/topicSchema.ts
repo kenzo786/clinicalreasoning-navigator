@@ -37,6 +37,19 @@ export interface TopicManifestEntry {
 }
 
 function defaultReviewFromV1(topic: TopicV1): ReviewContent {
+  const inferredCommonDiagnoses = topic.snippets
+    .filter((snippet) => ["assessment", "history", "plan"].includes(snippet.category.toLowerCase()))
+    .map((snippet) => {
+      const cleaned = snippet.label
+        .replace(/focused/gi, "")
+        .replace(/history|assessment|plan/gi, "")
+        .trim();
+      return cleaned || snippet.label;
+    })
+    .filter((value, index, arr) => value.length > 0 && arr.indexOf(value) === index)
+    .slice(0, 3)
+    .map((name) => ({ name }));
+
   const reviewDiscriminators = topic.reasoning.discriminators.map((q) => ({
     question: q,
     reasoning: "Key discriminator for this presentation.",
@@ -89,7 +102,10 @@ function defaultReviewFromV1(topic: TopicV1): ReviewContent {
       },
     ],
     diagnoses: {
-      common: topic.reasoning.discriminators.slice(0, 3).map((name) => ({ name })),
+      common:
+        inferredCommonDiagnoses.length > 0
+          ? inferredCommonDiagnoses
+          : [{ name: `${topic.metadata.displayName} likely primary-care cause` }],
       mustNotMiss: topic.reasoning.mustNotMiss.map((name) => ({ name })),
       oftenMissed: [],
     },

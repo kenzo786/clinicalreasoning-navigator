@@ -75,6 +75,8 @@ export interface UiPrefs {
   composerTrayCollapsed: boolean;
   lastTopicId: string;
   onboardingDismissed: boolean;
+  onboardingSeenVersion: string;
+  telemetryEnabled: boolean;
   librarySearchCollapsed: boolean;
   hintDismissals: Record<string, boolean>;
 }
@@ -143,6 +145,8 @@ export const DEFAULT_USER_PREFS_STATE: UserPrefsState = {
     composerTrayCollapsed: false,
     lastTopicId: "sore-throat",
     onboardingDismissed: false,
+    onboardingSeenVersion: "2026-02-16",
+    telemetryEnabled: true,
     librarySearchCollapsed: true,
     hintDismissals: {},
   },

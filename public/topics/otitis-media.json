@@ -27,18 +27,30 @@
   ],
   "reasoning": {
     "discriminators": [
-      "Onset and progression",
-      "Severity and impact",
-      "Associated red flags"
+      "Otalgia pattern, fever, and hearing change",
+      "Otoscopic appearance and tympanic membrane findings",
+      "Post-auricular tenderness or swelling",
+      "Systemic toxicity or neurological symptoms",
+      "Immunocompromise or recurrent episodes"
     ],
     "mustNotMiss": [
-      "Serious pathology"
+      "Mastoiditis",
+      "Intracranial infection (meningitis or abscess)",
+      "Malignant otitis externa in high-risk patients"
     ],
     "redFlags": [
-      "Rapid deterioration",
-      "Systemic instability"
+      "Post-auricular swelling, erythema, or protruding pinna",
+      "Severe headache, photophobia, or neck stiffness",
+      "Facial nerve weakness or other cranial nerve signs",
+      "Persistent high fever with systemic toxicity",
+      "Rapidly worsening pain despite treatment"
     ],
-    "references": []
+    "references": [
+      {
+        "label": "NICE CKS - Otitis media",
+        "url": "https://cks.nice.org.uk/topics/otitis-media-acute/"
+      }
+    ]
   },
   "structuredFields": [
     {
@@ -177,24 +189,71 @@
   },
   "review": {
     "illnessScript": {
-      "summary": "Otitis Media consultation framework for 10-minute primary-care assessment."
+      "summary": "Otitis media assessment in primary care: confirm uncomplicated infection, identify suppurative complications, and provide clear safety-net advice."
     },
     "mustNotMiss": [
       {
-        "condition": "Serious pathology",
+        "condition": "Mastoiditis",
         "redFlags": [
-          "Rapid deterioration",
-          "Systemic instability"
+          "Post-auricular swelling, erythema, or protruding pinna",
+          "Severe headache, photophobia, or neck stiffness",
+          "Facial nerve weakness or other cranial nerve signs",
+          "Persistent high fever with systemic toxicity",
+          "Rapidly worsening pain despite treatment"
         ],
-        "whyDangerous": "Delayed recognition may result in avoidable harm.",
-        "escalationConcern": "Escalate same-day if concern persists after assessment."
+        "whyDangerous": "Can spread intracranially and cause severe complications.",
+        "escalationConcern": "Urgent ENT/emergency referral for post-auricular signs or persistent severe pain/fever."
+      },
+      {
+        "condition": "Intracranial infection (meningitis or abscess)",
+        "redFlags": [
+          "Post-auricular swelling, erythema, or protruding pinna",
+          "Severe headache, photophobia, or neck stiffness",
+          "Facial nerve weakness or other cranial nerve signs",
+          "Persistent high fever with systemic toxicity",
+          "Rapidly worsening pain despite treatment"
+        ],
+        "whyDangerous": "Life-threatening neurological deterioration can occur rapidly.",
+        "escalationConcern": "Emergency transfer for neurological symptoms, meningism, or systemic toxicity."
+      },
+      {
+        "condition": "Malignant otitis externa in high-risk patients",
+        "redFlags": [
+          "Post-auricular swelling, erythema, or protruding pinna",
+          "Severe headache, photophobia, or neck stiffness",
+          "Facial nerve weakness or other cranial nerve signs",
+          "Persistent high fever with systemic toxicity",
+          "Rapidly worsening pain despite treatment"
+        ],
+        "whyDangerous": "Can progress to skull-base osteomyelitis with cranial neuropathies.",
+        "escalationConcern": "Urgent specialist assessment for severe refractory otalgia in diabetes/immunosuppression."
       }
     ],
     "discriminators": [
       {
-        "question": "What changes urgency in this presentation?",
-        "reasoning": "Prioritises immediate risk over routine symptom management.",
-        "clinicalValue": "Supports safer triage and disposition decisions."
+        "question": "Otalgia pattern, fever, and hearing change",
+        "reasoning": "Helps prioritize immediate risk while refining the working diagnosis.",
+        "clinicalValue": "Improves triage decisions and reduces missed serious disease."
+      },
+      {
+        "question": "Otoscopic appearance and tympanic membrane findings",
+        "reasoning": "Helps prioritize immediate risk while refining the working diagnosis.",
+        "clinicalValue": "Improves triage decisions and reduces missed serious disease."
+      },
+      {
+        "question": "Post-auricular tenderness or swelling",
+        "reasoning": "Helps prioritize immediate risk while refining the working diagnosis.",
+        "clinicalValue": "Improves triage decisions and reduces missed serious disease."
+      },
+      {
+        "question": "Systemic toxicity or neurological symptoms",
+        "reasoning": "Helps prioritize immediate risk while refining the working diagnosis.",
+        "clinicalValue": "Improves triage decisions and reduces missed serious disease."
+      },
+      {
+        "question": "Immunocompromise or recurrent episodes",
+        "reasoning": "Helps prioritize immediate risk while refining the working diagnosis.",
+        "clinicalValue": "Improves triage decisions and reduces missed serious disease."
       }
     ],
     "historyPrompts": [
@@ -236,17 +295,29 @@
     "diagnoses": {
       "common": [
         {
-          "name": "Likely benign presentation"
+          "name": "Acute otitis media"
+        },
+        {
+          "name": "Otitis media with effusion"
+        },
+        {
+          "name": "Referred otalgia from upper respiratory infection"
         }
       ],
       "mustNotMiss": [
         {
-          "name": "Serious pathology"
+          "name": "Mastoiditis"
+        },
+        {
+          "name": "Intracranial infection (meningitis or abscess)"
+        },
+        {
+          "name": "Malignant otitis externa in high-risk patients"
         }
       ],
       "oftenMissed": [
         {
-          "name": "Atypical presentation of Serious pathology"
+          "name": "Otitis externa coexisting with middle-ear symptoms"
         }
       ]
     },
@@ -276,16 +347,23 @@
       "pharmacologicalConcepts": [],
       "delayedStrategies": [],
       "followUpLogic": [
-        "Follow-up based on risk trajectory and response."
+        "Escalate immediately for mastoid, intracranial, or cranial nerve complication signs.",
+        "Review persistent symptoms or hearing concerns and consider reassessment pathway.",
+        "Provide explicit advice for worsening fever, pain, swelling, or neurological features."
       ]
     },
     "safetyNetting": {
       "returnAdvice": [
-        "Return if symptoms worsen or new red flags emerge."
+        "Seek urgent care for worsening pain with swelling behind the ear or pinna displacement.",
+        "Seek urgent care for persistent high fever, severe headache, or neck stiffness.",
+        "Return if hearing worsens, discharge persists, or symptoms fail to improve."
       ],
       "escalationTriggers": [
-        "Rapid deterioration",
-        "Systemic instability"
+        "Post-auricular swelling, erythema, or protruding pinna",
+        "Severe headache, photophobia, or neck stiffness",
+        "Facial nerve weakness or other cranial nerve signs",
+        "Persistent high fever with systemic toxicity",
+        "Rapidly worsening pain despite treatment"
       ]
     },
     "mindset": "Balance efficiency with explicit risk documentation."
@@ -327,9 +405,11 @@
   },
   "ddx": {
     "evidencePrompts": [
-      "Duration",
-      "Severity",
-      "Red flag screen"
+      "Otalgia pattern, fever, and hearing change",
+      "Otoscopic appearance and tympanic membrane findings",
+      "Post-auricular tenderness or swelling",
+      "Systemic toxicity or neurological symptoms",
+      "Immunocompromise or recurrent episodes"
     ],
     "compareEnabled": true
   },

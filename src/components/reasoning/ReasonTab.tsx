@@ -6,6 +6,7 @@ import { composeDDx, composeReasoningSummary } from "@/lib/outputComposer";
 import {
   AlertTriangle,
   ArrowUpDown,
+  Check,
   ChevronDown,
   ChevronUp,
   GitCompareArrows,
@@ -21,6 +22,16 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 
 interface ReasonTabProps {
   topic: TopicRuntime;
@@ -85,6 +96,7 @@ export function ReasonTab({ topic, onPromote, onOpenJitl }: ReasonTabProps) {
   const [evidenceQuery, setEvidenceQuery] = useState("");
   const [showAssignedOnly, setShowAssignedOnly] = useState(false);
   const [expandedSection, setExpandedSection] = useState<ReasonSectionId | null>("red-flags");
+  const [confirmMarkNormalOpen, setConfirmMarkNormalOpen] = useState(false);
 
   const allDiagnoses = useMemo(
     () => [
@@ -138,12 +150,15 @@ export function ReasonTab({ topic, onPromote, onOpenJitl }: ReasonTabProps) {
     [state.reasoningChecks.redFlagsConfirmed]
   );
   const workingDdxCount = state.ddx.workingDiagnoses.length;
-  const assignedEvidenceCount = useMemo(
-    () =>
-      state.ddx.evidenceFor.reduce((sum, e) => sum + e.items.length, 0) +
-      state.ddx.evidenceAgainst.reduce((sum, e) => sum + e.items.length, 0),
-    [state.ddx.evidenceAgainst, state.ddx.evidenceFor]
+  const evidenceForCount = useMemo(
+    () => state.ddx.evidenceFor.reduce((sum, e) => sum + e.items.length, 0),
+    [state.ddx.evidenceFor]
   );
+  const evidenceAgainstCount = useMemo(
+    () => state.ddx.evidenceAgainst.reduce((sum, e) => sum + e.items.length, 0),
+    [state.ddx.evidenceAgainst]
+  );
+  const assignedEvidenceCount = evidenceForCount + evidenceAgainstCount;
 
   useEffect(() => {
     if (!selectedDiagnosisForEvidence && state.ddx.workingDiagnoses.length > 0) {
@@ -189,12 +204,15 @@ export function ReasonTab({ topic, onPromote, onOpenJitl }: ReasonTabProps) {
       <div className="rounded-md border border-primary/30 bg-primary/5 p-2">
         <p className="text-xs font-semibold uppercase tracking-wider text-primary">Reasoning workspace</p>
         <p className="mt-1 text-[11px] text-muted-foreground">
-          Build and rank your differential, then assign evidence for and against before inserting into the note.
+          Build and rank your differential, use drag handles (GripVertical icon) to reorder, then assign evidence for and against before inserting into the note.
         </p>
       </div>
       <div className="rounded-md border p-2 bg-muted/20">
         <div className="flex flex-wrap gap-1">
-          <button onClick={markExamNormal} className="text-xs px-2 py-1 rounded border bg-secondary hover:bg-accent">
+          <button
+            onClick={() => setConfirmMarkNormalOpen(true)}
+            className="text-xs px-2 py-1 rounded border bg-secondary hover:bg-accent"
+          >
             Mark all normal
           </button>
           <button onClick={addCommonSafetyNet} className="text-xs px-2 py-1 rounded border bg-secondary hover:bg-accent">
@@ -391,21 +409,34 @@ export function ReasonTab({ topic, onPromote, onOpenJitl }: ReasonTabProps) {
                         key={d.name}
                         role="button"
                         tabIndex={0}
-                        onClick={() => dispatch({ type: "DDX_TOGGLE_DIAGNOSIS", name: d.name })}
+                        onClick={() => {
+                          if (selected) return;
+                          dispatch({ type: "DDX_TOGGLE_DIAGNOSIS", name: d.name });
+                        }}
                         onKeyDown={(e) => {
                           if (e.key === "Enter" || e.key === " ") {
                             e.preventDefault();
+                            if (selected) return;
                             dispatch({ type: "DDX_TOGGLE_DIAGNOSIS", name: d.name });
                           }
                         }}
                         className={`w-full text-left p-2 rounded border text-sm cursor-pointer ${
-                          selected ? "bg-primary/5 border-primary/30 text-primary" : "bg-card hover:bg-accent"
+                          selected
+                            ? "bg-primary/5 border-primary/30 text-primary cursor-default"
+                            : "bg-card hover:bg-accent"
                         }`}
                         aria-label={d.name}
                       >
                         <div className="flex items-center justify-between gap-2">
                           <JitlTerm term={d.name} config={topic.jitl} defaultContextType="ddx" onOpen={onOpenJitl} />
-                          <ArrowUpDown className="h-3.5 w-3.5 text-muted-foreground" />
+                          {selected ? (
+                            <span className="inline-flex items-center gap-1 text-[10px] rounded border border-primary/40 px-1.5 py-0.5">
+                              <Check className="h-3 w-3" />
+                              Added
+                            </span>
+                          ) : (
+                            <ArrowUpDown className="h-3.5 w-3.5 text-muted-foreground" />
+                          )}
                         </div>
                       </div>
                     );
@@ -419,7 +450,7 @@ export function ReasonTab({ topic, onPromote, onOpenJitl }: ReasonTabProps) {
       <SectionCard
         id="evidence"
         title="Evidence For / Against"
-        badge={`${assignedEvidenceCount} assigned`}
+        badge={`${assignedEvidenceCount} assigned (${evidenceForCount} For, ${evidenceAgainstCount} Against)`}
         expandedSection={expandedSection}
         onExpand={handleExpandSection}
       >
@@ -579,6 +610,27 @@ export function ReasonTab({ topic, onPromote, onOpenJitl }: ReasonTabProps) {
           state={state}
         />
       )}
+      <AlertDialog open={confirmMarkNormalOpen} onOpenChange={setConfirmMarkNormalOpen}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Mark all normal findings?</AlertDialogTitle>
+            <AlertDialogDescription>
+              This fills all examination select fields that have a normal option.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={() => {
+                markExamNormal();
+                setConfirmMarkNormalOpen(false);
+              }}
+            >
+              Confirm
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 }

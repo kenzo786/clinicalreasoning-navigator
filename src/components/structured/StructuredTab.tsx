@@ -12,14 +12,24 @@ export function StructuredTab({ topic }: StructuredTabProps) {
   const { state, dispatch } = useConsultation();
 
   useEffect(() => {
+    const neutralDefaults = new Set([
+      "normal",
+      "not examined",
+      "not tested",
+      "unknown",
+      "n/a",
+      "na",
+    ]);
     const defaults: Record<string, string | number | boolean | string[]> = {};
     for (const section of topic.structuredFields) {
       for (const field of section.fields) {
-        if (field.type === "select" && field.options?.length) {
-          const preferred =
-            field.options.find((o) => ["normal", "none", "no", "negative", "not tested"].includes(o.toLowerCase())) ??
-            field.options[0];
-          defaults[field.id] = preferred;
+        if (field.type === "select" && field.options?.length > 0) {
+          const preferred = field.options.find((o) =>
+            neutralDefaults.has(o.toLowerCase())
+          );
+          if (preferred) {
+            defaults[field.id] = preferred;
+          }
         }
       }
     }

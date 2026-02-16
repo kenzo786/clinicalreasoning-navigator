@@ -62,6 +62,7 @@ npm run dev
 npm run test
 npm run build
 npm run topics:build
+npm run telemetry:kpi-report -- <events.json-or-ndjson>
 npm run release:check
 npm run generate-topic-v2
 node scripts/topics-manifest.mjs
@@ -70,3 +71,8 @@ node scripts/topics-qa-report.mjs
 node scripts/import-compass-condition.mjs <path-to-condition.ts> [output.json]
 node scripts/import-quicknotes-library.mjs <quicknotes-export.json> <topic.json>
 ```
+
+## Telemetry (Pilot)
+- Optional endpoint: set `VITE_TELEMETRY_ENDPOINT`.
+- Telemetry captures workflow metadata only and excludes note/editor text.
+- Event schema: `docs/telemetry-events.md`.

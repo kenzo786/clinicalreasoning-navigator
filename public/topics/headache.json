@@ -27,18 +27,31 @@
   ],
   "reasoning": {
     "discriminators": [
-      "Onset and progression",
-      "Severity and impact",
-      "Associated red flags"
+      "Thunderclap onset vs gradual progression",
+      "New focal neurological symptoms or seizure",
+      "Fever, neck stiffness, or systemic symptoms",
+      "Visual disturbance or jaw claudication",
+      "Pattern change in age >50 or cancer/immunosuppression context"
     ],
     "mustNotMiss": [
-      "Serious pathology"
+      "Subarachnoid hemorrhage",
+      "Meningitis or encephalitis",
+      "Temporal arteritis",
+      "Space-occupying intracranial lesion"
     ],
     "redFlags": [
-      "Rapid deterioration",
-      "Systemic instability"
+      "Sudden thunderclap headache",
+      "Focal neurological deficit or reduced consciousness",
+      "Fever with neck stiffness or photophobia",
+      "New headache in age over 50 with scalp tenderness or jaw claudication",
+      "Headache with papilloedema, vomiting, or progressive worsening"
     ],
-    "references": []
+    "references": [
+      {
+        "label": "NICE CKS - Headache",
+        "url": "https://cks.nice.org.uk/topics/headache/"
+      }
+    ]
   },
   "structuredFields": [
     {
@@ -177,24 +190,83 @@
   },
   "review": {
     "illnessScript": {
-      "summary": "Headache consultation framework for 10-minute primary-care assessment."
+      "summary": "Headache in primary care: identify secondary causes requiring urgent neurovascular or infectious workup while managing common primary headache disorders."
     },
     "mustNotMiss": [
       {
-        "condition": "Serious pathology",
+        "condition": "Subarachnoid hemorrhage",
         "redFlags": [
-          "Rapid deterioration",
-          "Systemic instability"
+          "Sudden thunderclap headache",
+          "Focal neurological deficit or reduced consciousness",
+          "Fever with neck stiffness or photophobia",
+          "New headache in age over 50 with scalp tenderness or jaw claudication",
+          "Headache with papilloedema, vomiting, or progressive worsening"
         ],
-        "whyDangerous": "Delayed recognition may result in avoidable harm.",
-        "escalationConcern": "Escalate same-day if concern persists after assessment."
+        "whyDangerous": "Missed diagnosis can lead to rebleeding, disability, or death.",
+        "escalationConcern": "Immediate emergency referral for thunderclap headache or meningism."
+      },
+      {
+        "condition": "Meningitis or encephalitis",
+        "redFlags": [
+          "Sudden thunderclap headache",
+          "Focal neurological deficit or reduced consciousness",
+          "Fever with neck stiffness or photophobia",
+          "New headache in age over 50 with scalp tenderness or jaw claudication",
+          "Headache with papilloedema, vomiting, or progressive worsening"
+        ],
+        "whyDangerous": "Rapid neurological deterioration can occur without urgent treatment.",
+        "escalationConcern": "Emergency transfer for fever, neck stiffness, altered mental state, or rash."
+      },
+      {
+        "condition": "Temporal arteritis",
+        "redFlags": [
+          "Sudden thunderclap headache",
+          "Focal neurological deficit or reduced consciousness",
+          "Fever with neck stiffness or photophobia",
+          "New headache in age over 50 with scalp tenderness or jaw claudication",
+          "Headache with papilloedema, vomiting, or progressive worsening"
+        ],
+        "whyDangerous": "Can cause irreversible visual loss if treatment is delayed.",
+        "escalationConcern": "Same-day urgent pathway for new headache with jaw claudication or visual symptoms in older adults."
+      },
+      {
+        "condition": "Space-occupying intracranial lesion",
+        "redFlags": [
+          "Sudden thunderclap headache",
+          "Focal neurological deficit or reduced consciousness",
+          "Fever with neck stiffness or photophobia",
+          "New headache in age over 50 with scalp tenderness or jaw claudication",
+          "Headache with papilloedema, vomiting, or progressive worsening"
+        ],
+        "whyDangerous": "Progressive raised intracranial pressure can cause herniation and neurological injury.",
+        "escalationConcern": "Urgent neuroimaging/referral for progressive focal signs or raised ICP features."
       }
     ],
     "discriminators": [
       {
-        "question": "What changes urgency in this presentation?",
-        "reasoning": "Prioritises immediate risk over routine symptom management.",
-        "clinicalValue": "Supports safer triage and disposition decisions."
+        "question": "Thunderclap onset vs gradual progression",
+        "reasoning": "Helps prioritize immediate risk while refining the working diagnosis.",
+        "clinicalValue": "Improves triage decisions and reduces missed serious disease."
+      },
+      {
+        "question": "New focal neurological symptoms or seizure",
+        "reasoning": "Helps prioritize immediate risk while refining the working diagnosis.",
+        "clinicalValue": "Improves triage decisions and reduces missed serious disease."
+      },
+      {
+        "question": "Fever, neck stiffness, or systemic symptoms",
+        "reasoning": "Helps prioritize immediate risk while refining the working diagnosis.",
+        "clinicalValue": "Improves triage decisions and reduces missed serious disease."
+      },
+      {
+        "question": "Visual disturbance or jaw claudication",
+        "reasoning": "Helps prioritize immediate risk while refining the working diagnosis.",
+        "clinicalValue": "Improves triage decisions and reduces missed serious disease."
+      },
+      {
+        "question": "Pattern change in age >50 or cancer/immunosuppression context",
+        "reasoning": "Helps prioritize immediate risk while refining the working diagnosis.",
+        "clinicalValue": "Improves triage decisions and reduces missed serious disease."
       }
     ],
     "historyPrompts": [
@@ -236,17 +308,32 @@
     "diagnoses": {
       "common": [
         {
-          "name": "Likely benign presentation"
+          "name": "Tension-type headache"
+        },
+        {
+          "name": "Migraine"
+        },
+        {
+          "name": "Medication overuse headache"
         }
       ],
       "mustNotMiss": [
         {
-          "name": "Serious pathology"
+          "name": "Subarachnoid hemorrhage"
+        },
+        {
+          "name": "Meningitis or encephalitis"
+        },
+        {
+          "name": "Temporal arteritis"
+        },
+        {
+          "name": "Space-occupying intracranial lesion"
         }
       ],
       "oftenMissed": [
         {
-          "name": "Atypical presentation of Serious pathology"
+          "name": "Cervicogenic headache"
         }
       ]
     },
@@ -276,16 +363,23 @@
       "pharmacologicalConcepts": [],
       "delayedStrategies": [],
       "followUpLogic": [
-        "Follow-up based on risk trajectory and response."
+        "Escalate immediately for thunderclap, neurological deficits, or infective red flags.",
+        "Use headache pattern and risk profile to separate primary from secondary causes.",
+        "Safety-net for symptom progression, persistent vomiting, or visual change."
       ]
     },
     "safetyNetting": {
       "returnAdvice": [
-        "Return if symptoms worsen or new red flags emerge."
+        "Call emergency services for sudden severe headache or new weakness/speech change.",
+        "Seek urgent care for fever with neck stiffness, confusion, or persistent vomiting.",
+        "Return urgently if headache pattern is rapidly worsening or different from usual."
       ],
       "escalationTriggers": [
-        "Rapid deterioration",
-        "Systemic instability"
+        "Sudden thunderclap headache",
+        "Focal neurological deficit or reduced consciousness",
+        "Fever with neck stiffness or photophobia",
+        "New headache in age over 50 with scalp tenderness or jaw claudication",
+        "Headache with papilloedema, vomiting, or progressive worsening"
       ]
     },
     "mindset": "Balance efficiency with explicit risk documentation."
@@ -327,9 +421,11 @@
   },
   "ddx": {
     "evidencePrompts": [
-      "Duration",
-      "Severity",
-      "Red flag screen"
+      "Thunderclap onset vs gradual progression",
+      "New focal neurological symptoms or seizure",
+      "Fever, neck stiffness, or systemic symptoms",
+      "Visual disturbance or jaw claudication",
+      "Pattern change in age >50 or cancer/immunosuppression context"
     ],
     "compareEnabled": true
   },

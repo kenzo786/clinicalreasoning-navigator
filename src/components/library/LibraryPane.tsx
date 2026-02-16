@@ -5,6 +5,7 @@ import { parseTokens } from "@/lib/tokenParser";
 import type { UnresolvedToken } from "@/lib/tokenParser";
 import { TokenResolverModal } from "@/components/editor/TokenResolverModal";
 import { Search, ChevronDown, ChevronUp } from "lucide-react";
+import { trackTelemetry } from "@/lib/telemetry";
 
 interface LibraryPaneProps {
   topic: TopicRuntime;
@@ -47,6 +48,11 @@ export function LibraryPane({ topic, editorRef, availableTopics }: LibraryPanePr
     const { textWithDatesResolved, unresolvedTokens } = parseTokens(snippet.content);
     if (unresolvedTokens.length > 0) {
       setResolverData({ text: textWithDatesResolved, tokens: unresolvedTokens, snippetId: snippet.id });
+      trackTelemetry(
+        "token_modal_opened",
+        { source: "library", token_count: unresolvedTokens.length },
+        { enabled: state.uiPrefs.telemetryEnabled }
+      );
     } else {
       insertText(textWithDatesResolved, snippet.id);
     }
@@ -179,6 +185,11 @@ export function LibraryPane({ topic, editorRef, availableTopics }: LibraryPanePr
           tokens={resolverData.tokens}
           onResolve={(resolved) => {
             insertText(resolved, resolverData.snippetId);
+            trackTelemetry(
+              "token_modal_resolved",
+              { source: "library" },
+              { enabled: state.uiPrefs.telemetryEnabled }
+            );
             setResolverData(null);
           }}
           onCancel={() => setResolverData(null)}

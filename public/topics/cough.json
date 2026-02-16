@@ -27,18 +27,31 @@
   ],
   "reasoning": {
     "discriminators": [
-      "Onset and progression",
-      "Severity and impact",
-      "Associated red flags"
+      "Acute vs subacute vs chronic duration",
+      "Breathlessness, pleuritic pain, and oxygenation status",
+      "Fever pattern and systemic symptoms",
+      "Hemoptysis or unexplained weight loss",
+      "Smoking history and immunosuppression risk"
     ],
     "mustNotMiss": [
-      "Serious pathology"
+      "Pneumonia",
+      "Pulmonary embolism",
+      "Lung cancer",
+      "Acute heart failure"
     ],
     "redFlags": [
-      "Rapid deterioration",
-      "Systemic instability"
+      "Hemoptysis",
+      "Breathlessness at rest or new hypoxia",
+      "Persistent fever with pleuritic chest pain",
+      "Unintentional weight loss or night sweats",
+      "Confusion, hypotension, or sepsis features"
     ],
-    "references": []
+    "references": [
+      {
+        "label": "NICE CKS - Cough",
+        "url": "https://cks.nice.org.uk/topics/cough/"
+      }
+    ]
   },
   "structuredFields": [
     {
@@ -177,24 +190,83 @@
   },
   "review": {
     "illnessScript": {
-      "summary": "Cough consultation framework for 10-minute primary-care assessment."
+      "summary": "Cough in primary care: distinguish self-limiting respiratory illness from serious infection, cardiorespiratory compromise, and occult malignancy."
     },
     "mustNotMiss": [
       {
-        "condition": "Serious pathology",
+        "condition": "Pneumonia",
         "redFlags": [
-          "Rapid deterioration",
-          "Systemic instability"
+          "Hemoptysis",
+          "Breathlessness at rest or new hypoxia",
+          "Persistent fever with pleuritic chest pain",
+          "Unintentional weight loss or night sweats",
+          "Confusion, hypotension, or sepsis features"
         ],
-        "whyDangerous": "Delayed recognition may result in avoidable harm.",
-        "escalationConcern": "Escalate same-day if concern persists after assessment."
+        "whyDangerous": "Can progress to respiratory failure and sepsis without timely treatment.",
+        "escalationConcern": "Urgent assessment for tachypnea, hypoxia, focal chest signs, or systemic toxicity."
+      },
+      {
+        "condition": "Pulmonary embolism",
+        "redFlags": [
+          "Hemoptysis",
+          "Breathlessness at rest or new hypoxia",
+          "Persistent fever with pleuritic chest pain",
+          "Unintentional weight loss or night sweats",
+          "Confusion, hypotension, or sepsis features"
+        ],
+        "whyDangerous": "Potentially fatal if untreated, especially with delayed recognition.",
+        "escalationConcern": "Urgent hospital evaluation for pleuritic pain, tachycardia, dyspnea, or VTE risk."
+      },
+      {
+        "condition": "Lung cancer",
+        "redFlags": [
+          "Hemoptysis",
+          "Breathlessness at rest or new hypoxia",
+          "Persistent fever with pleuritic chest pain",
+          "Unintentional weight loss or night sweats",
+          "Confusion, hypotension, or sepsis features"
+        ],
+        "whyDangerous": "Delayed diagnosis worsens stage at detection and treatment options.",
+        "escalationConcern": "Fast-track imaging/referral for persistent cough, hemoptysis, or red-flag weight loss."
+      },
+      {
+        "condition": "Acute heart failure",
+        "redFlags": [
+          "Hemoptysis",
+          "Breathlessness at rest or new hypoxia",
+          "Persistent fever with pleuritic chest pain",
+          "Unintentional weight loss or night sweats",
+          "Confusion, hypotension, or sepsis features"
+        ],
+        "whyDangerous": "Can rapidly deteriorate with pulmonary edema and hypoxia.",
+        "escalationConcern": "Same-day escalation for orthopnea, edema, crackles, or hypoxic breathlessness."
       }
     ],
     "discriminators": [
       {
-        "question": "What changes urgency in this presentation?",
-        "reasoning": "Prioritises immediate risk over routine symptom management.",
-        "clinicalValue": "Supports safer triage and disposition decisions."
+        "question": "Acute vs subacute vs chronic duration",
+        "reasoning": "Helps prioritize immediate risk while refining the working diagnosis.",
+        "clinicalValue": "Improves triage decisions and reduces missed serious disease."
+      },
+      {
+        "question": "Breathlessness, pleuritic pain, and oxygenation status",
+        "reasoning": "Helps prioritize immediate risk while refining the working diagnosis.",
+        "clinicalValue": "Improves triage decisions and reduces missed serious disease."
+      },
+      {
+        "question": "Fever pattern and systemic symptoms",
+        "reasoning": "Helps prioritize immediate risk while refining the working diagnosis.",
+        "clinicalValue": "Improves triage decisions and reduces missed serious disease."
+      },
+      {
+        "question": "Hemoptysis or unexplained weight loss",
+        "reasoning": "Helps prioritize immediate risk while refining the working diagnosis.",
+        "clinicalValue": "Improves triage decisions and reduces missed serious disease."
+      },
+      {
+        "question": "Smoking history and immunosuppression risk",
+        "reasoning": "Helps prioritize immediate risk while refining the working diagnosis.",
+        "clinicalValue": "Improves triage decisions and reduces missed serious disease."
       }
     ],
     "historyPrompts": [
@@ -236,17 +308,32 @@
     "diagnoses": {
       "common": [
         {
-          "name": "Likely benign presentation"
+          "name": "Post-viral cough"
+        },
+        {
+          "name": "Acute bronchitis"
+        },
+        {
+          "name": "Upper airway cough syndrome"
         }
       ],
       "mustNotMiss": [
         {
-          "name": "Serious pathology"
+          "name": "Pneumonia"
+        },
+        {
+          "name": "Pulmonary embolism"
+        },
+        {
+          "name": "Lung cancer"
+        },
+        {
+          "name": "Acute heart failure"
         }
       ],
       "oftenMissed": [
         {
-          "name": "Atypical presentation of Serious pathology"
+          "name": "Asthma cough-variant presentation"
         }
       ]
     },
@@ -276,16 +363,23 @@
       "pharmacologicalConcepts": [],
       "delayedStrategies": [],
       "followUpLogic": [
-        "Follow-up based on risk trajectory and response."
+        "Escalate urgently when red flags or physiological compromise are present.",
+        "Review persistent cough trajectories and trigger imaging/referral when thresholds are met.",
+        "Document explicit return precautions for worsening breathing or systemic illness."
       ]
     },
     "safetyNetting": {
       "returnAdvice": [
-        "Return if symptoms worsen or new red flags emerge."
+        "Seek urgent care for coughing blood, worsening breathlessness, or chest pain.",
+        "Seek urgent care for persistent fever, confusion, or inability to keep fluids down.",
+        "Return if cough persists beyond expected recovery or new red flags develop."
       ],
       "escalationTriggers": [
-        "Rapid deterioration",
-        "Systemic instability"
+        "Hemoptysis",
+        "Breathlessness at rest or new hypoxia",
+        "Persistent fever with pleuritic chest pain",
+        "Unintentional weight loss or night sweats",
+        "Confusion, hypotension, or sepsis features"
       ]
     },
     "mindset": "Balance efficiency with explicit risk documentation."
@@ -327,9 +421,11 @@
   },
   "ddx": {
     "evidencePrompts": [
-      "Duration",
-      "Severity",
-      "Red flag screen"
+      "Acute vs subacute vs chronic duration",
+      "Breathlessness, pleuritic pain, and oxygenation status",
+      "Fever pattern and systemic symptoms",
+      "Hemoptysis or unexplained weight loss",
+      "Smoking history and immunosuppression risk"
     ],
     "compareEnabled": true
   },

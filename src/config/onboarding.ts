@@ -1,0 +1,1 @@
+export const ONBOARDING_VERSION = "2026-02-16";

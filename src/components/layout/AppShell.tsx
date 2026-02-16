@@ -14,7 +14,7 @@ import { ShortcutsModal } from "@/components/shared/ShortcutsModal";
 import { CommandPalette } from "@/components/library/CommandPalette";
 import { MobileNav } from "@/components/layout/MobileNav";
 import { useKeyboardShortcuts } from "@/hooks/useKeyboardShortcuts";
-import { useCallback, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Stethoscope } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { getDetachedAnchorIds, refreshAnchoredBlock } from "@/lib/editorBridge";
@@ -22,6 +22,8 @@ import { upsertLinkedSection } from "@/lib/insertionService";
 import { buildComposerSections, buildExportText } from "@/lib/composer";
 import { SectionInsertPicker } from "@/components/editor/SectionInsertPicker";
 import { QuickStartCard } from "@/components/onboarding/QuickStartCard";
+import { trackTelemetry } from "@/lib/telemetry";
+import { ONBOARDING_VERSION } from "@/config/onboarding";
 
 export default function AppShell() {
   const { state, dispatch } = useConsultation();
@@ -33,6 +35,7 @@ export default function AppShell() {
   const [showInsertPicker, setShowInsertPicker] = useState(false);
   const editorRef = useRef<HTMLTextAreaElement | null>(null);
   const rightPaneRef = useRef<HTMLDivElement | null>(null);
+  const quickStartVisibleRef = useRef(false);
   const composedSections = useMemo(
     () => (topic ? buildComposerSections(topic, state) : []),
     [topic, state]
@@ -175,11 +178,23 @@ export default function AppShell() {
       title: "Section sync complete",
       description: `Updated ${counts.updated}, unchanged ${counts.unchanged}, detached ${counts.detached}, missing ${counts.missing}, not linked ${counts.notLinked}.`,
     });
+    trackTelemetry(
+      "section_sync_executed",
+      {
+        updated: counts.updated,
+        unchanged: counts.unchanged,
+        detached: counts.detached,
+        missing: counts.missing,
+        not_linked: counts.notLinked,
+      },
+      { enabled: state.uiPrefs.telemetryEnabled }
+    );
   }, [
     topic,
     composedSections,
     state.editorAnchors,
     state.editorText,
+    state.uiPrefs.telemetryEnabled,
     dispatch,
     updateEditorText,
     toast,
@@ -219,6 +234,60 @@ export default function AppShell() {
   const insertCurrentRightSection = useCallback(() => {
     setShowInsertPicker(true);
   }, []);
+
+  const dismissQuickStart = useCallback(() => {
+    dispatch({
+      type: "SET_UI_PREF",
+      key: "onboardingDismissed",
+      value: true,
+    });
+    dispatch({
+      type: "SET_UI_PREF",
+      key: "onboardingSeenVersion",
+      value: ONBOARDING_VERSION,
+    });
+    trackTelemetry(
+      "quick_start_dismissed",
+      { version: ONBOARDING_VERSION },
+      { enabled: state.uiPrefs.telemetryEnabled }
+    );
+  }, [dispatch, state.uiPrefs.telemetryEnabled]);
+
+  const reopenQuickStart = useCallback(() => {
+    dispatch({
+      type: "SET_UI_PREF",
+      key: "onboardingDismissed",
+      value: false,
+    });
+    dispatch({
+      type: "SET_UI_PREF",
+      key: "onboardingSeenVersion",
+      value: ONBOARDING_VERSION,
+    });
+    trackTelemetry(
+      "quick_start_reopened",
+      { version: ONBOARDING_VERSION },
+      { enabled: state.uiPrefs.telemetryEnabled }
+    );
+  }, [dispatch, state.uiPrefs.telemetryEnabled]);
+
+  useEffect(() => {
+    if (state.uiPrefs.onboardingDismissed) {
+      quickStartVisibleRef.current = false;
+      return;
+    }
+    if (quickStartVisibleRef.current) return;
+    quickStartVisibleRef.current = true;
+    trackTelemetry(
+      "quick_start_shown",
+      { version: state.uiPrefs.onboardingSeenVersion || ONBOARDING_VERSION },
+      { enabled: state.uiPrefs.telemetryEnabled }
+    );
+  }, [
+    state.uiPrefs.onboardingDismissed,
+    state.uiPrefs.onboardingSeenVersion,
+    state.uiPrefs.telemetryEnabled,
+  ]);
 
   useKeyboardShortcuts({
     onCommandPalette: () => setShowPalette(true),
@@ -273,12 +342,37 @@ export default function AppShell() {
             className="text-xs px-2 py-1 rounded border bg-secondary text-secondary-foreground hover:bg-accent transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
             title={
               hasLinkedSections
-                ? "Sync inserted sections from the right pane. Manually edited blocks stay untouched."
+                ? "Refresh linked right-pane sections in the editor. Manually edited blocks are preserved."
                 : "Insert a section into the editor to enable sync."
             }
           >
             Sync Inserted Sections
           </button>
+          {state.uiPrefs.onboardingDismissed && (
+            <button
+              onClick={reopenQuickStart}
+              className="text-xs px-2 py-1 rounded border bg-secondary text-secondary-foreground hover:bg-accent transition-colors"
+              title="Reopen the quick-start workflow guide"
+            >
+              Show Quick Start
+            </button>
+          )}
+          <button
+            onClick={() =>
+              dispatch({
+                type: "SET_UI_PREF",
+                key: "telemetryEnabled",
+                value: !state.uiPrefs.telemetryEnabled,
+              })
+            }
+            className="text-xs px-2 py-1 rounded border bg-secondary text-secondary-foreground hover:bg-accent transition-colors"
+            title="Workflow telemetry only. No note text is sent."
+          >
+            Telemetry: {state.uiPrefs.telemetryEnabled ? "On" : "Off"}
+          </button>
+          <span className="hidden xl:inline text-[10px] text-muted-foreground">
+            Workflow telemetry only. No note text sent.
+          </span>
           <button
             onClick={() =>
               dispatch({
@@ -295,19 +389,14 @@ export default function AppShell() {
             onClick={() => setShowShortcuts(true)}
             className="text-xs px-2 py-1 rounded border bg-secondary text-secondary-foreground hover:bg-accent transition-colors"
           >
-            ?
+            Shortcuts (?)
           </button>
         </div>
       </header>
       {!state.uiPrefs.onboardingDismissed && (
         <QuickStartCard
-          onDismiss={() =>
-            dispatch({
-              type: "SET_UI_PREF",
-              key: "onboardingDismissed",
-              value: true,
-            })
-          }
+          onDismiss={dismissQuickStart}
+          onShowShortcuts={() => setShowShortcuts(true)}
         />
       )}
 

@@ -332,6 +332,12 @@
         "includeByDefault": true
       },
       {
+        "id": "ddx-assessment",
+        "title": "Working Differential",
+        "source": "ddx",
+        "includeByDefault": true
+      },
+      {
         "id": "plan",
         "title": "Plan",
         "source": "structured",
@@ -372,8 +378,8 @@
           "IV drug use or immunosuppression",
           "Thoracic spine pain"
         ],
-        "whyDangerous": "Potential for significant harm if missed.",
-        "escalationConcern": "Escalate urgently if suspected based on assessment."
+        "whyDangerous": "Delayed decompression can cause permanent bladder, bowel, and neurological deficits.",
+        "escalationConcern": "Immediate emergency referral for saddle anesthesia or bladder/bowel dysfunction."
       },
       {
         "condition": "Spinal fracture",
@@ -389,8 +395,8 @@
           "IV drug use or immunosuppression",
           "Thoracic spine pain"
         ],
-        "whyDangerous": "Potential for significant harm if missed.",
-        "escalationConcern": "Escalate urgently if suspected based on assessment."
+        "whyDangerous": "Instability can worsen neurological outcomes without prompt immobilization and imaging.",
+        "escalationConcern": "Urgent emergency assessment for trauma-related pain or high fracture risk features."
       },
       {
         "condition": "Spinal malignancy/metastasis",
@@ -406,8 +412,8 @@
           "IV drug use or immunosuppression",
           "Thoracic spine pain"
         ],
-        "whyDangerous": "Potential for significant harm if missed.",
-        "escalationConcern": "Escalate urgently if suspected based on assessment."
+        "whyDangerous": "Delay risks cord compression and loss of function.",
+        "escalationConcern": "Urgent imaging/referral for cancer history with progressive pain or neurological deficits."
       },
       {
         "condition": "Spinal infection (discitis/epidural abscess)",
@@ -423,8 +429,8 @@
           "IV drug use or immunosuppression",
           "Thoracic spine pain"
         ],
-        "whyDangerous": "Potential for significant harm if missed.",
-        "escalationConcern": "Escalate urgently if suspected based on assessment."
+        "whyDangerous": "Can progress rapidly to sepsis and irreversible neurological injury.",
+        "escalationConcern": "Same-day emergency pathway for fever, severe pain, and risk factors such as IV drug use."
       },
       {
         "condition": "Abdominal aortic aneurysm (AAA)",
@@ -440,8 +446,8 @@
           "IV drug use or immunosuppression",
           "Thoracic spine pain"
         ],
-        "whyDangerous": "Potential for significant harm if missed.",
-        "escalationConcern": "Escalate urgently if suspected based on assessment."
+        "whyDangerous": "Leak or rupture can be rapidly fatal.",
+        "escalationConcern": "Immediate emergency transfer for back pain with collapse, hypotension, or vascular risk profile."
       }
     ],
     "discriminators": [
@@ -550,13 +556,13 @@
     "diagnoses": {
       "common": [
         {
-          "name": "Mechanical vs inflammatory pattern"
+          "name": "Mechanical low back pain"
         },
         {
-          "name": "Presence of radiculopathy"
+          "name": "Lumbar radiculopathy (sciatica)"
         },
         {
-          "name": "Duration: acute (<6w) vs chronic (>12w)"
+          "name": "Acute lumbar muscular strain"
         }
       ],
       "mustNotMiss": [
@@ -578,7 +584,7 @@
       ],
       "oftenMissed": [
         {
-          "name": "Atypical presentation of Cauda equina syndrome"
+          "name": "Vertebral compression fracture"
         }
       ]
     },

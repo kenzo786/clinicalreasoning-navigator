@@ -294,6 +294,12 @@
         "includeByDefault": true
       },
       {
+        "id": "ddx-assessment",
+        "title": "Working Differential",
+        "source": "ddx",
+        "includeByDefault": true
+      },
+      {
         "id": "plan",
         "title": "Plan",
         "source": "structured",
@@ -330,8 +336,8 @@
           "Visible frank haematuria",
           "Immunosuppressed patient"
         ],
-        "whyDangerous": "Potential for significant harm if missed.",
-        "escalationConcern": "Escalate urgently if suspected based on assessment."
+        "whyDangerous": "Can progress to sepsis and renal complications without prompt treatment.",
+        "escalationConcern": "Urgent same-day escalation for fever, flank pain, vomiting, or systemic unwellness."
       },
       {
         "condition": "Urosepsis",
@@ -343,8 +349,8 @@
           "Visible frank haematuria",
           "Immunosuppressed patient"
         ],
-        "whyDangerous": "Potential for significant harm if missed.",
-        "escalationConcern": "Escalate urgently if suspected based on assessment."
+        "whyDangerous": "High morbidity and mortality if not recognized early.",
+        "escalationConcern": "Emergency referral for hypotension, confusion, rigors, or persistent tachycardia."
       },
       {
         "condition": "Urinary retention",
@@ -356,8 +362,8 @@
           "Visible frank haematuria",
           "Immunosuppressed patient"
         ],
-        "whyDangerous": "Potential for significant harm if missed.",
-        "escalationConcern": "Escalate urgently if suspected based on assessment."
+        "whyDangerous": "Can cause obstructive renal injury and infection progression.",
+        "escalationConcern": "Same-day urgent assessment for suprapubic pain with inability to pass urine."
       },
       {
         "condition": "Renal abscess",
@@ -369,8 +375,8 @@
           "Visible frank haematuria",
           "Immunosuppressed patient"
         ],
-        "whyDangerous": "Potential for significant harm if missed.",
-        "escalationConcern": "Escalate urgently if suspected based on assessment."
+        "whyDangerous": "Requires urgent imaging and specialist treatment to avoid severe sepsis.",
+        "escalationConcern": "Urgent hospital assessment for persistent fever/flank pain despite treatment."
       },
       {
         "condition": "Pregnancy-related UTI (high risk)",
@@ -382,8 +388,8 @@
           "Visible frank haematuria",
           "Immunosuppressed patient"
         ],
-        "whyDangerous": "Potential for significant harm if missed.",
-        "escalationConcern": "Escalate urgently if suspected based on assessment."
+        "whyDangerous": "Associated with maternal and fetal complications if inadequately managed.",
+        "escalationConcern": "Urgent review and pregnancy-safe management when UTI occurs in pregnancy."
       }
     ],
     "discriminators": [
@@ -492,13 +498,13 @@
     "diagnoses": {
       "common": [
         {
-          "name": "Lower vs upper tract symptoms"
+          "name": "Uncomplicated lower UTI"
         },
         {
-          "name": "Complicated vs uncomplicated (pregnancy, male, structural)"
+          "name": "Urethritis or STI mimic"
         },
         {
-          "name": "Recurrent vs isolated episode"
+          "name": "Vaginal/urogenital irritation presenting as dysuria"
         }
       ],
       "mustNotMiss": [
@@ -520,7 +526,7 @@
       ],
       "oftenMissed": [
         {
-          "name": "Atypical presentation of Pyelonephritis"
+          "name": "Nephrolithiasis presenting with urinary symptoms"
         }
       ]
     },

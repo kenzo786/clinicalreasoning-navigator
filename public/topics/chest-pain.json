@@ -27,18 +27,31 @@
   ],
   "reasoning": {
     "discriminators": [
-      "Onset and progression",
-      "Severity and impact",
-      "Associated red flags"
+      "Cardiac vs pleuritic vs musculoskeletal pain characteristics",
+      "Exertional trigger, radiation, and associated autonomic symptoms",
+      "Breathlessness, hypoxia, or syncope",
+      "VTE and cardiovascular risk factors",
+      "Abnormal observations or ECG changes if available"
     ],
     "mustNotMiss": [
-      "Serious pathology"
+      "Acute coronary syndrome",
+      "Pulmonary embolism",
+      "Aortic dissection",
+      "Tension pneumothorax"
     ],
     "redFlags": [
-      "Rapid deterioration",
-      "Systemic instability"
+      "Central chest pressure lasting >15 minutes",
+      "Syncope, presyncope, or hemodynamic instability",
+      "Breathlessness with hypoxia or pleuritic pain",
+      "Radiation to jaw or arm with diaphoresis",
+      "New neurological deficit or tearing chest/back pain"
     ],
-    "references": []
+    "references": [
+      {
+        "label": "NICE CKS - Chest pain",
+        "url": "https://cks.nice.org.uk/topics/chest-pain/"
+      }
+    ]
   },
   "structuredFields": [
     {
@@ -177,24 +190,83 @@
   },
   "review": {
     "illnessScript": {
-      "summary": "Chest Pain consultation framework for 10-minute primary-care assessment."
+      "summary": "Chest pain in primary care: rapidly separate life-threatening cardiopulmonary causes from common non-cardiac pain while documenting risk clearly."
     },
     "mustNotMiss": [
       {
-        "condition": "Serious pathology",
+        "condition": "Acute coronary syndrome",
         "redFlags": [
-          "Rapid deterioration",
-          "Systemic instability"
+          "Central chest pressure lasting >15 minutes",
+          "Syncope, presyncope, or hemodynamic instability",
+          "Breathlessness with hypoxia or pleuritic pain",
+          "Radiation to jaw or arm with diaphoresis",
+          "New neurological deficit or tearing chest/back pain"
         ],
-        "whyDangerous": "Delayed recognition may result in avoidable harm.",
-        "escalationConcern": "Escalate same-day if concern persists after assessment."
+        "whyDangerous": "Missed ischemia can lead to arrhythmia, heart failure, or sudden death.",
+        "escalationConcern": "Emergency referral for suspected ACS symptoms or unstable observations."
+      },
+      {
+        "condition": "Pulmonary embolism",
+        "redFlags": [
+          "Central chest pressure lasting >15 minutes",
+          "Syncope, presyncope, or hemodynamic instability",
+          "Breathlessness with hypoxia or pleuritic pain",
+          "Radiation to jaw or arm with diaphoresis",
+          "New neurological deficit or tearing chest/back pain"
+        ],
+        "whyDangerous": "Can deteriorate quickly with cardiovascular collapse.",
+        "escalationConcern": "Urgent hospital assessment for pleuritic pain with dyspnea, tachycardia, or VTE risk."
+      },
+      {
+        "condition": "Aortic dissection",
+        "redFlags": [
+          "Central chest pressure lasting >15 minutes",
+          "Syncope, presyncope, or hemodynamic instability",
+          "Breathlessness with hypoxia or pleuritic pain",
+          "Radiation to jaw or arm with diaphoresis",
+          "New neurological deficit or tearing chest/back pain"
+        ],
+        "whyDangerous": "Time-critical vascular emergency with high mortality.",
+        "escalationConcern": "Immediate emergency transfer for abrupt tearing chest or back pain."
+      },
+      {
+        "condition": "Tension pneumothorax",
+        "redFlags": [
+          "Central chest pressure lasting >15 minutes",
+          "Syncope, presyncope, or hemodynamic instability",
+          "Breathlessness with hypoxia or pleuritic pain",
+          "Radiation to jaw or arm with diaphoresis",
+          "New neurological deficit or tearing chest/back pain"
+        ],
+        "whyDangerous": "Can cause rapidly progressive respiratory and circulatory compromise.",
+        "escalationConcern": "Emergency transfer for acute unilateral pleuritic pain with respiratory distress."
       }
     ],
     "discriminators": [
       {
-        "question": "What changes urgency in this presentation?",
-        "reasoning": "Prioritises immediate risk over routine symptom management.",
-        "clinicalValue": "Supports safer triage and disposition decisions."
+        "question": "Cardiac vs pleuritic vs musculoskeletal pain characteristics",
+        "reasoning": "Helps prioritize immediate risk while refining the working diagnosis.",
+        "clinicalValue": "Improves triage decisions and reduces missed serious disease."
+      },
+      {
+        "question": "Exertional trigger, radiation, and associated autonomic symptoms",
+        "reasoning": "Helps prioritize immediate risk while refining the working diagnosis.",
+        "clinicalValue": "Improves triage decisions and reduces missed serious disease."
+      },
+      {
+        "question": "Breathlessness, hypoxia, or syncope",
+        "reasoning": "Helps prioritize immediate risk while refining the working diagnosis.",
+        "clinicalValue": "Improves triage decisions and reduces missed serious disease."
+      },
+      {
+        "question": "VTE and cardiovascular risk factors",
+        "reasoning": "Helps prioritize immediate risk while refining the working diagnosis.",
+        "clinicalValue": "Improves triage decisions and reduces missed serious disease."
+      },
+      {
+        "question": "Abnormal observations or ECG changes if available",
+        "reasoning": "Helps prioritize immediate risk while refining the working diagnosis.",
+        "clinicalValue": "Improves triage decisions and reduces missed serious disease."
       }
     ],
     "historyPrompts": [
@@ -236,17 +308,32 @@
     "diagnoses": {
       "common": [
         {
-          "name": "Likely benign presentation"
+          "name": "Musculoskeletal chest wall pain"
+        },
+        {
+          "name": "Gastro-oesophageal reflux"
+        },
+        {
+          "name": "Anxiety-related chest discomfort"
         }
       ],
       "mustNotMiss": [
         {
-          "name": "Serious pathology"
+          "name": "Acute coronary syndrome"
+        },
+        {
+          "name": "Pulmonary embolism"
+        },
+        {
+          "name": "Aortic dissection"
+        },
+        {
+          "name": "Tension pneumothorax"
         }
       ],
       "oftenMissed": [
         {
-          "name": "Atypical presentation of Serious pathology"
+          "name": "Pericarditis"
         }
       ]
     },
@@ -276,16 +363,23 @@
       "pharmacologicalConcepts": [],
       "delayedStrategies": [],
       "followUpLogic": [
-        "Follow-up based on risk trajectory and response."
+        "Escalate immediately for any features of ACS, PE, dissection, or pneumothorax.",
+        "Use documented risk factors to determine urgency of investigation and referral.",
+        "Safety-net explicitly for recurrence, worsening pain, syncope, or breathlessness."
       ]
     },
     "safetyNetting": {
       "returnAdvice": [
-        "Return if symptoms worsen or new red flags emerge."
+        "Call emergency services for persistent chest pain, collapse, or severe breathlessness.",
+        "Seek urgent reassessment for new radiation of pain, vomiting, or sweating.",
+        "Return urgently if symptoms worsen despite initial treatment plan."
       ],
       "escalationTriggers": [
-        "Rapid deterioration",
-        "Systemic instability"
+        "Central chest pressure lasting >15 minutes",
+        "Syncope, presyncope, or hemodynamic instability",
+        "Breathlessness with hypoxia or pleuritic pain",
+        "Radiation to jaw or arm with diaphoresis",
+        "New neurological deficit or tearing chest/back pain"
       ]
     },
     "mindset": "Balance efficiency with explicit risk documentation."
@@ -327,9 +421,11 @@
   },
   "ddx": {
     "evidencePrompts": [
-      "Duration",
-      "Severity",
-      "Red flag screen"
+      "Cardiac vs pleuritic vs musculoskeletal pain characteristics",
+      "Exertional trigger, radiation, and associated autonomic symptoms",
+      "Breathlessness, hypoxia, or syncope",
+      "VTE and cardiovascular risk factors",
+      "Abnormal observations or ECG changes if available"
     ],
     "compareEnabled": true
   },

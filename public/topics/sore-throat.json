@@ -24,7 +24,7 @@
       "trigger": "centor",
       "label": "Centor Criteria",
       "category": "Assessment",
-      "content": "Centor score: {0|1|2|3*|4}/4\n- Tonsillar exudate: {yes|no*}\n- Tender anterior cervical lymphadenopathy: {yes|no*}\n- Fever >38°C: {yes|no*}\n- Absence of cough: {yes|no*}"
+      "content": "Centor score (manual entry): [Centor score 0-4]/4\n- Tonsillar exudate: [yes/no]\n- Tender anterior cervical lymphadenopathy: [yes/no]\n- Fever >38C: [yes/no]\n- Absence of cough: [yes/no]"
     },
     {
       "id": "st-exam",
@@ -282,6 +282,12 @@
         "includeByDefault": true
       },
       {
+        "id": "ddx-assessment",
+        "title": "Working Differential",
+        "source": "ddx",
+        "includeByDefault": true
+      },
+      {
         "id": "plan",
         "title": "Plan",
         "source": "structured",
@@ -318,8 +324,8 @@
           "Neck swelling with systemic toxicity",
           "Immunocompromised patient"
         ],
-        "whyDangerous": "Potential for significant harm if missed.",
-        "escalationConcern": "Escalate urgently if suspected based on assessment."
+        "whyDangerous": "Can compromise airway and require urgent drainage.",
+        "escalationConcern": "Urgent ENT referral for trismus, unilateral swelling, muffled voice, or drooling."
       },
       {
         "condition": "Epiglottitis",
@@ -331,8 +337,8 @@
           "Neck swelling with systemic toxicity",
           "Immunocompromised patient"
         ],
-        "whyDangerous": "Potential for significant harm if missed.",
-        "escalationConcern": "Escalate urgently if suspected based on assessment."
+        "whyDangerous": "Rapid airway compromise can occur, especially with delayed treatment.",
+        "escalationConcern": "Immediate emergency escalation for stridor, drooling, or severe dysphagia."
       },
       {
         "condition": "Ludwig's angina",
@@ -344,8 +350,8 @@
           "Neck swelling with systemic toxicity",
           "Immunocompromised patient"
         ],
-        "whyDangerous": "Potential for significant harm if missed.",
-        "escalationConcern": "Escalate urgently if suspected based on assessment."
+        "whyDangerous": "Deep neck infection can spread quickly and threaten airway patency.",
+        "escalationConcern": "Emergency transfer for floor-of-mouth swelling, systemic toxicity, or airway concern."
       },
       {
         "condition": "Lemierre syndrome",
@@ -357,8 +363,8 @@
           "Neck swelling with systemic toxicity",
           "Immunocompromised patient"
         ],
-        "whyDangerous": "Potential for significant harm if missed.",
-        "escalationConcern": "Escalate urgently if suspected based on assessment."
+        "whyDangerous": "Septic thrombophlebitis can cause metastatic infection and sepsis.",
+        "escalationConcern": "Urgent hospital assessment for severe sore throat with neck swelling and systemic illness."
       },
       {
         "condition": "Retropharyngeal abscess",
@@ -370,8 +376,8 @@
           "Neck swelling with systemic toxicity",
           "Immunocompromised patient"
         ],
-        "whyDangerous": "Potential for significant harm if missed.",
-        "escalationConcern": "Escalate urgently if suspected based on assessment."
+        "whyDangerous": "Can progress to airway obstruction and mediastinal spread.",
+        "escalationConcern": "Emergency referral for neck stiffness, dysphagia, respiratory distress, or toxic appearance."
       }
     ],
     "discriminators": [
@@ -465,13 +471,13 @@
     "diagnoses": {
       "common": [
         {
-          "name": "Duration and progression of symptoms"
+          "name": "Viral pharyngitis"
         },
         {
-          "name": "Centor criteria score"
+          "name": "Streptococcal tonsillitis"
         },
         {
-          "name": "Presence of systemic features"
+          "name": "Infectious mononucleosis"
         }
       ],
       "mustNotMiss": [
@@ -493,7 +499,7 @@
       ],
       "oftenMissed": [
         {
-          "name": "Atypical presentation of Peritonsillar abscess (quinsy)"
+          "name": "Early peritonsillar abscess presentation"
         }
       ]
     },

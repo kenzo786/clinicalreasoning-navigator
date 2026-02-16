@@ -5,6 +5,7 @@ import { useConsultation } from "@/context/ConsultationProvider";
 import { buildComposerSections, getComposerLinkStatePresentation } from "@/lib/composer";
 import { buildExportForFormat } from "@/lib/exportFormats";
 import { useToast } from "@/hooks/use-toast";
+import { trackTelemetry } from "@/lib/telemetry";
 import {
   Copy,
   Check,
@@ -77,17 +78,32 @@ export function PreviewPane({ topic, onClose, onInsertSection, onAppendSection }
       toast({ title: "Nothing to download", description: "No output text available." });
       return;
     }
+    const datePart = new Date().toISOString().slice(0, 10);
+    const fileName = `clinical_note_${exportFormat}_${datePart}.txt`;
+    const byteSize = new TextEncoder().encode(fileText).length;
+    const kbSize = (byteSize / 1024).toFixed(1);
     const blob = new Blob([fileText], { type: "text/plain;charset=utf-8" });
     const url = URL.createObjectURL(blob);
     const link = document.createElement("a");
     link.href = url;
-    link.download = `crx-note-${exportFormat}.txt`;
+    link.download = fileName;
     document.body.appendChild(link);
     link.click();
     link.remove();
     URL.revokeObjectURL(url);
-    toast({ title: "Downloaded", description: "Output saved as .txt" });
-  }, [displayText, exportFormat, toast]);
+    toast({
+      title: "Downloaded",
+      description: `${fileName} (${kbSize} KB)`,
+    });
+    trackTelemetry(
+      "export_download_triggered",
+      {
+        format: exportFormat,
+        size_bytes: byteSize,
+      },
+      { enabled: state.uiPrefs.telemetryEnabled }
+    );
+  }, [displayText, exportFormat, state.uiPrefs.telemetryEnabled, toast]);
 
   return (
     <div className="flex flex-col h-full bg-card">
@@ -126,7 +142,15 @@ export function PreviewPane({ topic, onClose, onInsertSection, onAppendSection }
         <select
           aria-label="Format"
           value={exportFormat}
-          onChange={(e) => setExportFormat(e.target.value as ExportFormat)}
+          onChange={(e) => {
+            const next = e.target.value as ExportFormat;
+            setExportFormat(next);
+            trackTelemetry(
+              "export_format_selected",
+              { format: next },
+              { enabled: state.uiPrefs.telemetryEnabled }
+            );
+          }}
           className="h-7 rounded border bg-background px-2 text-xs"
         >
           <option value="raw">Raw</option>

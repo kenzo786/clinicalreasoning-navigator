@@ -27,18 +27,30 @@
   ],
   "reasoning": {
     "discriminators": [
-      "Onset and progression",
-      "Severity and impact",
-      "Associated red flags"
+      "Duration and trajectory beyond 10 days",
+      "Unilateral facial pain, dental pain, and purulent discharge",
+      "Periorbital swelling or visual symptoms",
+      "Severe frontal headache or neurological symptoms",
+      "Systemic illness or immunocompromised status"
     ],
     "mustNotMiss": [
-      "Serious pathology"
+      "Orbital cellulitis",
+      "Intracranial extension (abscess or meningitis)",
+      "Cavernous sinus thrombosis"
     ],
     "redFlags": [
-      "Rapid deterioration",
-      "Systemic instability"
+      "Periorbital edema, erythema, or painful eye movement",
+      "Visual disturbance, diplopia, or reduced acuity",
+      "Severe unilateral frontal headache or altered mental state",
+      "High persistent fever with systemic toxicity",
+      "Neurological deficits or meningism"
     ],
-    "references": []
+    "references": [
+      {
+        "label": "NICE CKS - Sinusitis",
+        "url": "https://cks.nice.org.uk/topics/sinusitis/"
+      }
+    ]
   },
   "structuredFields": [
     {
@@ -177,24 +189,71 @@
   },
   "review": {
     "illnessScript": {
-      "summary": "Sinusitis consultation framework for 10-minute primary-care assessment."
+      "summary": "Sinusitis in primary care: distinguish viral and bacterial disease while actively screening for orbital and intracranial complications."
     },
     "mustNotMiss": [
       {
-        "condition": "Serious pathology",
+        "condition": "Orbital cellulitis",
         "redFlags": [
-          "Rapid deterioration",
-          "Systemic instability"
+          "Periorbital edema, erythema, or painful eye movement",
+          "Visual disturbance, diplopia, or reduced acuity",
+          "Severe unilateral frontal headache or altered mental state",
+          "High persistent fever with systemic toxicity",
+          "Neurological deficits or meningism"
         ],
-        "whyDangerous": "Delayed recognition may result in avoidable harm.",
-        "escalationConcern": "Escalate same-day if concern persists after assessment."
+        "whyDangerous": "Can rapidly threaten vision and spread intracranially.",
+        "escalationConcern": "Urgent same-day emergency/ENT-ophthalmology pathway for orbital red flags."
+      },
+      {
+        "condition": "Intracranial extension (abscess or meningitis)",
+        "redFlags": [
+          "Periorbital edema, erythema, or painful eye movement",
+          "Visual disturbance, diplopia, or reduced acuity",
+          "Severe unilateral frontal headache or altered mental state",
+          "High persistent fever with systemic toxicity",
+          "Neurological deficits or meningism"
+        ],
+        "whyDangerous": "Potentially fatal without immediate recognition and treatment.",
+        "escalationConcern": "Emergency transfer for severe headache, focal neurology, or meningism."
+      },
+      {
+        "condition": "Cavernous sinus thrombosis",
+        "redFlags": [
+          "Periorbital edema, erythema, or painful eye movement",
+          "Visual disturbance, diplopia, or reduced acuity",
+          "Severe unilateral frontal headache or altered mental state",
+          "High persistent fever with systemic toxicity",
+          "Neurological deficits or meningism"
+        ],
+        "whyDangerous": "Can cause rapid neurological decline and cranial nerve deficits.",
+        "escalationConcern": "Emergency referral for headache with ophthalmoplegia, chemosis, or sepsis features."
       }
     ],
     "discriminators": [
       {
-        "question": "What changes urgency in this presentation?",
-        "reasoning": "Prioritises immediate risk over routine symptom management.",
-        "clinicalValue": "Supports safer triage and disposition decisions."
+        "question": "Duration and trajectory beyond 10 days",
+        "reasoning": "Helps prioritize immediate risk while refining the working diagnosis.",
+        "clinicalValue": "Improves triage decisions and reduces missed serious disease."
+      },
+      {
+        "question": "Unilateral facial pain, dental pain, and purulent discharge",
+        "reasoning": "Helps prioritize immediate risk while refining the working diagnosis.",
+        "clinicalValue": "Improves triage decisions and reduces missed serious disease."
+      },
+      {
+        "question": "Periorbital swelling or visual symptoms",
+        "reasoning": "Helps prioritize immediate risk while refining the working diagnosis.",
+        "clinicalValue": "Improves triage decisions and reduces missed serious disease."
+      },
+      {
+        "question": "Severe frontal headache or neurological symptoms",
+        "reasoning": "Helps prioritize immediate risk while refining the working diagnosis.",
+        "clinicalValue": "Improves triage decisions and reduces missed serious disease."
+      },
+      {
+        "question": "Systemic illness or immunocompromised status",
+        "reasoning": "Helps prioritize immediate risk while refining the working diagnosis.",
+        "clinicalValue": "Improves triage decisions and reduces missed serious disease."
       }
     ],
     "historyPrompts": [
@@ -236,17 +295,29 @@
     "diagnoses": {
       "common": [
         {
-          "name": "Likely benign presentation"
+          "name": "Acute viral rhinosinusitis"
+        },
+        {
+          "name": "Acute bacterial sinusitis"
+        },
+        {
+          "name": "Allergic rhinitis with sinus pressure"
         }
       ],
       "mustNotMiss": [
         {
-          "name": "Serious pathology"
+          "name": "Orbital cellulitis"
+        },
+        {
+          "name": "Intracranial extension (abscess or meningitis)"
+        },
+        {
+          "name": "Cavernous sinus thrombosis"
         }
       ],
       "oftenMissed": [
         {
-          "name": "Atypical presentation of Serious pathology"
+          "name": "Dental source maxillary sinusitis"
         }
       ]
     },
@@ -276,16 +347,23 @@
       "pharmacologicalConcepts": [],
       "delayedStrategies": [],
       "followUpLogic": [
-        "Follow-up based on risk trajectory and response."
+        "Escalate immediately for orbital, neurological, or systemic toxicity red flags.",
+        "Use symptom duration and severity to guide watchful waiting vs treatment escalation.",
+        "Safety-net for visual change, severe headache progression, or persistent fever."
       ]
     },
     "safetyNetting": {
       "returnAdvice": [
-        "Return if symptoms worsen or new red flags emerge."
+        "Seek urgent care for eye swelling, visual symptoms, or painful eye movement.",
+        "Seek urgent care for severe headache, confusion, neck stiffness, or high fever.",
+        "Return if symptoms worsen or fail to improve as advised."
       ],
       "escalationTriggers": [
-        "Rapid deterioration",
-        "Systemic instability"
+        "Periorbital edema, erythema, or painful eye movement",
+        "Visual disturbance, diplopia, or reduced acuity",
+        "Severe unilateral frontal headache or altered mental state",
+        "High persistent fever with systemic toxicity",
+        "Neurological deficits or meningism"
       ]
     },
     "mindset": "Balance efficiency with explicit risk documentation."
@@ -327,9 +405,11 @@
   },
   "ddx": {
     "evidencePrompts": [
-      "Duration",
-      "Severity",
-      "Red flag screen"
+      "Duration and trajectory beyond 10 days",
+      "Unilateral facial pain, dental pain, and purulent discharge",
+      "Periorbital swelling or visual symptoms",
+      "Severe frontal headache or neurological symptoms",
+      "Systemic illness or immunocompromised status"
     ],
     "compareEnabled": true
   },

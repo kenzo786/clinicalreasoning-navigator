@@ -27,18 +27,31 @@
   ],
   "reasoning": {
     "discriminators": [
-      "Onset and progression",
-      "Severity and impact",
-      "Associated red flags"
+      "Persistently elevated home/clinic blood pressure trend",
+      "Evidence of end-organ symptoms or target-organ damage",
+      "Medication adherence and adverse effects",
+      "Secondary-cause indicators",
+      "Cardiovascular risk profile and comorbidity burden"
     ],
     "mustNotMiss": [
-      "Serious pathology"
+      "Hypertensive emergency",
+      "Stroke or transient ischemic attack",
+      "Acute coronary syndrome",
+      "Secondary hypertension due to renal or endocrine disease"
     ],
     "redFlags": [
-      "Rapid deterioration",
-      "Systemic instability"
+      "Blood pressure >=180/120 mmHg with symptoms",
+      "Chest pain, dyspnea, or acute heart failure symptoms",
+      "New focal neurological symptoms or confusion",
+      "Acute visual disturbance or papilloedema concern",
+      "Acute kidney injury symptoms or markedly reduced urine output"
     ],
-    "references": []
+    "references": [
+      {
+        "label": "NICE NG136 - Hypertension in adults",
+        "url": "https://www.nice.org.uk/guidance/ng136"
+      }
+    ]
   },
   "structuredFields": [
     {
@@ -177,24 +190,83 @@
   },
   "review": {
     "illnessScript": {
-      "summary": "Hypertension Review consultation framework for 10-minute primary-care assessment."
+      "summary": "Hypertension review in primary care: confirm blood-pressure trajectory, detect end-organ risk, and optimize treatment adherence and follow-up."
     },
     "mustNotMiss": [
       {
-        "condition": "Serious pathology",
+        "condition": "Hypertensive emergency",
         "redFlags": [
-          "Rapid deterioration",
-          "Systemic instability"
+          "Blood pressure >=180/120 mmHg with symptoms",
+          "Chest pain, dyspnea, or acute heart failure symptoms",
+          "New focal neurological symptoms or confusion",
+          "Acute visual disturbance or papilloedema concern",
+          "Acute kidney injury symptoms or markedly reduced urine output"
         ],
-        "whyDangerous": "Delayed recognition may result in avoidable harm.",
-        "escalationConcern": "Escalate same-day if concern persists after assessment."
+        "whyDangerous": "Acute end-organ injury can progress quickly without urgent treatment.",
+        "escalationConcern": "Emergency referral for very high blood pressure with neurological, cardiac, or renal symptoms."
+      },
+      {
+        "condition": "Stroke or transient ischemic attack",
+        "redFlags": [
+          "Blood pressure >=180/120 mmHg with symptoms",
+          "Chest pain, dyspnea, or acute heart failure symptoms",
+          "New focal neurological symptoms or confusion",
+          "Acute visual disturbance or papilloedema concern",
+          "Acute kidney injury symptoms or markedly reduced urine output"
+        ],
+        "whyDangerous": "Delay in diagnosis may miss a narrow therapeutic window.",
+        "escalationConcern": "Immediate emergency pathway for new focal neurological deficit or transient neurological events."
+      },
+      {
+        "condition": "Acute coronary syndrome",
+        "redFlags": [
+          "Blood pressure >=180/120 mmHg with symptoms",
+          "Chest pain, dyspnea, or acute heart failure symptoms",
+          "New focal neurological symptoms or confusion",
+          "Acute visual disturbance or papilloedema concern",
+          "Acute kidney injury symptoms or markedly reduced urine output"
+        ],
+        "whyDangerous": "Untreated myocardial ischemia can lead to infarction and arrhythmia.",
+        "escalationConcern": "Emergency transfer for ischemic chest pain with elevated blood pressure."
+      },
+      {
+        "condition": "Secondary hypertension due to renal or endocrine disease",
+        "redFlags": [
+          "Blood pressure >=180/120 mmHg with symptoms",
+          "Chest pain, dyspnea, or acute heart failure symptoms",
+          "New focal neurological symptoms or confusion",
+          "Acute visual disturbance or papilloedema concern",
+          "Acute kidney injury symptoms or markedly reduced urine output"
+        ],
+        "whyDangerous": "Missed reversible causes can drive uncontrolled long-term risk.",
+        "escalationConcern": "Expedited specialist workup when clinical features suggest secondary etiology."
       }
     ],
     "discriminators": [
       {
-        "question": "What changes urgency in this presentation?",
-        "reasoning": "Prioritises immediate risk over routine symptom management.",
-        "clinicalValue": "Supports safer triage and disposition decisions."
+        "question": "Persistently elevated home/clinic blood pressure trend",
+        "reasoning": "Helps prioritize immediate risk while refining the working diagnosis.",
+        "clinicalValue": "Improves triage decisions and reduces missed serious disease."
+      },
+      {
+        "question": "Evidence of end-organ symptoms or target-organ damage",
+        "reasoning": "Helps prioritize immediate risk while refining the working diagnosis.",
+        "clinicalValue": "Improves triage decisions and reduces missed serious disease."
+      },
+      {
+        "question": "Medication adherence and adverse effects",
+        "reasoning": "Helps prioritize immediate risk while refining the working diagnosis.",
+        "clinicalValue": "Improves triage decisions and reduces missed serious disease."
+      },
+      {
+        "question": "Secondary-cause indicators",
+        "reasoning": "Helps prioritize immediate risk while refining the working diagnosis.",
+        "clinicalValue": "Improves triage decisions and reduces missed serious disease."
+      },
+      {
+        "question": "Cardiovascular risk profile and comorbidity burden",
+        "reasoning": "Helps prioritize immediate risk while refining the working diagnosis.",
+        "clinicalValue": "Improves triage decisions and reduces missed serious disease."
       }
     ],
     "historyPrompts": [
@@ -236,17 +308,32 @@
     "diagnoses": {
       "common": [
         {
-          "name": "Likely benign presentation"
+          "name": "Essential hypertension"
+        },
+        {
+          "name": "White-coat hypertension"
+        },
+        {
+          "name": "Poorly controlled hypertension due to adherence issues"
         }
       ],
       "mustNotMiss": [
         {
-          "name": "Serious pathology"
+          "name": "Hypertensive emergency"
+        },
+        {
+          "name": "Stroke or transient ischemic attack"
+        },
+        {
+          "name": "Acute coronary syndrome"
+        },
+        {
+          "name": "Secondary hypertension due to renal or endocrine disease"
         }
       ],
       "oftenMissed": [
         {
-          "name": "Atypical presentation of Serious pathology"
+          "name": "Masked hypertension"
         }
       ]
     },
@@ -276,16 +363,23 @@
       "pharmacologicalConcepts": [],
       "delayedStrategies": [],
       "followUpLogic": [
-        "Follow-up based on risk trajectory and response."
+        "Escalate same-day for suspected hypertensive emergency or acute end-organ symptoms.",
+        "Use home and clinic BP trends to guide treatment intensification and monitoring intervals.",
+        "Document adherence plan, side-effect review, and threshold-based safety-net advice."
       ]
     },
     "safetyNetting": {
       "returnAdvice": [
-        "Return if symptoms worsen or new red flags emerge."
+        "Seek urgent care for chest pain, breathlessness, severe headache, or neurological symptoms.",
+        "Seek urgent care for visual loss, confusion, or reduced urine output.",
+        "Return early if home readings remain severely elevated despite treatment changes."
       ],
       "escalationTriggers": [
-        "Rapid deterioration",
-        "Systemic instability"
+        "Blood pressure >=180/120 mmHg with symptoms",
+        "Chest pain, dyspnea, or acute heart failure symptoms",
+        "New focal neurological symptoms or confusion",
+        "Acute visual disturbance or papilloedema concern",
+        "Acute kidney injury symptoms or markedly reduced urine output"
       ]
     },
     "mindset": "Balance efficiency with explicit risk documentation."
@@ -327,9 +421,11 @@
   },
   "ddx": {
     "evidencePrompts": [
-      "Duration",
-      "Severity",
-      "Red flag screen"
+      "Persistently elevated home/clinic blood pressure trend",
+      "Evidence of end-organ symptoms or target-organ damage",
+      "Medication adherence and adverse effects",
+      "Secondary-cause indicators",
+      "Cardiovascular risk profile and comorbidity burden"
     ],
     "compareEnabled": true
   },

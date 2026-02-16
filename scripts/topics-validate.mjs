@@ -17,6 +17,12 @@ const requiredRoot = [
   "qa",
 ];
 
+const diagnosisPlaceholderPatterns = [
+  /likely benign presentation/i,
+  /serious pathology/i,
+  /atypical presentation of serious pathology/i,
+];
+
 function validateTopic(filePath) {
   const raw = JSON.parse(fs.readFileSync(filePath, "utf8"));
   const issues = [];
@@ -31,6 +37,9 @@ function validateTopic(filePath) {
   if (!Array.isArray(raw.snippets)) issues.push("snippets must be an array");
   if (!Array.isArray(raw.structuredFields)) issues.push("structuredFields must be an array");
   if (!Array.isArray(raw.outputTemplate?.sections)) issues.push("outputTemplate.sections must be an array");
+  if (!raw.outputTemplate?.sections?.some((section) => section?.source === "ddx")) {
+    issues.push("outputTemplate.sections must include a ddx source section");
+  }
   if (!Array.isArray(raw.jitl?.linkProviders)) issues.push("jitl.linkProviders must be an array");
   if (typeof raw.ddx?.compareEnabled !== "boolean") issues.push("ddx.compareEnabled must be boolean");
   if (!Array.isArray(raw.review?.historyPrompts) || raw.review.historyPrompts.length < 1) {
@@ -58,6 +67,36 @@ function validateTopic(filePath) {
   }
   if (!qa.clinicalReviewer || !qa.reviewedAt || !qa.version) {
     issues.push("qa.clinicalReviewer, qa.reviewedAt, qa.version are required");
+  }
+
+  const commonDiagnoses = (raw.review?.diagnoses?.common ?? [])
+    .map((entry) => String(entry?.name ?? "").trim())
+    .filter(Boolean);
+  if (commonDiagnoses.length < 1) {
+    issues.push("review.diagnoses.common must include at least 1 diagnosis");
+  }
+
+  for (const diagnosis of [
+    ...commonDiagnoses,
+    ...(raw.review?.diagnoses?.mustNotMiss ?? []).map((entry) => String(entry?.name ?? "").trim()),
+    ...(raw.review?.diagnoses?.oftenMissed ?? []).map((entry) => String(entry?.name ?? "").trim()),
+  ]) {
+    if (!diagnosis) continue;
+    if (diagnosisPlaceholderPatterns.some((pattern) => pattern.test(diagnosis))) {
+      issues.push(`diagnosis placeholder is not allowed: '${diagnosis}'`);
+    }
+  }
+
+  const discriminatorSet = new Set(
+    (raw.reasoning?.discriminators ?? []).map((value) => String(value).trim().toLowerCase())
+  );
+  const overlaps = commonDiagnoses.filter((name) =>
+    discriminatorSet.has(name.toLowerCase())
+  );
+  if (overlaps.length > 0) {
+    issues.push(
+      `review.diagnoses.common must not overlap reasoning.discriminators (${overlaps.join(", ")})`
+    );
   }
 
   return issues;

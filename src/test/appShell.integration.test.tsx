@@ -123,6 +123,14 @@ describe("AppShell integration", () => {
     expect(screen.queryByText("Quick Start: 10-minute consultation flow")).not.toBeInTheDocument();
   });
 
+  it("allows reopening quick start from the header", () => {
+    renderShell();
+    fireEvent.click(screen.getByRole("button", { name: "Dismiss quick start" }));
+    expect(screen.queryByText("Quick Start: 10-minute consultation flow")).not.toBeInTheDocument();
+    fireEvent.click(screen.getByRole("button", { name: "Show Quick Start" }));
+    expect(screen.getByText("Quick Start: 10-minute consultation flow")).toBeInTheDocument();
+  });
+
   it("keeps refresh links disabled before any section is inserted", () => {
     renderShell();
     expect(screen.getByRole("button", { name: "Sync Inserted Sections" })).toBeDisabled();
@@ -144,6 +152,23 @@ describe("AppShell integration", () => {
     renderShell();
     expect(screen.queryByText("Restore saved workspace preferences?")).not.toBeInTheDocument();
     expect(screen.getByText("Review checklist")).toBeInTheDocument();
+  });
+
+  it("re-shows onboarding when saved onboarding version is stale", () => {
+    localStorage.setItem(
+      "crx-navigator-prefs-v1",
+      JSON.stringify({
+        ...DEFAULT_USER_PREFS_STATE,
+        uiPrefs: {
+          ...DEFAULT_USER_PREFS_STATE.uiPrefs,
+          onboardingDismissed: true,
+          onboardingSeenVersion: "2025-01-01",
+        },
+      })
+    );
+
+    renderShell();
+    expect(screen.getByText("Quick Start: 10-minute consultation flow")).toBeInTheDocument();
   });
 
   it("supports collapsible library search and DDx control labels", () => {

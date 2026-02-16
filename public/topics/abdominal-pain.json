@@ -27,18 +27,31 @@
   ],
   "reasoning": {
     "discriminators": [
-      "Onset and progression",
-      "Severity and impact",
-      "Associated red flags"
+      "Pain location and migration pattern",
+      "Peritonism or guarding on examination",
+      "Vomiting, bowel habit change, or GI bleeding",
+      "Pregnancy possibility and gynecological symptoms",
+      "Systemic instability (fever, tachycardia, hypotension)"
     ],
     "mustNotMiss": [
-      "Serious pathology"
+      "Acute appendicitis",
+      "Ectopic pregnancy",
+      "Bowel obstruction",
+      "Rupturing abdominal aortic aneurysm"
     ],
     "redFlags": [
-      "Rapid deterioration",
-      "Systemic instability"
+      "Severe worsening pain with guarding or rebound tenderness",
+      "Persistent vomiting or inability to tolerate fluids",
+      "GI bleeding, melaena, or haematemesis",
+      "Syncope, hypotension, or new tachycardia",
+      "Positive pregnancy test with unilateral lower abdominal pain"
     ],
-    "references": []
+    "references": [
+      {
+        "label": "NICE CKS - Abdominal pain",
+        "url": "https://cks.nice.org.uk/topics/abdominal-pain/"
+      }
+    ]
   },
   "structuredFields": [
     {
@@ -177,24 +190,83 @@
   },
   "review": {
     "illnessScript": {
-      "summary": "Abdominal Pain consultation framework for 10-minute primary-care assessment."
+      "summary": "Abdominal pain in primary care: identify urgent surgical, vascular, and gynecological causes early while managing common self-limiting conditions safely."
     },
     "mustNotMiss": [
       {
-        "condition": "Serious pathology",
+        "condition": "Acute appendicitis",
         "redFlags": [
-          "Rapid deterioration",
-          "Systemic instability"
+          "Severe worsening pain with guarding or rebound tenderness",
+          "Persistent vomiting or inability to tolerate fluids",
+          "GI bleeding, melaena, or haematemesis",
+          "Syncope, hypotension, or new tachycardia",
+          "Positive pregnancy test with unilateral lower abdominal pain"
         ],
-        "whyDangerous": "Delayed recognition may result in avoidable harm.",
-        "escalationConcern": "Escalate same-day if concern persists after assessment."
+        "whyDangerous": "Delay increases risk of perforation, sepsis, and emergency surgery.",
+        "escalationConcern": "Urgent same-day surgical assessment if progressive right iliac fossa pain or peritonism."
+      },
+      {
+        "condition": "Ectopic pregnancy",
+        "redFlags": [
+          "Severe worsening pain with guarding or rebound tenderness",
+          "Persistent vomiting or inability to tolerate fluids",
+          "GI bleeding, melaena, or haematemesis",
+          "Syncope, hypotension, or new tachycardia",
+          "Positive pregnancy test with unilateral lower abdominal pain"
+        ],
+        "whyDangerous": "Rupture can cause catastrophic intra-abdominal hemorrhage.",
+        "escalationConcern": "Immediate emergency referral for possible ectopic pregnancy symptoms."
+      },
+      {
+        "condition": "Bowel obstruction",
+        "redFlags": [
+          "Severe worsening pain with guarding or rebound tenderness",
+          "Persistent vomiting or inability to tolerate fluids",
+          "GI bleeding, melaena, or haematemesis",
+          "Syncope, hypotension, or new tachycardia",
+          "Positive pregnancy test with unilateral lower abdominal pain"
+        ],
+        "whyDangerous": "Can rapidly progress to ischemia, perforation, and sepsis.",
+        "escalationConcern": "Urgent ED referral for colicky pain, vomiting, distension, and obstipation."
+      },
+      {
+        "condition": "Rupturing abdominal aortic aneurysm",
+        "redFlags": [
+          "Severe worsening pain with guarding or rebound tenderness",
+          "Persistent vomiting or inability to tolerate fluids",
+          "GI bleeding, melaena, or haematemesis",
+          "Syncope, hypotension, or new tachycardia",
+          "Positive pregnancy test with unilateral lower abdominal pain"
+        ],
+        "whyDangerous": "High mortality without immediate specialist intervention.",
+        "escalationConcern": "Call emergency services for pain with collapse, hypotension, or pulsatile mass."
       }
     ],
     "discriminators": [
       {
-        "question": "What changes urgency in this presentation?",
-        "reasoning": "Prioritises immediate risk over routine symptom management.",
-        "clinicalValue": "Supports safer triage and disposition decisions."
+        "question": "Pain location and migration pattern",
+        "reasoning": "Helps prioritize immediate risk while refining the working diagnosis.",
+        "clinicalValue": "Improves triage decisions and reduces missed serious disease."
+      },
+      {
+        "question": "Peritonism or guarding on examination",
+        "reasoning": "Helps prioritize immediate risk while refining the working diagnosis.",
+        "clinicalValue": "Improves triage decisions and reduces missed serious disease."
+      },
+      {
+        "question": "Vomiting, bowel habit change, or GI bleeding",
+        "reasoning": "Helps prioritize immediate risk while refining the working diagnosis.",
+        "clinicalValue": "Improves triage decisions and reduces missed serious disease."
+      },
+      {
+        "question": "Pregnancy possibility and gynecological symptoms",
+        "reasoning": "Helps prioritize immediate risk while refining the working diagnosis.",
+        "clinicalValue": "Improves triage decisions and reduces missed serious disease."
+      },
+      {
+        "question": "Systemic instability (fever, tachycardia, hypotension)",
+        "reasoning": "Helps prioritize immediate risk while refining the working diagnosis.",
+        "clinicalValue": "Improves triage decisions and reduces missed serious disease."
       }
     ],
     "historyPrompts": [
@@ -236,17 +308,32 @@
     "diagnoses": {
       "common": [
         {
-          "name": "Likely benign presentation"
+          "name": "Gastroenteritis"
+        },
+        {
+          "name": "Irritable bowel syndrome flare"
+        },
+        {
+          "name": "Constipation"
         }
       ],
       "mustNotMiss": [
         {
-          "name": "Serious pathology"
+          "name": "Acute appendicitis"
+        },
+        {
+          "name": "Ectopic pregnancy"
+        },
+        {
+          "name": "Bowel obstruction"
+        },
+        {
+          "name": "Rupturing abdominal aortic aneurysm"
         }
       ],
       "oftenMissed": [
         {
-          "name": "Atypical presentation of Serious pathology"
+          "name": "Biliary colic"
         }
       ]
     },
@@ -276,16 +363,23 @@
       "pharmacologicalConcepts": [],
       "delayedStrategies": [],
       "followUpLogic": [
-        "Follow-up based on risk trajectory and response."
+        "Escalate immediately if red flags emerge during observation.",
+        "Arrange same-day reassessment if pain is worsening or diagnosis is uncertain.",
+        "Provide clear return precautions and documented safety-net advice."
       ]
     },
     "safetyNetting": {
       "returnAdvice": [
-        "Return if symptoms worsen or new red flags emerge."
+        "Seek urgent care for worsening constant pain, fainting, or persistent vomiting.",
+        "Seek urgent care for blood in vomit or stool, black stool, or new fever.",
+        "Seek urgent care for new severe pain in pregnancy or possible pregnancy."
       ],
       "escalationTriggers": [
-        "Rapid deterioration",
-        "Systemic instability"
+        "Severe worsening pain with guarding or rebound tenderness",
+        "Persistent vomiting or inability to tolerate fluids",
+        "GI bleeding, melaena, or haematemesis",
+        "Syncope, hypotension, or new tachycardia",
+        "Positive pregnancy test with unilateral lower abdominal pain"
       ]
     },
     "mindset": "Balance efficiency with explicit risk documentation."
@@ -327,9 +421,11 @@
   },
   "ddx": {
     "evidencePrompts": [
-      "Duration",
-      "Severity",
-      "Red flag screen"
+      "Pain location and migration pattern",
+      "Peritonism or guarding on examination",
+      "Vomiting, bowel habit change, or GI bleeding",
+      "Pregnancy possibility and gynecological symptoms",
+      "Systemic instability (fever, tachycardia, hypotension)"
     ],
     "compareEnabled": true
   },

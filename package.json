@@ -20,6 +20,7 @@
     "topics:validate": "node scripts/topics-validate.mjs",
     "topics:qa-report": "node scripts/topics-qa-report.mjs",
     "topics:build": "node scripts/topics-build.mjs",
+    "telemetry:kpi-report": "node scripts/telemetry-kpi-report.mjs",
     "release:check": "npm run lint && npm run test && npm run build && npm run topics:build && npm audit --audit-level=high"
   },
   "dependencies": {

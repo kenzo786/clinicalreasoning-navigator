@@ -228,3 +228,11 @@ Expected outcomes:
 - Desktop editor/preview split should expose a draggable divider and persist pane sizes in UI prefs.
 5. Keep consultation documentation professional:
 - No system-only identifiers, timestamps, or tracking tags in note body.
+6. Template field dialogs must remain documentation-only UX:
+- Show plain-language field labels and option text; never expose raw token syntax such as `{a|b*}`.
+- Use accessible form controls (radio, checkbox, text input) with keyboard and label support.
+- Keep "Insert with defaults" as a convenience action without changing clinical content policy.
+7. Regulatory safety boundary (non-medical-device behavior):
+- Never auto-calculate clinical scores in template dialogs.
+- Never add treatment recommendations, thresholds, risk stratification colors, or interpretation text based on entered values.
+- Dialogs may capture manually entered values for documentation only.

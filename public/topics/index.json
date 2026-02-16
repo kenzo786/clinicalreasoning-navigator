@@ -63,6 +63,13 @@
     "updatedAt": "2026-02-15"
   },
   {
+    "id": "shingles-pharmacy-first",
+    "displayName": "Shingles (Pharmacy First)",
+    "version": "2.1",
+    "qaStatus": "draft",
+    "updatedAt": "1970-01-01"
+  },
+  {
     "id": "sinusitis",
     "displayName": "Sinusitis",
     "version": "2.1",

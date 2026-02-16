@@ -1,0 +1,391 @@
+{
+  "version": "2.1",
+  "metadata": {
+    "id": "type-2-diabetes-review",
+    "slug": "type-2-diabetes-review",
+    "displayName": "Type 2 Diabetes Annual Review",
+    "specialty": "Endocrinology",
+    "triggers": ["t2dm", "diabetes", "diabetic", "dm2", "annual review"]
+  },
+  "snippets": [
+    {
+      "id": "hist-control",
+      "trigger": "thist",
+      "label": "Control History",
+      "category": "history",
+      "content": "Diabetes annual review. Symptoms: {none*|polyuria|polydipsia|weight loss|fatigue|blurred vision}. Hypoglycaemic episodes: {none*|rare|frequent, requiring assistance}. Adherence to [Metformin] reported as {good*|variable|poor}. Last HbA1c: [52] mmol/mol. Last BP: [135/82] mmHg."
+    },
+    {
+      "id": "exam-foot",
+      "trigger": "texfoot",
+      "label": "Foot Exam",
+      "category": "exam",
+      "content": "Diabetic foot check: Sensation (10g monofilament) {intact*|reduced}. Pulses (DP/PT) {palpable*|absent}. No ulcers, callus, or deformity. Risk category: {Low*|Increased|High}. Patient advised on daily foot checks."
+    },
+    {
+      "id": "exam-vitals",
+      "trigger": "texvitals",
+      "label": "Vitals and BMI",
+      "category": "exam",
+      "content": "BP [135/82] mmHg. Weight [88]kg, BMI [29.5]. Smoking status: {Never*|Ex-smoker|Current}. Waist circumference: [90]cm."
+    },
+    {
+      "id": "plan-targets",
+      "trigger": "tplan",
+      "label": "Management Plan",
+      "category": "plan",
+      "content": "1. HbA1c target: [48] mmol/mol. Latest result: [52] mmol/mol. \n2. Continue Metformin 1g BD. \n3. Consider SGLT2i for cardio-renal protection if indicated. \n4. Refer to DESMOND/structured education if not already attended. \n5. Eye screening booked for @date(+3m). \n6. Advised on sick day rules."
+    },
+    {
+      "id": "safety-net",
+      "trigger": "tsafety",
+      "label": "Safety Netting",
+      "category": "safety-net",
+      "content": "Advised on 'Sick Day Rules' (SADMANS) for SGLT2i/ACEi. Seek urgent review if new foot redness, swelling, or ulceration, sudden vision changes, or symptoms of severe hypoglycaemia. Ensure regular foot checks and attend all screening appointments."
+    }
+  ],
+  "reasoning": {
+    "discriminators": [
+      "HbA1c above individualized target (indicates suboptimal glycaemic control)",
+      "Albuminuria (ACR >3mg/mmol) (indicates diabetic nephropathy)",
+      "Reduced foot sensation or absent pulses (indicates peripheral neuropathy/arterial disease)",
+      "High cardiovascular risk (QRISK3 score) (guides medication choice, e.g., SGLT2i)",
+      "Weight gain or difficulty with weight management (impacts glycaemic control and CV risk)"
+    ],
+    "mustNotMiss": [
+      "Diabetic Foot Ulcer/Infection (risk of amputation, sepsis)",
+      "Chronic Kidney Disease (CKD) progression (risk of renal failure)",
+      "Proliferative Retinopathy (risk of blindness)",
+      "Acute Coronary Syndrome (ACS) / Stroke (silent ischaemia)",
+      "Severe Hypoglycaemia (risk of neurological damage, falls)"
+    ],
+    "redFlags": [
+      "New foot ulcer or localized redness/heat/swelling",
+      "Sudden, unexplained vision loss or new visual disturbances",
+      "Symptoms of acute coronary syndrome (chest pain, dyspnoea)",
+      "Symptoms of stroke/TIA (focal weakness, speech disturbance)",
+      "Recurrent severe hypoglycaemia or hypoglycaemia unawareness",
+      "Unexplained significant weight loss or gain",
+      "Rapid decline in eGFR or significant increase in ACR"
+    ],
+    "references": [
+      { "label": "NICE NG28: Type 2 diabetes in adults: management", "url": "https://www.nice.org.uk/guidance/ng28" },
+      { "label": "Diabetes UK: 15 Healthcare Essentials", "url": "https://www.diabetes.org.uk/guide-to-diabetes/managing-your-diabetes/15-healthcare-essentials" },
+      { "label": "NICE CKS: Diabetes - type 2", "url": "https://cks.nice.org.uk/topics/diabetes-type-2/" },
+      { "label": "GPnotebook: Type 2 Diabetes Mellitus", "url": "https://gpnotebook.com/pages/endocrinology/type-2-diabetes-mellitus" }
+    ]
+  },
+  "structuredFields": [
+    {
+      "id": "history",
+      "title": "History",
+      "fields": [
+        {
+          "id": "symptoms",
+          "label": "Current Symptoms",
+          "type": "multi",
+          "options": ["Polyuria", "Polydipsia", "Weight loss", "Fatigue", "Blurred vision", "Foot pain/numbness", "None"]
+        },
+        {
+          "id": "hypo_episodes",
+          "label": "Hypoglycaemic Episodes",
+          "type": "select",
+          "options": ["None", "Rare (self-managed)", "Frequent (requiring assistance)", "Hypo unawareness"]
+        },
+        {
+          "id": "medication_adherence",
+          "label": "Medication Adherence",
+          "type": "select",
+          "options": ["Good", "Variable", "Poor"]
+        },
+        {
+          "id": "smoking_status",
+          "label": "Smoking Status",
+          "type": "select",
+          "options": ["Never", "Ex-smoker", "Current"]
+        }
+      ]
+    },
+    {
+      "id": "exam",
+      "title": "Examination",
+      "fields": [
+        {
+          "id": "bp_systolic",
+          "label": "BP Systolic (mmHg)",
+          "type": "number"
+        },
+        {
+          "id": "bp_diastolic",
+          "label": "BP Diastolic (mmHg)",
+          "type": "number"
+        },
+        {
+          "id": "weight_kg",
+          "label": "Weight (kg)",
+          "type": "number"
+        },
+        {
+          "id": "bmi",
+          "label": "BMI",
+          "type": "number"
+        },
+        {
+          "id": "foot_sensation",
+          "label": "Foot Sensation (10g monofilament)",
+          "type": "select",
+          "options": ["Intact", "Reduced", "Absent"]
+        },
+        {
+          "id": "foot_pulses",
+          "label": "Foot Pulses (DP/PT)",
+          "type": "select",
+          "options": ["Palpable", "Reduced", "Absent"]
+        },
+        {
+          "id": "foot_risk_category",
+          "label": "Foot Risk Category",
+          "type": "select",
+          "options": ["Low", "Increased", "High", "Active ulceration"]
+        }
+      ]
+    },
+    {
+      "id": "monitoring",
+      "title": "Biochemical Monitoring",
+      "fields": [
+        {
+          "id": "hba1c_latest",
+          "label": "Latest HbA1c (mmol/mol)",
+          "type": "number"
+        },
+        {
+          "id": "hba1c_target",
+          "label": "HbA1c Target (mmol/mol)",
+          "type": "number"
+        },
+        {
+          "id": "acr_latest",
+          "label": "Latest Urine ACR (mg/mmol)",
+          "type": "number"
+        },
+        {
+          "id": "egfr_latest",
+          "label": "Latest eGFR (ml/min)",
+          "type": "number"
+        },
+        {
+          "id": "cholesterol_total",
+          "label": "Total Cholesterol (mmol/L)",
+          "type": "number"
+        },
+        {
+          "id": "cholesterol_ldl",
+          "label": "LDL Cholesterol (mmol/L)",
+          "type": "number"
+        }
+      ]
+    }
+  ],
+  "outputTemplate": {
+    "sections": [
+      { "id": "editor", "title": "Consultation Notes", "source": "editor", "includeByDefault": true },
+      { "id": "structured-history", "title": "History", "source": "structured", "structuredSectionId": "history", "includeByDefault": true },
+      { "id": "structured-exam", "title": "Examination", "source": "structured", "structuredSectionId": "exam", "includeByDefault": true },
+      { "id": "structured-monitoring", "title": "Monitoring Results", "source": "structured", "structuredSectionId": "monitoring", "includeByDefault": true },
+      { "id": "ddx-assessment", "title": "Working Differential", "source": "ddx", "includeByDefault": true }
+    ]
+  },
+  "review": {
+    "illnessScript": {
+      "summary": "The Type 2 Diabetes Annual Review is a crucial component of long-term diabetes management in primary care. Its primary goals are to assess glycaemic control, screen for and prevent microvascular (retinopathy, nephropathy, neuropathy) and macrovascular (cardiovascular disease, stroke, peripheral arterial disease) complications, and optimise pharmacological and lifestyle interventions. The review should be patient-centred, addressing individual targets and concerns."
+    },
+    "mustNotMiss": [
+      {
+        "condition": "Diabetic Foot Ulcer/Infection",
+        "redFlags": ["New breach in skin integrity on foot", "Localized redness, swelling, warmth", "Purulent discharge", "Unexplained pain or numbness in foot"],
+        "whyDangerous": "High risk of osteomyelitis, sepsis, and limb amputation if not managed promptly and aggressively.",
+        "escalationConcern": "Urgent referral to Multi-disciplinary Foot Team (MDFT) or podiatry. Consider antibiotics if infection suspected. Offloading of pressure areas."
+      },
+      {
+        "condition": "Acute Coronary Syndrome (ACS)",
+        "redFlags": ["New or worsening chest pain (angina equivalent)", "Dyspnoea, palpitations, sweating, nausea", "Silent ischaemia (especially in diabetics)", "ECG changes"],
+        "whyDangerous": "Leading cause of mortality in people with diabetes. Requires immediate intervention to prevent myocardial damage and death.",
+        "escalationConcern": "Immediate 999 call. Aspirin 300mg stat (if not contraindicated). Glyceryl trinitrate (GTN) spray. Urgent hospital assessment and management."
+      },
+      {
+        "condition": "Proliferative Diabetic Retinopathy",
+        "redFlags": ["Sudden, painless vision loss", "Floaters, flashes of light", "Blurred vision", "New onset diplopia"],
+        "whyDangerous": "Can lead to irreversible blindness due to vitreous haemorrhage or retinal detachment.",
+        "escalationConcern": "Urgent referral to ophthalmology/diabetic eye screening programme. Requires laser photocoagulation or anti-VEGF injections."
+      },
+      {
+        "condition": "Severe Hypoglycaemia",
+        "redFlags": ["Altered consciousness, confusion, disorientation", "Seizures", "Inability to self-treat", "Blood glucose <3.0 mmol/L"],
+        "whyDangerous": "Can cause irreversible neurological damage, falls, and cardiac events. Potentially fatal.",
+        "escalationConcern": "Immediate treatment with oral glucose (if conscious) or IM Glucagon/IV Glucose (if unconscious). Call 999 if not responding. Review medication regimen to prevent recurrence."
+      }
+    ],
+    "discriminators": [
+      { "question": "Is the HbA1c consistently above the individualized target?", "reasoning": "Persistent elevated HbA1c indicates suboptimal glycaemic control, increasing the risk of microvascular and macrovascular complications. The target should be individualized based on factors like age, frailty, and risk of hypoglycaemia.", "clinicalValue": "Guides decisions on lifestyle interventions, medication titration, or initiation of new glucose-lowering agents." },
+      { "question": "Is there evidence of albuminuria (ACR >3mg/mmol)?", "reasoning": "Albuminuria is an early marker of diabetic nephropathy and increased cardiovascular risk. Its presence necessitates specific interventions to protect kidney function.", "clinicalValue": "Triggers initiation or titration of ACE inhibitors/ARBs and consideration of SGLT2 inhibitors for renal protection." },
+      { "question": "Are there any new or worsening symptoms of peripheral neuropathy or peripheral arterial disease (e.g., foot numbness, pain, claudication)?", "reasoning": "These symptoms indicate progression of microvascular and macrovascular complications, increasing the risk of foot ulceration, amputation, and cardiovascular events.", "clinicalValue": "Prompts thorough foot examination, risk stratification, and consideration of vascular referral." }
+    ],
+    "historyPrompts": [
+      {
+        "category": "Glycaemic Control & Symptoms",
+        "prompts": [
+          { "id": "current_symptoms", "label": "Any new or worsening symptoms of diabetes (e.g., thirst, polyuria, fatigue, blurred vision)?", "mode": "text" },
+          { "id": "hypo_frequency_severity", "label": "Frequency and severity of hypoglycaemic episodes, including any requiring assistance.", "mode": "text" },
+          { "id": "medication_adherence_issues", "label": "Any issues with medication adherence or side effects?", "mode": "text" }
+        ]
+      },
+      {
+        "category": "Complication Screening",
+        "prompts": [
+          { "id": "foot_symptoms", "label": "Any foot pain, numbness, tingling, or history of ulcers?", "mode": "text" },
+          { "id": "vision_changes", "label": "Any changes in vision, floaters, or flashes of light?", "mode": "text" },
+          { "id": "chest_pain_dyspnoea", "label": "Any chest pain, shortness of breath, or palpitations?", "mode": "text" }
+        ]
+      },
+      {
+        "category": "Lifestyle & Education",
+        "prompts": [
+          { "id": "diet_exercise", "label": "Current diet and exercise habits.", "mode": "text" },
+          { "id": "smoking_alcohol", "label": "Smoking status and alcohol intake.", "mode": "text" },
+          { "id": "education_attended", "label": "Has the patient attended structured education (e.g., DESMOND)?", "mode": "yesNo" }
+        ]
+      }
+    ],
+    "examSections": [
+      {
+        "id": "vitals_general",
+        "title": "Vital Signs & General",
+        "prompts": [
+          { "id": "bp", "label": "Blood Pressure", "significance": "Target <140/90 mmHg, or <135/85 mmHg if end-organ damage." },
+          { "id": "bmi_wc", "label": "BMI and Waist Circumference", "significance": "Indicators of obesity, a key modifiable risk factor." }
+        ]
+      },
+      {
+        "id": "foot_exam_detailed",
+        "title": "Diabetic Foot Examination",
+        "prompts": [
+          { "id": "inspection", "label": "Inspection (skin integrity, deformity, callus)", "significance": "Look for signs of ulceration or infection." },
+          { "id": "sensation_test", "label": "Sensation (10g monofilament, vibration perception)", "significance": "Loss of protective sensation increases ulcer risk." },
+          { "id": "vascular_assessment", "label": "Vascular (dorsalis pedis and posterior tibial pulses)", "significance": "Absent pulses suggest peripheral arterial disease." }
+        ]
+      }
+    ],
+    "diagnoses": {
+      "common": [
+        { "name": "Type 2 Diabetes Mellitus", "likelihood": "Confirmed" },
+        { "name": "Hypertension" },
+        { "name": "Dyslipidaemia" }
+      ],
+      "mustNotMiss": [
+        { "name": "Diabetic Foot Ulcer/Infection" },
+        { "name": "Acute Coronary Syndrome" },
+        { "name": "Proliferative Diabetic Retinopathy" },
+        { "name": "Severe Hypoglycaemia" },
+        { "name": "Diabetic Ketoacidosis (DKA) / Hyperosmolar Hyperglycaemic State (HHS)" }
+      ],
+      "oftenMissed": [
+        { "name": "Diabetic Neuropathy (e.g., gastroparesis, erectile dysfunction)" },
+        { "name": "Depression/Anxiety (common comorbidity)" },
+        { "name": "Obstructive Sleep Apnoea" },
+        { "name": "Non-alcoholic Fatty Liver Disease (NAFLD)" }
+      ]
+    },
+    "investigations": {
+      "whenHelpful": [
+        { "test": "HbA1c", "rationale": "Primary measure of long-term glycaemic control." },
+        { "test": "Urine Albumin:Creatinine Ratio (ACR)", "rationale": "Screens for diabetic nephropathy." },
+        { "test": "eGFR", "rationale": "Assesses kidney function." },
+        { "test": "Lipid Profile (Total Cholesterol, LDL, HDL, Triglycerides)", "rationale": "Assesses cardiovascular risk." },
+        { "test": "Foot Examination", "rationale": "Screens for neuropathy and peripheral arterial disease." },
+        { "test": "Diabetic Eye Screening", "rationale": "Screens for retinopathy." }
+      ],
+      "whenNotNeeded": [
+        { "test": "Routine Self-Monitoring Blood Glucose (SMBG)", "rationale": "Not routinely recommended for all Type 2 diabetics, especially if on diet/metformin only, unless on insulin or at risk of hypoglycaemia." },
+        { "test": "C-peptide/Antibody tests", "rationale": "Not for routine annual review; used for differentiating diabetes types." }
+      ],
+      "limitations": [
+        "HbA1c can be unreliable in certain conditions (e.g., haemoglobinopathies, severe anaemia, CKD).",
+        "eGFR can be affected by muscle mass and diet."
+      ]
+    },
+    "managementConsiderations": {
+      "selfCare": [
+        "Adherence to healthy eating principles (e.g., Mediterranean diet).",
+        "Regular physical activity (e.g., 150 minutes moderate intensity per week).",
+        "Daily foot inspections and appropriate footwear.",
+        "Smoking cessation and moderate alcohol intake."
+      ],
+      "pharmacologicalConcepts": [
+        { "concept": "Metformin", "considerations": "First-line agent. Titrate to maximum tolerated dose. Contraindicated in severe renal impairment." },
+        { "concept": "SGLT2 Inhibitors (e.g., Dapagliflozin, Empagliflozin)", "considerations": "Recommended for patients with established cardiovascular disease, heart failure, or CKD, independent of glycaemic control. Sick day rules apply." },
+        { "concept": "GLP-1 Receptor Agonists (e.g., Semaglutide, Liraglutide)", "considerations": "Consider for weight management and cardiovascular benefits, especially if BMI >30." },
+        { "concept": "ACE Inhibitors/ARBs", "considerations": "First-line for hypertension and for renal protection in patients with albuminuria." },
+        { "concept": "Statins", "considerations": "Offer Atorvastatin 20mg for primary prevention if QRISK3 >10%. Higher doses for secondary prevention." }
+      ],
+      "delayedStrategies": [
+        "Referral to structured education programmes (e.g., DESMOND, X-PERT).",
+        "Referral to dietitian for individualized dietary advice.",
+        "Referral to podiatry for high-risk feet.",
+        "Referral to specialist diabetes team for complex management or uncontrolled diabetes."
+      ],
+      "followUpLogic": [
+        "Annual review for all patients with Type 2 Diabetes.",
+        "More frequent reviews (e.g., 3-6 monthly) if glycaemic targets not met, medication changes, or complications are progressing.",
+        "Review sick day rules annually, especially for patients on SGLT2i or diuretics."
+      ]
+    },
+    "safetyNetting": {
+      "returnAdvice": [
+        "Any new foot wounds, redness, or swelling.",
+        "Sudden changes in vision or new eye symptoms.",
+        "Symptoms of a heart attack or stroke.",
+        "Recurrent or severe hypoglycaemic episodes.",
+        "Feeling unwell during acute illness (sick day rules)."
+      ],
+      "escalationTriggers": [
+        "Active diabetic foot ulcer/infection.",
+        "Acute coronary syndrome symptoms.",
+        "Sudden, significant vision loss.",
+        "Severe hypoglycaemia requiring external assistance.",
+        "Rapidly deteriorating kidney function (eGFR)."
+      ]
+    }
+  },
+  "jitl": {
+    "termMap": [
+      { "term": "HbA1c", "contextType": "investigation", "description": "Glycated haemoglobin, a measure of average blood glucose over 2-3 months." },
+      { "term": "SGLT2i", "contextType": "pharmacology", "description": "Sodium-glucose co-transporter 2 inhibitor, a class of diabetes medication with cardiovascular and renal benefits." },
+      { "term": "ACR", "contextType": "investigation", "description": "Albumin:Creatinine Ratio, a urine test to screen for kidney damage." },
+      { "term": "eGFR", "contextType": "investigation", "description": "Estimated Glomerular Filtration Rate, a measure of kidney function." },
+      { "term": "SADMANS", "contextType": "clinical", "description": "Sick Day Rules mnemonic: SGLT2i, ACEi/ARBs, Diuretics, Metformin, NSAIDs, Sulfonylureas." }
+    ],
+    "linkProviders": [
+      { "label": "NICE NG28: T2DM Management", "hrefTemplate": "https://www.nice.org.uk/guidance/ng28", "row": 1 },
+      { "label": "Diabetes UK: 15 Essentials", "hrefTemplate": "https://www.diabetes.org.uk/guide-to-diabetes/managing-your-diabetes/15-healthcare-essentials", "row": 2 },
+      { "label": "NICE CKS: Diabetes - type 2", "hrefTemplate": "https://cks.nice.org.uk/topics/diabetes-type-2/", "row": 3 }
+    ]
+  },
+  "ddx": {
+    "evidencePrompts": [
+      "HbA1c >58 mmol/mol (above typical target)",
+      "ACR >3 mg/mmol (albuminuria)",
+      "Loss of monofilament sensation in feet",
+      "Absent foot pulses",
+      "New or worsening chest pain",
+      "Sudden vision changes"
+    ],
+    "compareEnabled": true
+  },
+  "qa": {
+    "status": "draft",
+    "clinicalReviewer": "unassigned",
+    "reviewedAt": "1970-01-01",
+    "version": "0.0.0"
+  }
+}

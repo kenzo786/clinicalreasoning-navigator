@@ -7,6 +7,13 @@
     "updatedAt": "2026-02-15"
   },
   {
+    "id": "acute-asthma",
+    "displayName": "Acute Asthma Exacerbation",
+    "version": "2.1",
+    "qaStatus": "draft",
+    "updatedAt": "1970-01-01"
+  },
+  {
     "id": "chest-pain",
     "displayName": "Chest Pain",
     "version": "2.1",
@@ -19,6 +26,13 @@
     "version": "2.1",
     "qaStatus": "approved",
     "updatedAt": "2026-02-15"
+  },
+  {
+    "id": "dizziness-vertigo",
+    "displayName": "Dizziness and Vertigo",
+    "version": "2.1",
+    "qaStatus": "draft",
+    "updatedAt": "1970-01-01"
   },
   {
     "id": "headache",
@@ -61,6 +75,13 @@
     "version": "2.1",
     "qaStatus": "approved",
     "updatedAt": "2026-02-15"
+  },
+  {
+    "id": "type-2-diabetes-review",
+    "displayName": "Type 2 Diabetes Annual Review",
+    "version": "2.1",
+    "qaStatus": "draft",
+    "updatedAt": "1970-01-01"
   },
   {
     "id": "uti",

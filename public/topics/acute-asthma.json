@@ -1,0 +1,319 @@
+{
+  "version": "2.1",
+  "metadata": {
+    "id": "acute-asthma",
+    "slug": "acute-asthma",
+    "displayName": "Acute Asthma Exacerbation",
+    "specialty": "Respiratory",
+    "triggers": ["asthma", "wheeze", "sob", "dyspnoea"]
+  },
+  "snippets": [
+    {
+      "id": "hist-onset",
+      "trigger": "ahist",
+      "label": "History of Onset",
+      "category": "history",
+      "content": "Acute worsening of asthma symptoms over [Duration] (e.g., hours/days). Triggers identified: {viral illness|allergen|cold air|pollution|none*}. No previous ICU admissions for asthma. Last hospital admission for asthma: [Date]."
+    },
+    {
+      "id": "exam-mod",
+      "trigger": "aexmod",
+      "label": "Moderate Exacerbation Exam",
+      "category": "exam",
+      "content": "Speaking in full sentences. Respiratory Rate (RR) [20] bpm, Heart Rate (HR) [90] bpm. Peak Expiratory Flow (PEF) {50-75%*|best} of predicted. SpO2 [96]% on air. Widespread polyphonic wheeze on auscultation."
+    },
+    {
+      "id": "exam-sev",
+      "trigger": "aexsev",
+      "label": "Severe Exacerbation Exam",
+      "category": "exam",
+      "content": "Cannot complete sentences in one breath. RR [28] bpm, HR [115] bpm. PEF {33-50%*|best} of predicted. SpO2 [93]% on air. Accessory muscle use noted. Bilateral polyphonic wheeze."
+    },
+    {
+      "id": "exam-life-threat",
+      "trigger": "aexlife",
+      "label": "Life-threatening Exacerbation Exam",
+      "category": "exam",
+      "content": "PEF <33% best/predicted. SpO2 <92%. Silent chest on auscultation. Cyanosis noted. Patient appears exhausted and confused. Bradycardia or hypotension may be present."
+    },
+    {
+      "id": "plan-mod-sev",
+      "trigger": "aplanmodsev",
+      "label": "Moderate/Severe Management Plan",
+      "category": "plan",
+      "content": "1. Salbutamol 100mcg via spacer: 4-10 puffs every 10-20 mins as needed (or nebulised salbutamol 5mg if severe). \n2. Prednisolone 40mg OD for 5 days. \n3. Review asthma action plan and inhaler technique. \n4. Safety netting provided."
+    },
+    {
+      "id": "plan-life-threat",
+      "trigger": "aplanlife",
+      "label": "Life-threatening Management Plan",
+      "category": "plan",
+      "content": "1. Immediate 999 call. \n2. High-flow oxygen to maintain SpO2 94-98%. \n3. Nebulised Salbutamol 5mg and Ipratropium Bromide 0.5mg. \n4. Oral Prednisolone 40mg. \n5. Consider IV Magnesium Sulphate (1.2-2g over 20 mins) if poor response."
+    },
+    {
+      "id": "safety-net",
+      "trigger": "asafety",
+      "label": "Safety Netting",
+      "category": "safety-net",
+      "content": "Seek urgent medical attention (999) if: symptoms worsen, unable to speak in sentences, blue inhaler not lasting 4 hours, new confusion, or exhaustion. Review with GP within 48 hours."
+    }
+  ],
+  "reasoning": {
+    "discriminators": [
+      "PEF % of best/predicted (objective measure of airflow obstruction)",
+      "Ability to speak in full sentences (clinical indicator of respiratory distress)",
+      "Respiratory rate (>25/min indicates severe exacerbation)",
+      "Heart rate (>110/min indicates severe exacerbation)",
+      "Presence of silent chest or cyanosis (life-threatening signs)"
+    ],
+    "mustNotMiss": [
+      "Life-threatening asthma (risk of respiratory arrest)",
+      "Anaphylaxis (can mimic asthma, requires adrenaline)",
+      "Pneumothorax (sudden worsening, unilateral chest pain)",
+      "Foreign body inhalation (sudden onset, often in children, unilateral wheeze)",
+      "Pulmonary Embolism (sudden onset dyspnoea, pleuritic chest pain)"
+    ],
+    "redFlags": [
+      "PEF <33% best/predicted",
+      "SpO2 <92% on air",
+      "Silent chest / Cyanosis",
+      "Exhaustion / Confusion / Drowsiness",
+      "Arrhythmia / Hypotension",
+      "Bradycardia (ominous sign)"
+    ],
+    "references": [
+      { "label": "NICE CKS: Asthma - Acute Exacerbation", "url": "https://cks.nice.org.uk/topics/asthma/management/acute-exacerbation-of-asthma/" },
+      { "label": "BTS/SIGN British Guideline on Management of Asthma", "url": "https://www.brit-thoracic.org.uk/quality-improvement/guidelines/asthma/" },
+      { "label": "GPnotebook: Management of acute severe asthma in adults", "url": "https://gpnotebook.com/pages/respiratory-and-chest-medicine/management-of-acute-severe-asthma-in-adults/management-of-acute-severe-asthma-in-an-adult" }
+    ]
+  },
+  "structuredFields": [
+    {
+      "id": "history",
+      "title": "History",
+      "fields": [
+        {
+          "id": "onset_duration",
+          "label": "Onset Duration",
+          "type": "select",
+          "options": ["Hours", "Days", "Weeks"],
+          "required": true
+        },
+        {
+          "id": "triggers_identified",
+          "label": "Triggers Identified",
+          "type": "multi",
+          "options": ["Viral illness", "Allergen exposure", "Cold air", "Pollution", "Exercise", "Stress", "None"]
+        }
+      ]
+    },
+    {
+      "id": "assessment",
+      "title": "Clinical Assessment",
+      "fields": [
+        {
+          "id": "severity",
+          "label": "Severity Category",
+          "type": "select",
+          "options": ["Moderate", "Acute Severe", "Life-threatening"],
+          "required": true
+        },
+        {
+          "id": "pef_val",
+          "label": "Peak Flow (L/min)",
+          "type": "number",
+          "placeholder": "Enter PEF value"
+        },
+        {
+          "id": "spo2",
+          "label": "SpO2 (%)",
+          "type": "number",
+          "placeholder": "Enter SpO2 value"
+        },
+        {
+          "id": "rr",
+          "label": "Respiratory Rate (bpm)",
+          "type": "number",
+          "placeholder": "Enter RR"
+        },
+        {
+          "id": "hr",
+          "label": "Heart Rate (bpm)",
+          "type": "number",
+          "placeholder": "Enter HR"
+        }
+      ]
+    }
+  ],
+  "outputTemplate": {
+    "sections": [
+      { "id": "editor", "title": "Consultation Notes", "source": "editor", "includeByDefault": true },
+      { "id": "structured-history", "title": "History", "source": "structured", "structuredSectionId": "history", "includeByDefault": true },
+      { "id": "structured-assessment", "title": "Assessment", "source": "structured", "structuredSectionId": "assessment", "includeByDefault": true },
+      { "id": "ddx-assessment", "title": "Working Differential", "source": "ddx", "includeByDefault": true }
+    ]
+  },
+  "review": {
+    "illnessScript": {
+      "summary": "Acute asthma exacerbation is a progressive worsening of asthma symptoms. Severity is stratified by objective physiological markers (PEF, SpO2, RR, HR) and clinical signs (speech, level of consciousness, accessory muscle use). Early recognition of severe and life-threatening features is crucial for timely intervention and escalation."
+    },
+    "mustNotMiss": [
+      {
+        "condition": "Life-threatening Asthma",
+        "redFlags": ["PEF <33%", "SpO2 <92%", "Silent chest", "Cyanosis", "Exhaustion", "Confusion"],
+        "whyDangerous": "High risk of acute respiratory failure, cardiac arrest, and death if not managed immediately.",
+        "escalationConcern": "Requires immediate 999 transfer to hospital, high-flow oxygen, nebulised bronchodilators, and systemic corticosteroids. Consider IV magnesium sulphate."
+      },
+      {
+        "condition": "Anaphylaxis",
+        "redFlags": ["Sudden onset, rapid progression", "Skin/mucosal changes (hives, angioedema)", "Respiratory (wheeze, stridor, dyspnoea)", "Cardiovascular (hypotension, collapse)", "GI (abdominal pain, vomiting)"],
+        "whyDangerous": "Life-threatening allergic reaction with potential for airway obstruction and circulatory collapse.",
+        "escalationConcern": "Immediate intramuscular adrenaline (0.5mg for adults), call 999, lie patient flat, raise legs. Requires urgent hospital assessment."
+      },
+      {
+        "condition": "Pneumothorax",
+        "redFlags": ["Sudden onset sharp pleuritic chest pain", "Acute worsening of dyspnoea", "Unilateral reduced breath sounds", "Tracheal deviation (tension pneumothorax)"],
+        "whyDangerous": "Can lead to respiratory and circulatory compromise, especially tension pneumothorax which is a medical emergency.",
+        "escalationConcern": "Urgent hospital transfer. If tension pneumothorax suspected, immediate needle decompression may be required by trained personnel."
+      }
+    ],
+    "discriminators": [
+      { "question": "What is the patient's Peak Expiratory Flow (PEF) as a percentage of their best or predicted?", "reasoning": "PEF is a key objective measure for stratifying asthma severity. A PEF <33% indicates life-threatening asthma, 33-50% indicates severe, and 50-75% indicates moderate.", "clinicalValue": "Guides immediate management and escalation decisions." },
+      { "question": "Can the patient speak in full sentences?", "reasoning": "Inability to speak in full sentences due to breathlessness is a clinical sign of severe respiratory distress and indicates a severe asthma exacerbation.", "clinicalValue": "Helps differentiate moderate from severe exacerbations rapidly." },
+      { "question": "Are there any signs of exhaustion, confusion, or a silent chest?", "reasoning": "These are critical signs of impending respiratory failure and indicate a life-threatening asthma exacerbation, requiring immediate emergency intervention.", "clinicalValue": "Identifies patients at highest risk of adverse outcomes requiring urgent 999 call and hospital transfer." }
+    ],
+    "historyPrompts": [
+      {
+        "category": "Symptoms and Onset",
+        "prompts": [
+          { "id": "onset", "label": "Onset and duration of worsening symptoms", "mode": "text" },
+          { "id": "triggers", "label": "Identifiable triggers (e.g., viral, allergen, cold air)", "mode": "text" },
+          { "id": "previous_admissions", "label": "History of previous hospital/ICU admissions for asthma", "mode": "text" }
+        ]
+      },
+      {
+        "category": "Current Management",
+        "prompts": [
+          { "id": "inhaler_use", "label": "Current inhaler use and technique", "mode": "text" },
+          { "id": "saba_frequency", "label": "Frequency of Salbutamol (blue inhaler) use", "mode": "text" },
+          { "id": "oral_steroids", "label": "Recent oral steroid courses for asthma", "mode": "text" }
+        ]
+      }
+    ],
+    "examSections": [
+      {
+        "id": "vitals",
+        "title": "Vital Signs",
+        "prompts": [
+          { "id": "rr", "label": "Respiratory Rate", "significance": ">25 bpm suggests severe exacerbation." },
+          { "id": "hr", "label": "Heart Rate", "significance": ">110 bpm suggests severe exacerbation." },
+          { "id": "spo2", "label": "Oxygen Saturation (SpO2)", "significance": "<92% on air is a life-threatening sign." }
+        ]
+      },
+      {
+        "id": "respiratory",
+        "title": "Respiratory Examination",
+        "prompts": [
+          { "id": "speech", "label": "Ability to speak in sentences", "significance": "Cannot complete sentences = severe." },
+          { "id": "wheeze", "label": "Presence and character of wheeze", "significance": "Silent chest = life-threatening." },
+          { "id": "accessory_muscles", "label": "Accessory muscle use", "significance": "Indicates increased work of breathing." }
+        ]
+      }
+    ],
+    "diagnoses": {
+      "common": [
+        { "name": "Acute Asthma Exacerbation (Moderate)", "likelihood": "High" },
+        { "name": "Acute Asthma Exacerbation (Severe)", "likelihood": "Medium" }
+      ],
+      "mustNotMiss": [
+        { "name": "Life-threatening Asthma" },
+        { "name": "Anaphylaxis" },
+        { "name": "Pneumothorax" }
+      ],
+      "oftenMissed": [
+        { "name": "Vocal Cord Dysfunction" },
+        { "name": "Cardiac Failure (with wheeze)" },
+        { "name": "Hyperventilation Syndrome" }
+      ]
+    },
+    "investigations": {
+      "whenHelpful": [
+        { "test": "Peak Flow (PEF)", "rationale": "Essential for objective severity assessment and monitoring response to treatment." },
+        { "test": "Oxygen Saturation (SpO2)", "rationale": "Crucial for identifying hypoxaemia and guiding oxygen therapy." }
+      ],
+      "whenNotNeeded": [
+        { "test": "Chest X-ray", "rationale": "Not routinely indicated unless suspicion of pneumothorax, pneumonia, or other complications." },
+        { "test": "Arterial Blood Gas (ABG)", "rationale": "Not for primary care; reserved for severe/life-threatening cases in hospital to assess respiratory failure." }
+      ],
+      "limitations": [
+        "Pulse oximetry may be normal in moderate attacks, not ruling out significant airflow obstruction.",
+        "PEF can be effort-dependent and may not be reliable in very unwell patients."
+      ]
+    },
+    "managementConsiderations": {
+      "selfCare": [
+        "Avoid known triggers where possible.",
+        "Ensure good inhaler technique and adherence to prevent future exacerbations.",
+        "Rest during recovery and avoid strenuous activity."
+      ],
+      "pharmacologicalConcepts": [
+        { "concept": "Short-acting Beta2 Agonists (SABA)", "considerations": "Salbutamol via spacer is first-line. Nebulised therapy for severe/life-threatening. Dose and frequency depend on severity." },
+        { "concept": "Systemic Corticosteroids", "considerations": "Oral Prednisolone 40-50mg daily for 5 days is standard for exacerbations. Do not taper." },
+        { "concept": "Ipratropium Bromide", "considerations": "Add to SABA for severe/life-threatening exacerbations (nebulised)." }
+      ],
+      "delayedStrategies": [
+        "Review asthma action plan and provide updated self-management advice.",
+        "Consider referral to asthma nurse or specialist for ongoing management and education."
+      ],
+      "followUpLogic": [
+        "Mandatory review with GP within 48 hours of an acute exacerbation.",
+        "Follow-up within 1 week for all patients discharged from emergency care.",
+        "Patients admitted to hospital for asthma should have specialist follow-up for at least one year."
+      ]
+    },
+    "safetyNetting": {
+      "returnAdvice": [
+        "Worsening breathlessness or wheeze.",
+        "Blue inhaler (Salbutamol) not providing relief or not lasting 4 hours.",
+        "Difficulty speaking or eating due to breathlessness.",
+        "New confusion, drowsiness, or exhaustion."
+      ],
+      "escalationTriggers": [
+        "PEF <33% best/predicted.",
+        "SpO2 <92%.",
+        "Silent chest or cyanosis.",
+        "Altered consciousness.",
+        "Bradycardia or hypotension."
+      ]
+    }
+  },
+  "jitl": {
+    "termMap": [
+      { "term": "PEF", "contextType": "investigation", "description": "Peak Expiratory Flow" },
+      { "term": "Prednisolone", "contextType": "pharmacology", "description": "Oral corticosteroid" },
+      { "term": "SABA", "contextType": "pharmacology", "description": "Short-acting Beta2 Agonist" },
+      { "term": "SpO2", "contextType": "investigation", "description": "Oxygen Saturation" }
+    ],
+    "linkProviders": [
+      { "label": "BNF: Asthma Acute", "hrefTemplate": "https://bnf.nice.org.uk/treatment-summaries/asthma-acute/", "row": 1 },
+      { "label": "GPnotebook: Acute Asthma", "hrefTemplate": "https://gpnotebook.com/pages/respiratory-and-chest-medicine/management-of-acute-severe-asthma-in-adults/management-of-acute-severe-asthma-in-an-adult", "row": 2 }
+    ]
+  },
+  "ddx": {
+    "evidencePrompts": [
+      "PEF <50% best/predicted",
+      "Unable to speak in full sentences",
+      "Respiratory Rate >25 bpm",
+      "Heart Rate >110 bpm",
+      "Silent chest / Cyanosis",
+      "History of atopy/allergies"
+    ],
+    "compareEnabled": true
+  },
+  "qa": {
+    "status": "draft",
+    "clinicalReviewer": "unassigned",
+    "reviewedAt": "1970-01-01",
+    "version": "0.0.0"
+  }
+}

@@ -1,0 +1,337 @@
+{
+  "version": "2.1",
+  "metadata": {
+    "id": "dizziness-vertigo",
+    "slug": "dizziness-vertigo",
+    "displayName": "Dizziness and Vertigo",
+    "specialty": "Neurology/ENT",
+    "triggers": ["dizzy", "vertigo", "spinning", "lightheaded"]
+  },
+  "snippets": [
+    {
+      "id": "hist-sensation",
+      "trigger": "dhist",
+      "label": "Nature of Sensation",
+      "category": "history",
+      "content": "Patient reports sensation of {spinning (vertigo)*|lightheadedness (presyncope)|unsteadiness (disequilibrium)|non-specific dizziness}. Episodes last [Duration] (e.g., seconds, minutes, hours, persistent)."
+    },
+    {
+      "id": "hist-triggers",
+      "trigger": "dtrig",
+      "label": "Triggers and Associated Symptoms",
+      "category": "history",
+      "content": "Triggered by: {head movement|standing up quickly|rolling in bed|stress|none}. Associated symptoms: {nausea/vomiting|hearing loss/tinnitus|headache|palpitations|focal weakness|none}."
+    },
+    {
+      "id": "exam-dix-hallpike",
+      "trigger": "dexbppv",
+      "label": "Dix-Hallpike Manoeuvre",
+      "category": "exam",
+      "content": "Dix-Hallpike manoeuvre: {Positive*|Negative} on [Right] side. Latency of [5]s, followed by geotropic nystagmus lasting [20]s. Fatigable on repeat. Consistent with BPPV."
+    },
+    {
+      "id": "exam-neuro",
+      "trigger": "dexneuro",
+      "label": "Neurological Examination",
+      "category": "exam",
+      "content": "Cranial nerves II-XII intact. No focal motor or sensory deficit. Gait: {stable*|unsteady, broad-based}. Romberg test: {negative*|positive}. No vertical nystagmus or new cerebellar signs."
+    },
+    {
+      "id": "plan-bppv",
+      "trigger": "dplanbppv",
+      "label": "BPPV Management Plan",
+      "category": "plan",
+      "content": "1. Epley manoeuvre performed in clinic. \n2. Advised on Brandt-Daroff exercises at home. \n3. Avoid sudden head movements for 48 hours. \n4. Safety netting provided."
+    },
+    {
+      "id": "plan-symptomatic",
+      "trigger": "dplansymp",
+      "label": "Symptomatic Management Plan",
+      "category": "plan",
+      "content": "1. Prochlorperazine 5mg TDS for maximum 3 days to manage acute nausea/vomiting. \n2. Advised to stop medication as soon as acute symptoms settle to avoid delaying vestibular compensation. \n3. Vestibular rehabilitation exercises recommended."
+    },
+    {
+      "id": "safety-net",
+      "trigger": "dsafety",
+      "label": "Safety Netting",
+      "category": "safety-net",
+      "content": "Seek urgent medical attention (999) if: new weakness, numbness, double vision, slurred speech, severe headache, sudden hearing loss, or inability to stand/walk. Review with GP in 1 week if no improvement."
+    }
+  ],
+  "reasoning": {
+    "discriminators": [
+      "Duration of episodes (seconds: BPPV; minutes: TIA/migraine; hours: Meniere's; days: Vestibular Neuritis/Labyrinthitis; persistent: central/psychogenic)",
+      "Associated hearing loss or tinnitus (suggests Labyrinthitis, Meniere's)",
+      "Presence of focal neurological signs (suggests central cause like stroke/TIA)",
+      "Nystagmus characteristics (vertical or purely torsional nystagmus suggests central cause)",
+      "Triggering factors (head position changes for BPPV, standing for orthostatic hypotension)"
+    ],
+    "mustNotMiss": [
+      "Posterior circulation stroke/TIA",
+      "Brainstem/Cerebellar tumor",
+      "Cardiac arrhythmia (if presyncope)",
+      "Wernicke's encephalopathy",
+      "Acute angle-closure glaucoma (if eye pain/redness)"
+    ],
+    "redFlags": [
+      "Sudden onset focal neurological deficit (e.g., weakness, numbness, dysarthria, dysphagia)",
+      "New onset severe headache, especially 'thunderclap' type",
+      "Vertical or purely torsional nystagmus (non-fatigable)",
+      "Truncal ataxia (inability to sit or stand unsupported)",
+      "Acute, sudden hearing loss (especially unilateral)",
+      "Altered consciousness or confusion",
+      "Diplopia (double vision)"
+    ],
+    "references": [
+      { "label": "NICE CKS: Vertigo", "url": "https://cks.nice.org.uk/topics/vertigo/" },
+      { "label": "NICE CKS: Benign paroxysmal positional vertigo", "url": "https://cks.nice.org.uk/topics/benign-paroxysmal-positional-vertigo/" },
+      { "label": "NICE CKS: Vestibular neuronitis", "url": "https://cks.nice.org.uk/topics/vestibular-neuronitis/" },
+      { "label": "GPnotebook: Dizziness", "url": "https://gpnotebook.com/pages/neurology/dizziness" }
+    ]
+  },
+  "structuredFields": [
+    {
+      "id": "history",
+      "title": "History",
+      "fields": [
+        {
+          "id": "sensation_type",
+          "label": "Type of Sensation",
+          "type": "select",
+          "options": ["Vertigo (spinning)", "Lightheadedness (presyncope)", "Unsteadiness (disequilibrium)", "Non-specific dizziness"],
+          "required": true
+        },
+        {
+          "id": "episode_duration",
+          "label": "Episode Duration",
+          "type": "select",
+          "options": ["Seconds", "Minutes", "Hours", "Days", "Persistent"],
+          "required": true
+        },
+        {
+          "id": "movement_triggered",
+          "label": "Triggered by movement?",
+          "type": "toggle"
+        },
+        {
+          "id": "hearing_loss",
+          "label": "Associated hearing loss/tinnitus?",
+          "type": "toggle"
+        },
+        {
+          "id": "focal_neuro",
+          "label": "Associated focal neurological symptoms?",
+          "type": "toggle"
+        }
+      ]
+    },
+    {
+      "id": "exam",
+      "title": "Examination Findings",
+      "fields": [
+        {
+          "id": "nystagmus_type",
+          "label": "Nystagmus Type",
+          "type": "select",
+          "options": ["Horizontal (fatigable)", "Vertical", "Purely torsional", "None"],
+          "showIf": "history.focal_neuro == true || history.sensation_type == 'Vertigo (spinning)'"
+        },
+        {
+          "id": "gait_stability",
+          "label": "Gait Stability",
+          "type": "select",
+          "options": ["Stable", "Unsteady", "Ataxic", "Unable to stand"],
+          "required": true
+        },
+        {
+          "id": "romberg_test",
+          "label": "Romberg's Test",
+          "type": "select",
+          "options": ["Negative", "Positive"],
+          "required": true
+        }
+      ]
+    }
+  ],
+  "outputTemplate": {
+    "sections": [
+      { "id": "editor", "title": "Consultation Notes", "source": "editor", "includeByDefault": true },
+      { "id": "structured-history", "title": "History", "source": "structured", "structuredSectionId": "history", "includeByDefault": true },
+      { "id": "structured-exam", "title": "Examination", "source": "structured", "structuredSectionId": "exam", "includeByDefault": true },
+      { "id": "ddx-assessment", "title": "Working Differential", "source": "ddx", "includeByDefault": true }
+    ]
+  },
+  "review": {
+    "illnessScript": {
+      "summary": "Dizziness is a common, non-specific symptom. Vertigo is the illusion of movement. A structured approach is essential to differentiate benign peripheral causes (e.g., BPPV, vestibular neuritis) from serious central causes (e.g., stroke, tumour). Key discriminators include the timing and triggers of symptoms, and the presence of focal neurological signs."
+    },
+    "mustNotMiss": [
+      {
+        "condition": "Posterior Circulation Stroke/TIA",
+        "redFlags": ["Sudden onset focal neurological deficit", "New severe headache", "Vertical/purely torsional nystagmus", "Truncal ataxia", "Diplopia"],
+        "whyDangerous": "Can lead to significant neurological disability or death. Requires urgent investigation and management.",
+        "escalationConcern": "Immediate 999 transfer to hospital for neurological assessment and imaging (e.g., CT/MRI brain)."
+      },
+      {
+        "condition": "Brainstem/Cerebellar Tumour",
+        "redFlags": ["Progressive, persistent dizziness", "New focal neurological signs", "Headache", "Papilloedema"],
+        "whyDangerous": "Space-occupying lesion that can cause progressive neurological deficit and raised intracranial pressure.",
+        "escalationConcern": "Urgent referral to neurology/neurosurgery for investigation (MRI brain)."
+      },
+      {
+        "condition": "Cardiac Arrhythmia (causing presyncope)",
+        "redFlags": ["Palpitations", "Chest pain", "Syncope", "Exertional dizziness", "Known cardiac history"],
+        "whyDangerous": "Can lead to sudden cardiac death or significant morbidity from falls/injury.",
+        "escalationConcern": "Urgent ECG, cardiac monitoring, and cardiology assessment. Consider 999 if unstable."
+      },
+      {
+        "condition": "Acute Angle-Closure Glaucoma",
+        "redFlags": ["Sudden onset severe eye pain", "Red eye", "Blurred vision/halos around lights", "Nausea/vomiting", "Fixed mid-dilated pupil"],
+        "whyDangerous": "Rapidly progressive condition that can lead to permanent vision loss if not treated urgently.",
+        "escalationConcern": "Immediate referral to ophthalmology. Avoid medications that can worsen angle closure."
+      }
+    ],
+    "discriminators": [
+      { "question": "What is the duration of the dizzy spells?", "reasoning": "Duration is a key differentiator: seconds for BPPV, minutes for TIA/migraine, hours for Meniere's, days for vestibular neuritis/labyrinthitis, persistent for central/psychogenic.", "clinicalValue": "Helps narrow down the differential diagnosis significantly." },
+      { "question": "Is the dizziness triggered by head position changes?", "reasoning": "Vertigo specifically triggered by head movements (e.g., rolling in bed, looking up) is highly suggestive of BPPV.", "clinicalValue": "Guides the use of Dix-Hallpike manoeuvre and Epley manoeuvre." },
+      { "question": "Are there any associated focal neurological symptoms (e.g., weakness, numbness, double vision, slurred speech)?", "reasoning": "The presence of focal neurological signs strongly suggests a central cause (e.g., stroke, tumour) rather than a peripheral vestibular disorder.", "clinicalValue": "Identifies red flags requiring urgent neurological assessment." }
+    ],
+    "historyPrompts": [
+      {
+        "category": "Nature of Dizziness",
+        "prompts": [
+          { "id": "type_sensation", "label": "Describe the sensation (spinning, lightheaded, unsteady)", "mode": "text" },
+          { "id": "onset_course", "label": "Onset (sudden/gradual) and course (episodic/constant)", "mode": "text" },
+          { "id": "duration_episodes", "label": "Duration of individual episodes", "mode": "text" }
+        ]
+      },
+      {
+        "category": "Associated Symptoms",
+        "prompts": [
+          { "id": "nausea_vomiting", "label": "Nausea or vomiting?", "mode": "yesNo" },
+          { "id": "hearing_tinnitus", "label": "Hearing loss or tinnitus?", "mode": "yesNo" },
+          { "id": "headache", "label": "Headache?", "mode": "yesNo" },
+          { "id": "focal_neuro_symptoms", "label": "Focal neurological symptoms (e.g., weakness, numbness, visual changes)?", "mode": "yesNo" }
+        ]
+      }
+    ],
+    "examSections": [
+      {
+        "id": "vitals",
+        "title": "Vital Signs",
+        "prompts": [
+          { "id": "bp_hr", "label": "Blood Pressure and Heart Rate (lying and standing)", "significance": "Orthostatic hypotension can cause lightheadedness." }
+        ]
+      },
+      {
+        "id": "neurological",
+        "title": "Neurological Examination",
+        "prompts": [
+          { "id": "cranial_nerves", "label": "Cranial Nerves (especially II, III, IV, VI, VII, VIII)", "significance": "Abnormalities can indicate central pathology." },
+          { "id": "nystagmus_exam", "label": "Nystagmus (direction, fatigability, vertical/torsional component)", "significance": "Vertical/torsional nystagmus is a red flag for central cause." },
+          { "id": "gait_balance", "label": "Gait and Balance (Romberg, tandem gait)", "significance": "Truncal ataxia suggests cerebellar involvement." },
+          { "id": "dix_hallpike_exam", "label": "Dix-Hallpike Manoeuvre (if BPPV suspected)", "significance": "Diagnostic for BPPV." }
+        ]
+      }
+    ],
+    "diagnoses": {
+      "common": [
+        { "name": "Benign Paroxysmal Positional Vertigo (BPPV)", "likelihood": "High" },
+        { "name": "Vestibular Neuritis" },
+        { "name": "Labyrinthitis" },
+        { "name": "Orthostatic Hypotension" }
+      ],
+      "mustNotMiss": [
+        { "name": "Posterior Circulation Stroke/TIA" },
+        { "name": "Brain Tumour" },
+        { "name": "Cardiac Arrhythmia" },
+        { "name": "Acute Angle-Closure Glaucoma" }
+      ],
+      "oftenMissed": [
+        { "name": "Vestibular Migraine" },
+        { "name": "Persistent Postural-Perceptual Dizziness (PPPD)" },
+        { "name": "Medication Side Effects" },
+        { "name": "Anxiety/Panic Disorder" }
+      ]
+    },
+    "investigations": {
+      "whenHelpful": [
+        { "test": "Dix-Hallpike Manoeuvre", "rationale": "Diagnostic for BPPV, guiding treatment with Epley manoeuvre." },
+        { "test": "Lying and Standing Blood Pressure", "rationale": "To assess for orthostatic hypotension as a cause of lightheadedness." },
+        { "test": "ECG", "rationale": "If cardiac cause (e.g., arrhythmia) is suspected, especially with presyncope or palpitations." }
+      ],
+      "whenNotNeeded": [
+        { "test": "Routine Blood Tests (FBC, U&Es, TFTs)", "rationale": "Rarely helpful unless specific systemic cause (e.g., anaemia, electrolyte imbalance) is strongly suspected based on history." },
+        { "test": "CT/MRI Brain in primary care", "rationale": "Not indicated unless red flags for central pathology are present, in which case urgent hospital referral is needed." }
+      ],
+      "limitations": [
+        "Dix-Hallpike manoeuvre can be negative in early BPPV or if performed incorrectly.",
+        "Normal neurological exam does not completely rule out central pathology, especially if symptoms are transient."
+      ]
+    },
+    "managementConsiderations": {
+      "selfCare": [
+        "Avoid sudden head movements (for BPPV).",
+        "Ensure adequate hydration and stand up slowly (for orthostatic hypotension).",
+        "Vestibular rehabilitation exercises (for persistent dizziness/unsteadiness)."
+      ],
+      "pharmacologicalConcepts": [
+        { "concept": "Vestibular Suppressants (e.g., Prochlorperazine, Cinnarizine)", "considerations": "Use for acute symptom relief only, for a maximum of 3 days, to avoid delaying vestibular compensation." },
+        { "concept": "Epley Manoeuvre", "considerations": "Effective treatment for BPPV, can be performed in primary care if trained." }
+      ],
+      "delayedStrategies": [
+        "Referral to ENT/Audiology for persistent hearing loss or Meniere's disease.",
+        "Referral to Vestibular Rehabilitation Physiotherapy for chronic dizziness or unsteadiness."
+      ],
+      "followUpLogic": [
+        "Review in 1 week if symptoms not improving or new symptoms develop.",
+        "Urgent referral to secondary care if red flags emerge or central cause suspected."
+      ]
+    },
+    "safetyNetting": {
+      "returnAdvice": [
+        "Worsening dizziness or new types of dizziness.",
+        "Development of any new weakness, numbness, double vision, or slurred speech.",
+        "Severe headache or sudden, acute hearing loss.",
+        "Inability to stand or walk without assistance."
+      ],
+      "escalationTriggers": [
+        "Any focal neurological deficit.",
+        "Vertical or purely torsional nystagmus.",
+        "Truncal ataxia.",
+        "Sudden severe headache.",
+        "Acute unilateral hearing loss."
+      ]
+    }
+  },
+  "jitl": {
+    "termMap": [
+      { "term": "BPPV", "contextType": "clinical", "description": "Benign Paroxysmal Positional Vertigo" },
+      { "term": "Epley", "contextType": "management", "description": "Epley Manoeuvre" },
+      { "term": "HINTS", "contextType": "exam", "description": "Head Impulse, Nystagmus, Test of Skew" },
+      { "term": "Prochlorperazine", "contextType": "pharmacology", "description": "Anti-emetic and vestibular suppressant" }
+    ],
+    "linkProviders": [
+      { "label": "CKS: Vertigo Assessment", "hrefTemplate": "https://cks.nice.org.uk/topics/vertigo/diagnosis/assessment/", "row": 1 },
+      { "label": "CKS: BPPV Management", "hrefTemplate": "https://cks.nice.org.uk/topics/benign-paroxysmal-positional-vertigo/management/management/", "row": 2 },
+      { "label": "GPnotebook: Dizziness", "hrefTemplate": "https://gpnotebook.com/pages/neurology/dizziness", "row": 3 }
+    ]
+  },
+  "ddx": {
+    "evidencePrompts": [
+      "Vertigo (spinning sensation)",
+      "Triggered by head movement",
+      "Episodes lasting seconds",
+      "Associated hearing loss/tinnitus",
+      "Focal neurological signs present",
+      "Vertical nystagmus"
+    ],
+    "compareEnabled": true
+  },
+  "qa": {
+    "status": "draft",
+    "clinicalReviewer": "unassigned",
+    "reviewedAt": "1970-01-01",
+    "version": "0.0.0"
+  }
+}

@@ -54,3 +54,53 @@ test("desktop export format supports SOAP and file download", async ({ page }, t
   await page.getByRole("button", { name: "Download" }).click();
   await downloadPromise;
 });
+
+test("silently restores prefs and supports full-width review section toggles", async ({ page }, testInfo) => {
+  test.skip(testInfo.project.name.includes("mobile"), "Desktop-only right-pane interaction test.");
+
+  await page.addInitScript(() => {
+    localStorage.setItem(
+      "crx-navigator-prefs-v1",
+      JSON.stringify({
+        uiPrefs: {
+          desktopPaneSizes: [20, 45, 35],
+          mobileActivePane: "editor",
+          rightPaneTab: "review",
+          theme: "light",
+          compactStructured: false,
+          composerTrayCollapsed: false,
+          lastTopicId: "sore-throat",
+          onboardingDismissed: true,
+          librarySearchCollapsed: true,
+          hintDismissals: {},
+        },
+        featureFlags: {
+          composerBridge: true,
+          ddxBuilder: true,
+          reviewJitl: true,
+          reviewEnabled: true,
+          jitlEnabled: true,
+          topicV2Authoring: false,
+        },
+      })
+    );
+  });
+
+  await page.goto("/");
+  await expect(page.getByText("Restore saved workspace preferences?")).toHaveCount(0);
+  await expect(page.getByText("Review checklist")).toBeVisible();
+  await expect(page.getByTestId("review-section-content-illness")).toBeVisible();
+
+  const illnessHeader = page.getByTestId("review-section-toggle-illness");
+  const headerBounds = await illnessHeader.boundingBox();
+  if (!headerBounds) throw new Error("Unable to find illness header bounds");
+
+  await page.mouse.click(headerBounds.x + headerBounds.width - 6, headerBounds.y + headerBounds.height / 2);
+  await expect(page.getByTestId("review-section-content-illness")).toHaveCount(0);
+
+  await illnessHeader.click({ position: { x: 10, y: 10 } });
+  await expect(page.getByTestId("review-section-content-illness")).toBeVisible();
+
+  await page.getByTestId("review-section-send-illness").click();
+  await expect(page.getByTestId("review-section-content-illness")).toBeVisible();
+});

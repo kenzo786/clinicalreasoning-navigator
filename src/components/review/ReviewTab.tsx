@@ -75,27 +75,48 @@ function Section({
 }) {
   const { state, dispatch } = useConsultation();
   const expanded = state.reviewUi.expandedSections[id] ?? (DEFAULT_REVIEW_EXPANDED[id] ?? false);
+  const contentId = `review-section-content-${id}`;
+  const toggleSection = () => dispatch({ type: "TOGGLE_REVIEW_SECTION", sectionId: id });
   return (
     <section className="border rounded-md overflow-hidden">
-      <div className="flex items-center justify-between px-3 py-2 bg-muted/40 border-b">
-        <button
-          onClick={() => dispatch({ type: "TOGGLE_REVIEW_SECTION", sectionId: id })}
-          className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-muted-foreground"
-        >
+      <div
+        role="button"
+        tabIndex={0}
+        data-testid={`review-section-toggle-${id}`}
+        aria-expanded={expanded}
+        aria-controls={contentId}
+        onClick={toggleSection}
+        onKeyDown={(event) => {
+          if (event.key === "Enter" || event.key === " ") {
+            event.preventDefault();
+            toggleSection();
+          }
+        }}
+        className="flex cursor-pointer items-center justify-between px-3 py-2 bg-muted/40 border-b transition-colors hover:bg-muted/60 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40"
+      >
+        <div className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
           {icon}
           {title}
           {expanded ? <ChevronUp className="h-3.5 w-3.5" /> : <ChevronDown className="h-3.5 w-3.5" />}
-        </button>
+        </div>
         {onPromote && (
           <button
-            onClick={onPromote}
+            onClick={(event) => {
+              event.stopPropagation();
+              onPromote();
+            }}
+            data-testid={`review-section-send-${id}`}
             className="text-[10px] px-2 py-1 rounded border bg-secondary hover:bg-accent"
           >
             Send to editor
           </button>
         )}
       </div>
-      {expanded && <div className="p-3">{children}</div>}
+      {expanded && (
+        <div id={contentId} data-testid={contentId} className="p-3">
+          {children}
+        </div>
+      )}
     </section>
   );
 }
@@ -155,6 +176,7 @@ export function ReviewTab({ topic, onPromote, onOpenJitl }: ReviewTabProps) {
         <p className="mt-1 text-[11px] text-amber-900/90">
           Confirm safety-critical findings and mark what has been reviewed or inserted into documentation.
         </p>
+        <p className="mt-1 text-[10px] text-amber-800/90">Click any section header to expand or collapse.</p>
       </div>
       <div className="grid grid-cols-3 gap-2 text-[10px]">
         <div className="rounded border bg-secondary px-2 py-1 text-muted-foreground">

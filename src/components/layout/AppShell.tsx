@@ -10,7 +10,6 @@ import { LibraryPane } from "@/components/library/LibraryPane";
 import { EditorPane } from "@/components/editor/EditorPane";
 import { RightPane } from "@/components/reasoning/RightPane";
 import { PreviewPane } from "@/components/preview/PreviewPane";
-import { RestoreModal } from "@/components/shared/RestoreModal";
 import { ShortcutsModal } from "@/components/shared/ShortcutsModal";
 import { CommandPalette } from "@/components/library/CommandPalette";
 import { MobileNav } from "@/components/layout/MobileNav";
@@ -396,7 +395,6 @@ export default function AppShell() {
         )}
       </div>
 
-      <RestoreModal />
       <ShortcutsModal open={showShortcuts} onClose={() => setShowShortcuts(false)} />
       <CommandPalette
         open={showPalette}

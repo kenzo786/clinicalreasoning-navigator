@@ -6,7 +6,6 @@ import React, {
   useMemo,
   useReducer,
   useRef,
-  useState,
 } from "react";
 import type {
   ConsultationAction,
@@ -23,7 +22,6 @@ import { sessionReducer } from "@/state/sessionReducer";
 import { prefsReducer } from "@/state/prefsReducer";
 import { isPrefsAction } from "@/state/actions";
 import {
-  clearPrefs,
   loadPrefs,
   purgeLegacyClinicalStorage,
   savePrefs,
@@ -51,26 +49,19 @@ function normalizeLoadedPrefs(raw: UserPrefsState | null): UserPrefsState {
 interface ConsultationContextValue {
   state: ConsultationState;
   dispatch: React.Dispatch<ConsultationAction>;
-  hasPrefsBackup: boolean;
-  restorePrefsBackup: () => void;
-  discardPrefsBackup: () => void;
 }
 
 const ConsultationContext = createContext<ConsultationContextValue | null>(null);
 
 export function ConsultationProvider({ children }: { children: React.ReactNode }) {
-  const rawLoadedPrefs = loadPrefs();
-  const loadedPrefs = normalizeLoadedPrefs(rawLoadedPrefs);
-  const [savedPrefsCandidate, setSavedPrefsCandidate] = useState<UserPrefsState | null>(
-    rawLoadedPrefs ? loadedPrefs : null
-  );
+  const loadedPrefs = normalizeLoadedPrefs(loadPrefs());
   const [prefsState, prefsDispatch] = useReducer(
     prefsReducer,
-    DEFAULT_USER_PREFS_STATE
+    loadedPrefs
   );
   const [sessionState, sessionDispatch] = useReducer(sessionReducer, {
     ...DEFAULT_CONSULTATION_SESSION_STATE,
-    activeTopicId: DEFAULT_USER_PREFS_STATE.uiPrefs.lastTopicId,
+    activeTopicId: loadedPrefs.uiPrefs.lastTopicId,
   });
   const prefsRef = useRef(prefsState);
 
@@ -108,21 +99,6 @@ export function ConsultationProvider({ children }: { children: React.ReactNode }
     return () => clearTimeout(timeout);
   }, [prefsState]);
 
-  const restorePrefsBackup = useCallback(() => {
-    if (!savedPrefsCandidate) return;
-    prefsDispatch({ type: "RESTORE_PREFS", prefs: savedPrefsCandidate });
-    setSavedPrefsCandidate(null);
-    sessionDispatch({
-      type: "SET_TOPIC",
-      topicId: savedPrefsCandidate.uiPrefs.lastTopicId,
-    });
-  }, [savedPrefsCandidate]);
-
-  const discardPrefsBackup = useCallback(() => {
-    clearPrefs();
-    setSavedPrefsCandidate(null);
-  }, []);
-
   const state: ConsultationState = useMemo(
     () => ({
       ...sessionState,
@@ -137,9 +113,6 @@ export function ConsultationProvider({ children }: { children: React.ReactNode }
       value={{
         state,
         dispatch,
-        hasPrefsBackup: savedPrefsCandidate !== null,
-        restorePrefsBackup,
-        discardPrefsBackup,
       }}
     >
       {children}

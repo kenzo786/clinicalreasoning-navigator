@@ -4,6 +4,7 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { ConsultationProvider } from "@/context/ConsultationProvider";
 import AppShell from "@/components/layout/AppShell";
 import type { TopicRuntime } from "@/types/topic";
+import { DEFAULT_USER_PREFS_STATE } from "@/types/consultation";
 
 const topicFixture: TopicRuntime = {
   version: "runtime",
@@ -127,6 +128,24 @@ describe("AppShell integration", () => {
     expect(screen.getByRole("button", { name: "Sync Inserted Sections" })).toBeDisabled();
   });
 
+  it("silently restores saved preferences without showing a restore prompt", () => {
+    localStorage.setItem(
+      "crx-navigator-prefs-v1",
+      JSON.stringify({
+        ...DEFAULT_USER_PREFS_STATE,
+        uiPrefs: {
+          ...DEFAULT_USER_PREFS_STATE.uiPrefs,
+          onboardingDismissed: true,
+          rightPaneTab: "review",
+        },
+      })
+    );
+
+    renderShell();
+    expect(screen.queryByText("Restore saved workspace preferences?")).not.toBeInTheDocument();
+    expect(screen.getByText("Review checklist")).toBeInTheDocument();
+  });
+
   it("supports collapsible library search and DDx control labels", () => {
     renderShell();
     fireEvent.click(screen.getByRole("button", { name: "Toggle snippet search" }));
@@ -140,5 +159,32 @@ describe("AppShell integration", () => {
     fireEvent.click(ddxSectionToggle);
     fireEvent.click(screen.getAllByRole("button", { name: /Viral pharyngitis/i })[0]);
     expect(screen.getByLabelText("Set Viral pharyngitis as primary diagnosis")).toBeInTheDocument();
+  });
+
+  it("supports full-width review section toggles and keeps send action isolated", () => {
+    localStorage.setItem(
+      "crx-navigator-prefs-v1",
+      JSON.stringify({
+        ...DEFAULT_USER_PREFS_STATE,
+        uiPrefs: {
+          ...DEFAULT_USER_PREFS_STATE.uiPrefs,
+          onboardingDismissed: true,
+          rightPaneTab: "review",
+        },
+      })
+    );
+    renderShell();
+
+    const illnessToggle = screen.getByTestId("review-section-toggle-illness");
+    expect(screen.getByTestId("review-section-content-illness")).toBeInTheDocument();
+
+    fireEvent.click(illnessToggle);
+    expect(screen.queryByTestId("review-section-content-illness")).not.toBeInTheDocument();
+
+    fireEvent.keyDown(illnessToggle, { key: "Enter" });
+    expect(screen.getByTestId("review-section-content-illness")).toBeInTheDocument();
+
+    fireEvent.click(screen.getByTestId("review-section-send-illness"));
+    expect(screen.getByTestId("review-section-content-illness")).toBeInTheDocument();
   });
 });

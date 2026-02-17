@@ -1,0 +1,206 @@
+{
+  "version": "2.1",
+  "metadata": {
+    "id": "shingles-pharmacy-first",
+    "slug": "shingles-pharmacy-first",
+    "displayName": "Shingles (Pharmacy First)",
+    "specialty": "Dermatology/Pharmacy",
+    "triggers": ["shingles", "herpes zoster", "pharmacy first"]
+  },
+  "snippets": [
+    {
+      "id": "hist-presenting-complaint",
+      "trigger": "shistpc",
+      "label": "Presenting Complaint",
+      "category": "history",
+      "content": "Patient presents with a unilateral rash, consistent with shingles. Onset of rash was [2] days ago. Prodromal symptoms of {pain|tingling|burning} in the affected area for [1-2] days prior. The rash is located on the [dermatome, e.g., T4 on the right]."
+    },
+    {
+      "id": "hist-red-flags-assessment",
+      "trigger": "shistrf",
+      "label": "Red Flag Assessment",
+      "category": "history",
+      "content": "Red flag screen: No eye involvement (pain, redness, visual changes). No facial droop or hearing loss. Not pregnant. Not severely immunocompromised (e.g., recent chemotherapy, organ transplant). No signs of systemic illness (fever, confusion)."
+    },
+    {
+      "id": "exam-rash",
+      "trigger": "sexamrash",
+      "label": "Rash Examination",
+      "category": "exam",
+      "content": "Unilateral vesicular rash on an erythematous base, located in the [dermatome] dermatome. The rash does not cross the midline. Lesions are at the {vesicular*|pustular|crusting} stage. No signs of secondary bacterial infection (e.g., spreading erythema, purulent discharge)."
+    },
+    {
+      "id": "plan-treatment-supply",
+      "trigger": "splantx",
+      "label": "Treatment Plan (Supply)",
+      "category": "plan",
+      "content": "Patient meets criteria for treatment under the Pharmacy First PGD. Supplied Aciclovir 800mg five times daily for 7 days. Advised on importance of adherence and completing the course. Pain management advice given (paracetamol/ibuprofen). Safety netting and self-care advice provided."
+    },
+    {
+      "id": "plan-referral",
+      "trigger": "splanref",
+      "label": "Referral Plan",
+      "category": "plan",
+      "content": "Patient does not meet criteria for treatment under the Pharmacy First PGD due to [reason, e.g., rash onset >7 days, ophthalmic involvement]. Referred to GP for further assessment and management. Self-care and safety netting advice provided."
+    },
+    {
+      "id": "safety-netting",
+      "trigger": "ssafety",
+      "label": "Safety Netting",
+      "category": "safety-net",
+      "content": "Advised to seek urgent medical attention (A&E/999) if: rash spreads to the eyes, develops facial weakness, becomes systemically unwell (fever, confusion), or if pain is severe and uncontrolled. Advised to contact GP if lesions show signs of bacterial infection or if not improving after treatment."
+    }
+  ],
+  "reasoning": {
+    "discriminators": [
+      "Time since rash onset (<72 hours vs <7 days vs >7 days)",
+      "Location of rash (truncal vs. ophthalmic vs. head/neck)",
+      "Presence of immunosuppression",
+      "Severity of pain and rash",
+      "Patient age (>50 or >70 years)"
+    ],
+    "mustNotMiss": [
+      "Ophthalmic Shingles (Herpes Zoster Ophthalmicus)",
+      "Ramsay Hunt Syndrome (Herpes Zoster Oticus)",
+      "Disseminated Shingles",
+      "Secondary bacterial infection of lesions",
+      "Post-Herpetic Neuralgia (PHN)"
+    ],
+    "redFlags": [
+      "Eye involvement (Hutchinson's sign - vesicles on the tip of the nose, side, or root of the nose)",
+      "Facial nerve palsy (facial droop)",
+      "Hearing loss, vertigo, or tinnitus",
+      "Altered mental state, confusion, or severe headache",
+      "Signs of systemic illness (fever, sepsis)",
+      "Known severe immunosuppression (e.g., recent chemotherapy, organ transplant)",
+      "Pregnancy"
+    ],
+    "references": [
+      { "label": "NHS England Pharmacy First PGD: Shingles", "url": "https://www.england.nhs.uk/wp-content/uploads/2023/11/PRN01010-2a.-shingles-aciclovir-patient-group-direction-pharmacy-first.pdf" },
+      { "label": "NICE CKS: Shingles", "url": "https://cks.nice.org.uk/topics/shingles/" },
+      { "label": "Clinical Pathways UK: Pharmacy First - Shingles", "url": "https://clinicalpathways.uk/pharmacy/shingles/" }
+    ]
+  },
+  "structuredFields": [
+    {
+      "id": "assessment",
+      "title": "Pharmacy First Assessment",
+      "fields": [
+        {
+          "id": "rash_onset_hours",
+          "label": "Time since rash onset (hours)",
+          "type": "number",
+          "required": true
+        },
+        {
+          "id": "location",
+          "label": "Dermatome Affected",
+          "type": "text",
+          "required": true
+        },
+        {
+          "id": "eye_involvement",
+          "label": "Eye involvement?",
+          "type": "toggle",
+          "required": true
+        },
+        {
+          "id": "immunosuppressed",
+          "label": "Patient immunosuppressed?",
+          "type": "toggle",
+          "required": true
+        },
+        {
+          "id": "pregnant",
+          "label": "Pregnant or suspected pregnancy?",
+          "type": "toggle",
+          "required": true
+        }
+      ]
+    }
+  ],
+  "outputTemplate": {
+    "sections": [
+      { "id": "editor", "title": "Consultation Notes", "source": "editor", "includeByDefault": true },
+      { "id": "structured-assessment", "title": "Pharmacy First Assessment", "source": "structured", "structuredSectionId": "assessment", "includeByDefault": true },
+      { "id": "ddx", "title": "Differential Diagnosis", "source": "ddx", "includeByDefault": false }
+    ]
+  },
+  "review": {
+    "illnessScript": {
+      "summary": "Shingles (herpes zoster) is a reactivation of the varicella-zoster virus, causing a painful, unilateral vesicular rash in a dermatomal distribution. The Pharmacy First service allows community pharmacists to assess and treat eligible adults (18+) to reduce severity and prevent complications like post-herpetic neuralgia."
+    },
+    "mustNotMiss": [
+      {
+        "condition": "Ophthalmic Shingles",
+        "redFlags": ["Vesicles on the tip, side, or root of the nose (Hutchinson's sign)", "Eye pain, redness, or visual disturbance"],
+        "whyDangerous": "Can lead to permanent vision loss.",
+        "escalationConcern": "Urgent same-day referral to an ophthalmologist."
+      }
+    ],
+    "discriminators": [
+      { "question": "When did the rash first appear?", "reasoning": "Treatment is most effective within 72 hours. The PGD has specific criteria for treatment between 72 hours and 7 days.", "clinicalValue": "Determines eligibility for antiviral treatment under the PGD." }
+    ],
+    "historyPrompts": [
+      {
+        "category": "Eligibility Screening",
+        "prompts": [
+          { "id": "age", "label": "Confirm age (18+)", "mode": "yesNo" },
+          { "id": "onset", "label": "Confirm rash onset time", "mode": "text" },
+          { "id": "location", "label": "Confirm rash location (non-ophthalmic)", "mode": "text" }
+        ]
+      }
+    ],
+    "examSections": [
+      {
+        "id": "rash_assessment",
+        "title": "Rash Assessment",
+        "prompts": [
+          { "id": "distribution", "label": "Confirm unilateral, dermatomal distribution", "significance": "Key diagnostic feature of shingles." },
+          { "id": "hutchinson", "label": "Check for Hutchinson's sign", "significance": "Red flag for ophthalmic involvement." }
+        ]
+      }
+    ],
+    "diagnoses": {
+      "common": [{ "name": "Shingles (Herpes Zoster)", "likelihood": "High" }],
+      "mustNotMiss": [{ "name": "Ophthalmic Shingles" }, { "name": "Ramsay Hunt Syndrome" }],
+      "oftenMissed": [{ "name": "Zoster sine herpete (pain without rash)" }]
+    },
+    "investigations": {
+      "whenHelpful": [{ "test": "None routinely required", "rationale": "Shingles is a clinical diagnosis in the community pharmacy setting." }],
+      "whenNotNeeded": [{ "test": "Viral swabs", "rationale": "Diagnosis is clinical in most cases in a community pharmacy setting." }],
+      "limitations": []
+    },
+    "managementConsiderations": {
+      "selfCare": ["Keep the rash clean and dry", "Wear loose-fitting clothing", "Use a cool compress for pain relief"],
+      "pharmacologicalConcepts": [
+        { "concept": "Antiviral Therapy", "considerations": "Aciclovir 800mg 5 times a day for 7 days is the standard PGD treatment." }
+      ],
+      "delayedStrategies": [],
+      "followUpLogic": ["Advise to see GP if pain persists after the rash has healed (for PHN assessment)."]
+    },
+    "safetyNetting": {
+      "returnAdvice": ["Worsening pain", "Signs of secondary bacterial infection (pus, spreading redness)"],
+      "escalationTriggers": ["Eye symptoms", "Facial weakness", "Severe systemic illness"]
+    }
+  },
+  "jitl": {
+    "termMap": [
+      { "term": "PGD", "contextType": "clinical", "description": "Patient Group Direction" },
+      { "term": "Hutchinson's sign", "contextType": "exam", "description": "Vesicles on the tip of the nose, indicating ophthalmic involvement" }
+    ],
+    "linkProviders": [
+      { "label": "NHS England Pharmacy First PGD", "hrefTemplate": "https://www.england.nhs.uk/wp-content/uploads/2023/11/PRN01010-2a.-shingles-aciclovir-patient-group-direction-pharmacy-first.pdf", "row": 1 }
+    ]
+  },
+  "ddx": {
+    "evidencePrompts": ["Unilateral rash", "Dermatomal distribution", "Vesicular lesions", "Prodromal pain"],
+    "compareEnabled": false
+  },
+  "qa": {
+    "status": "draft",
+    "clinicalReviewer": "unassigned",
+    "reviewedAt": "1970-01-01",
+    "version": "0.0.0"
+  }
+}

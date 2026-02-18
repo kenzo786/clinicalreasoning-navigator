@@ -91,6 +91,13 @@
     "updatedAt": "1970-01-01"
   },
   {
+    "id": "uti-pharmacy-first",
+    "displayName": "Uncomplicated UTI (Pharmacy First)",
+    "version": "2.1",
+    "qaStatus": "draft",
+    "updatedAt": "1970-01-01"
+  },
+  {
     "id": "uti",
     "displayName": "UTI",
     "version": "2.1",

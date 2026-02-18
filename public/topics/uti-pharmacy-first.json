@@ -1,0 +1,329 @@
+{
+  "version": "2.1",
+  "metadata": {
+    "id": "uti-pharmacy-first",
+    "slug": "uti-pharmacy-first",
+    "displayName": "Uncomplicated UTI (Pharmacy First)",
+    "specialty": "Urology/Pharmacy",
+    "triggers": ["uti", "urinary tract infection", "cystitis", "pharmacy first", "nitrofurantoin"]
+  },
+  "snippets": [
+    {
+      "id": "hist-presenting-complaint",
+      "trigger": "uhistpc",
+      "label": "Presenting Complaint",
+      "category": "history",
+      "content": "Patient presents with symptoms of a urinary tract infection, including {dysuria|frequency|urgency|nocturia|haematuria|suprapubic pain}. Symptoms started [duration] ago. Symptom severity described as {mild|moderate|severe}."
+    },
+    {
+      "id": "hist-red-flags",
+      "trigger": "uhistrf",
+      "label": "Red Flag Assessment",
+      "category": "history",
+      "content": "Red flag screen: No signs of pyelonephritis (no loin pain, fever, rigors, nausea/vomiting). No signs of sepsis. Not pregnant and not breastfeeding. No known immunosuppression. No recurrent UTIs (2 in 6 months or 3 in 12 months). No vaginal discharge or symptoms suggestive of STI."
+    },
+    {
+      "id": "exam-key-symptoms",
+      "trigger": "uexamkey",
+      "label": "Key Diagnostic Symptoms",
+      "category": "exam",
+      "content": "Patient reports [number] of the following key diagnostic symptoms: dysuria (burning pain when passing urine), new nocturia (needing to pass urine in the night), cloudy urine (visual inspection by pharmacist if practicable)."
+    },
+    {
+      "id": "exam-alternative-diagnosis",
+      "trigger": "uexamalt",
+      "label": "Alternative Diagnosis Exclusion",
+      "category": "exam",
+      "content": "No vaginal discharge or irritation. No history suggestive of a sexually transmitted infection. No symptoms of genitourinary syndrome of menopause. No urethritis symptoms (post-coital irritation)."
+    },
+    {
+      "id": "plan-treatment-supply",
+      "trigger": "uplantx",
+      "label": "Treatment Plan (Supply)",
+      "category": "plan",
+      "content": "Patient meets criteria for treatment under the Pharmacy First PGD. Supplied Nitrofurantoin 100mg MR capsules, one to be taken twice daily for 3 days. Advised to complete the course. Provided with TARGET UTI patient information leaflet. Pain management advice given (paracetamol/ibuprofen). Self-care advice provided (adequate hydration)."
+    },
+    {
+      "id": "plan-self-care",
+      "trigger": "uplansc",
+      "label": "Self-Care Plan",
+      "category": "plan",
+      "content": "Patient has mild symptoms. Advised on self-care measures: adequate hydration, pain relief (paracetamol/ibuprofen), and monitoring of symptoms. Provided with TARGET UTI patient information leaflet. Advised to return to pharmacy for reassessment if no improvement in 48 hours or if symptoms worsen."
+    },
+    {
+      "id": "safety-netting",
+      "trigger": "usafety",
+      "label": "Safety Netting",
+      "category": "safety-net",
+      "content": "Advised to seek urgent medical attention (GP same-day or A&E) if: symptoms worsen rapidly, develop fever (≥37.9°C), loin pain, rigors, nausea/vomiting, or signs of sepsis. Advised to contact GP if symptoms do not improve within 48 hours of starting antibiotics, or if they develop signs of pyelonephritis."
+    }
+  ],
+  "reasoning": {
+    "discriminators": [
+      "Number of key diagnostic symptoms (0, 1, 2, or 3)",
+      "Symptom severity (mild vs. moderate to severe)",
+      "Presence of systemic symptoms (fever, rigors, loin pain)",
+      "Alternative diagnoses (vaginal discharge, pregnancy, STI)",
+      "Immunosuppression status"
+    ],
+    "mustNotMiss": [
+      "Pyelonephritis (upper UTI)",
+      "Sepsis",
+      "Pregnancy",
+      "Sexually Transmitted Infection (STI)",
+      "Severe/Moderate Immunosuppression"
+    ],
+    "redFlags": [
+      "Loin pain, fever (≥37.9°C), rigors, nausea/vomiting (pyelonephritis)",
+      "Signs of sepsis (deterioration, altered mental state)",
+      "Pregnancy or suspected pregnancy",
+      "Severe immunosuppression (as defined in Green Book Chapter 28a)",
+      "Recurrent UTI (2 episodes in 6 months or 3 in 12 months)",
+      "Vaginal discharge or symptoms suggestive of STI"
+    ],
+    "references": [
+      { "label": "NHS England Pharmacy First PGD: UTI", "url": "https://www.england.nhs.uk/wp-content/uploads/2023/11/PRN01010-1a.-urinary-tract-infection-nitrofurantoin-patient-group-direction-pharmacy-first.pdf" },
+      { "label": "NICE NG109: Urinary tract infection (lower): antimicrobial prescribing", "url": "https://www.nice.org.uk/guidance/ng109" },
+      { "label": "Clinical Pathways UK: Pharmacy First - UTI", "url": "https://clinicalpathways.uk/pharmacy/uti/" }
+    ]
+  },
+  "structuredFields": [
+    {
+      "id": "assessment",
+      "title": "Pharmacy First UTI Assessment",
+      "fields": [
+        {
+          "id": "key_symptoms_count",
+          "label": "Number of key diagnostic symptoms (dysuria, nocturia, cloudy urine)",
+          "type": "number",
+          "required": true
+        },
+        {
+          "id": "symptom_severity",
+          "label": "Symptom Severity",
+          "type": "select",
+          "options": ["Mild", "Moderate", "Severe"],
+          "required": true
+        },
+        {
+          "id": "systemic_symptoms",
+          "label": "Systemic symptoms present (fever, loin pain, rigors)?",
+          "type": "toggle",
+          "required": true
+        },
+        {
+          "id": "alternative_diagnosis",
+          "label": "Alternative diagnosis suspected (vaginal discharge, STI, pregnancy)?",
+          "type": "toggle",
+          "required": true
+        },
+        {
+          "id": "immunosuppression",
+          "label": "Immunosuppression Status",
+          "type": "select",
+          "options": ["None", "Moderate", "Severe"],
+          "required": true
+        },
+        {
+          "id": "pgd_eligibility",
+          "label": "PGD Eligibility",
+          "type": "select",
+          "options": ["Eligible", "Excluded"],
+          "required": true
+        },
+        {
+          "id": "treatment_decision",
+          "label": "Treatment Decision",
+          "type": "select",
+          "options": ["Nitrofurantoin supplied", "Self-care advised", "Referred to GP/A&E"],
+          "required": true
+        }
+      ]
+    }
+  ],
+  "outputTemplate": {
+    "sections": [
+      { "id": "editor", "title": "Consultation Notes", "source": "editor", "includeByDefault": true },
+      { "id": "structured-assessment", "title": "Pharmacy First UTI Assessment", "source": "structured", "structuredSectionId": "assessment", "includeByDefault": true },
+      { "id": "ddx", "title": "Differential Diagnosis", "source": "ddx", "includeByDefault": false }
+    ]
+  },
+  "review": {
+    "illnessScript": {
+      "summary": "Uncomplicated lower UTI in women is a common presentation in community pharmacy. The Pharmacy First service enables pharmacists to assess, diagnose, and treat eligible patients using a structured pathway aligned to the nitrofurantoin PGD. The primary goals are to identify patients suitable for antibiotic treatment, exclude serious complications (pyelonephritis, sepsis), and ensure appropriate safety netting for those who do not meet PGD criteria or have mild symptoms suitable for self-care."
+    },
+    "mustNotMiss": [
+      {
+        "condition": "Pyelonephritis (Upper UTI)",
+        "redFlags": ["Loin pain", "Fever (≥37.9°C)", "Rigors", "Nausea/vomiting"],
+        "whyDangerous": "Requires urgent same-day GP referral for systemic antibiotics to prevent sepsis and renal complications.",
+        "escalationConcern": "Urgent same-day GP referral or A&E if systemically unwell."
+      },
+      {
+        "condition": "Sepsis",
+        "redFlags": ["Signs of deterioration or serious illness", "Altered mental state", "High or low temperature", "Fast heart rate or breathing"],
+        "whyDangerous": "Life-threatening condition requiring immediate hospital assessment and treatment.",
+        "escalationConcern": "Immediate escalation to A&E or 999."
+      },
+      {
+        "condition": "Pregnancy",
+        "redFlags": ["Missed or lighter periods", "Positive pregnancy test"],
+        "whyDangerous": "Excluded from the Pharmacy First PGD. Requires GP management to prevent complications.",
+        "escalationConcern": "Refer to GP for appropriate antibiotic choice and monitoring."
+      },
+      {
+        "condition": "Sexually Transmitted Infection (STI)",
+        "redFlags": ["Urethritis symptoms", "Vaginal discharge", "Relevant sexual history"],
+        "whyDangerous": "Requires specific testing and treatment at a sexual health clinic.",
+        "escalationConcern": "Refer to sexual health clinic or GP."
+      },
+      {
+        "condition": "Severe/Moderate Immunosuppression",
+        "redFlags": ["Recent chemotherapy", "Organ transplant", "HIV with low CD4 count", "High-dose steroids"],
+        "whyDangerous": "Excluded from the Pharmacy First PGD. Higher risk of complications and treatment failure.",
+        "escalationConcern": "Refer to GP for assessment and appropriate antibiotic choice."
+      }
+    ],
+    "discriminators": [
+      { "question": "How many of the 3 key diagnostic symptoms does the patient have?", "reasoning": "The number of key diagnostic symptoms (dysuria, nocturia, cloudy urine) determines the likelihood of UTI and the appropriate treatment pathway.", "clinicalValue": "Guides decision-making: 0 symptoms = UTI less likely (self-care), 1 symptom = UTI equally likely to other diagnosis (shared decision-making), 2-3 symptoms = proceed to antibiotic assessment." },
+      { "question": "How severe are the patient's symptoms?", "reasoning": "Symptom severity (mild vs. moderate to severe) guides the decision between self-care and antibiotic treatment.", "clinicalValue": "Mild symptoms may be managed with self-care and pain relief as first-line treatment." },
+      { "question": "Are there any systemic symptoms present?", "reasoning": "The presence of systemic symptoms (fever, rigors, loin pain) differentiates lower UTI from pyelonephritis.", "clinicalValue": "Systemic symptoms require urgent GP referral or A&E assessment." }
+    ],
+    "historyPrompts": [
+      {
+        "category": "Eligibility Screening",
+        "prompts": [
+          { "id": "age", "label": "Confirm age (16-64 years)", "mode": "yesNo" },
+          { "id": "gender", "label": "Confirm cisgender woman, non-binary assigned female at birth, or transgender man (with no structural alteration to urethra)", "mode": "yesNo" },
+          { "id": "pregnancy", "label": "Exclude pregnancy or suspected pregnancy", "mode": "yesNo" },
+          { "id": "breastfeeding", "label": "Exclude breastfeeding", "mode": "yesNo" },
+          { "id": "immunosuppression", "label": "Exclude severe/moderate immunosuppression", "mode": "yesNo" },
+          { "id": "recurrent_uti", "label": "Exclude recurrent UTI (2 in 6 months or 3 in 12 months)", "mode": "yesNo" }
+        ]
+      },
+      {
+        "category": "Symptom Assessment",
+        "prompts": [
+          { "id": "dysuria", "label": "Dysuria (burning pain when passing urine)?", "mode": "yesNo" },
+          { "id": "nocturia", "label": "New nocturia (needing to pass urine in the night)?", "mode": "yesNo" },
+          { "id": "cloudy_urine", "label": "Cloudy urine (visual inspection if practicable)?", "mode": "yesNo" },
+          { "id": "frequency", "label": "Frequency?", "mode": "yesNo" },
+          { "id": "urgency", "label": "Urgency?", "mode": "yesNo" },
+          { "id": "haematuria", "label": "Visible haematuria?", "mode": "yesNo" },
+          { "id": "suprapubic_pain", "label": "Suprapubic pain/tenderness?", "mode": "yesNo" }
+        ]
+      },
+      {
+        "category": "Red Flag Assessment",
+        "prompts": [
+          { "id": "loin_pain", "label": "Loin pain or tenderness?", "mode": "yesNo" },
+          { "id": "fever", "label": "Fever (≥37.9°C)?", "mode": "yesNo" },
+          { "id": "rigors", "label": "Rigors (shaking chills)?", "mode": "yesNo" },
+          { "id": "nausea_vomiting", "label": "Nausea or vomiting?", "mode": "yesNo" },
+          { "id": "sepsis_signs", "label": "Signs of sepsis (deterioration, altered mental state)?", "mode": "yesNo" }
+        ]
+      },
+      {
+        "category": "Alternative Diagnosis Screening",
+        "prompts": [
+          { "id": "vaginal_discharge", "label": "Vaginal discharge?", "mode": "yesNo" },
+          { "id": "sti_risk", "label": "Sexual history suggestive of STI?", "mode": "yesNo" },
+          { "id": "menopause", "label": "Symptoms of genitourinary syndrome of menopause?", "mode": "yesNo" },
+          { "id": "urethritis", "label": "Urethritis symptoms (post-coital irritation)?", "mode": "yesNo" }
+        ]
+      }
+    ],
+    "examSections": [
+      {
+        "id": "visual_inspection",
+        "title": "Visual Inspection",
+        "prompts": [
+          { "id": "urine_appearance", "label": "Visual inspection of urine (if practicable)", "significance": "Cloudy urine is one of the 3 key diagnostic symptoms." }
+        ]
+      }
+    ],
+    "diagnoses": {
+      "common": [
+        { "name": "Uncomplicated lower UTI (cystitis)", "likelihood": "High (if 2-3 key symptoms)" },
+        { "name": "Vulvovaginal candidiasis (thrush)", "likelihood": "Moderate (if vaginal discharge)" }
+      ],
+      "mustNotMiss": [
+        { "name": "Pyelonephritis (upper UTI)" },
+        { "name": "Sepsis" },
+        { "name": "Pregnancy" },
+        { "name": "Sexually Transmitted Infection (STI)" }
+      ],
+      "oftenMissed": [
+        { "name": "Genitourinary syndrome of menopause" },
+        { "name": "Interstitial cystitis" },
+        { "name": "Urethritis" }
+      ]
+    },
+    "investigations": {
+      "whenHelpful": [
+        { "test": "Urine culture", "rationale": "Indicated for recurrent UTI (2 in 6 months or 3 in 12 months) to guide antibiotic choice." }
+      ],
+      "whenNotNeeded": [
+        { "test": "Urine dipstick", "rationale": "Not routinely required for diagnosis in the Pharmacy First pathway if clinical features are present." }
+      ],
+      "limitations": []
+    },
+    "managementConsiderations": {
+      "selfCare": [
+        "Adequate hydration (drink plenty of fluids)",
+        "Pain relief (paracetamol or ibuprofen)",
+        "Avoid irritants (caffeine, alcohol, spicy foods)"
+      ],
+      "pharmacologicalConcepts": [
+        { "concept": "Antibiotic Therapy", "considerations": "Nitrofurantoin 100mg MR twice daily for 3 days is the standard PGD treatment. Alternative: Nitrofurantoin 50mg immediate release four times daily for 3 days if MR unavailable." }
+      ],
+      "delayedStrategies": [
+        "For mild symptoms, consider self-care and pain relief as first-line treatment, with reassessment in 48 hours if no improvement."
+      ],
+      "followUpLogic": [
+        "Advise to return to pharmacy or see GP if symptoms do not improve within 48 hours of starting antibiotics.",
+        "Advise to see GP if recurrent UTIs (2 in 6 months or 3 in 12 months) for further investigation."
+      ]
+    },
+    "safetyNetting": {
+      "returnAdvice": [
+        "Symptoms worsen or do not improve within 48 hours of starting antibiotics",
+        "Development of new symptoms (fever, loin pain, nausea/vomiting)"
+      ],
+      "escalationTriggers": [
+        "Signs of pyelonephritis (loin pain, fever, rigors, nausea/vomiting)",
+        "Signs of sepsis (deterioration, altered mental state)",
+        "Pregnancy or suspected pregnancy"
+      ]
+    }
+  },
+  "jitl": {
+    "termMap": [
+      { "term": "PGD", "contextType": "clinical", "description": "Patient Group Direction" },
+      { "term": "Dysuria", "contextType": "symptom", "description": "Burning pain when passing urine" },
+      { "term": "Nocturia", "contextType": "symptom", "description": "Needing to pass urine in the night" },
+      { "term": "Pyelonephritis", "contextType": "diagnosis", "description": "Upper urinary tract infection affecting the kidneys" }
+    ],
+    "linkProviders": [
+      { "label": "NHS England Pharmacy First PGD: UTI", "hrefTemplate": "https://www.england.nhs.uk/wp-content/uploads/2023/11/PRN01010-1a.-urinary-tract-infection-nitrofurantoin-patient-group-direction-pharmacy-first.pdf", "row": 1 },
+      { "label": "TARGET UTI Patient Leaflet", "hrefTemplate": "https://www.rcgp.org.uk/clinical-and-research/resources/toolkits/target-antibiotic-toolkit.aspx", "row": 2 }
+    ]
+  },
+  "ddx": {
+    "evidencePrompts": [
+      "Dysuria (burning pain when passing urine)",
+      "New nocturia (needing to pass urine in the night)",
+      "Cloudy urine",
+      "Frequency",
+      "Urgency",
+      "Suprapubic pain/tenderness"
+    ],
+    "compareEnabled": false
+  },
+  "qa": {
+    "status": "draft",
+    "clinicalReviewer": "unassigned",
+    "reviewedAt": "1970-01-01",
+    "version": "0.0.0"
+  }
+}

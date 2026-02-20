@@ -49,6 +49,13 @@
     "updatedAt": "2026-02-15"
   },
   {
+    "id": "impetigo-pharmacy-first",
+    "displayName": "Impetigo (Pharmacy First)",
+    "version": "2.1",
+    "qaStatus": "draft",
+    "updatedAt": "1970-01-01"
+  },
+  {
     "id": "low-back-pain",
     "displayName": "Low Back Pain",
     "version": "2.1",
@@ -61,6 +68,13 @@
     "version": "2.1",
     "qaStatus": "approved",
     "updatedAt": "2026-02-15"
+  },
+  {
+    "id": "shingles-pharmacy-first",
+    "displayName": "Shingles (Pharmacy First)",
+    "version": "2.1",
+    "qaStatus": "draft",
+    "updatedAt": "1970-01-01"
   },
   {
     "id": "shingles-pharmacy-first",

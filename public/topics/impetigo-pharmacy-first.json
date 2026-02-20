@@ -1,0 +1,239 @@
+{
+  "version": "2.1",
+  "metadata": {
+    "id": "impetigo-pharmacy-first",
+    "slug": "impetigo-pharmacy-first",
+    "displayName": "Impetigo (Pharmacy First)",
+    "specialty": "Dermatology/Pharmacy",
+    "triggers": ["impetigo", "school sores", "pharmacy first", "non-bullous impetigo"]
+  },
+  "snippets": [
+    {
+      "id": "hist-presenting-complaint-localised",
+      "trigger": "ipchistl",
+      "label": "PC Hx (Localised)",
+      "category": "history",
+      "content": "Patient presents with localised skin lesions consistent with non-bullous impetigo. Onset [2] days ago. Reports [1-3] lesions/clusters on the [location, e.g., around the mouth]. Lesions started as red spots, which have now burst to leave golden, crusted patches. No systemic symptoms reported."
+    },
+    {
+      "id": "hist-presenting-complaint-widespread",
+      "trigger": "ipchistw",
+      "label": "PC Hx (Widespread)",
+      "category": "history",
+      "content": "Patient presents with widespread skin lesions consistent with non-bullous impetigo. Onset [3] days ago. Reports [4+] lesions/clusters affecting the [location, e.g., face and hands]. Lesions are described as red spots that have ruptured, leaving honey-coloured crusts. No systemic symptoms reported."
+    },
+    {
+      "id": "hist-red-flags-assessment",
+      "trigger": "ipcrf",
+      "label": "Red Flag Assessment",
+      "category": "history",
+      "content": "Red flag screen: No signs of systemic illness (fever, malaise, confusion). No large, painful, or rapidly spreading red areas concerning for cellulitis. Not bullous (no large blisters). Not recurrent (less than 2 episodes in the last year). Not severely immunocompromised. Not pregnant."
+    },
+    {
+      "id": "exam-lesions",
+      "trigger": "ipcexam",
+      "label": "Lesion Examination",
+      "category": "exam",
+      "content": "On examination, there are [number] lesions/clusters. Lesions are erythematous macules and papules with characteristic honey-coloured, golden crusts. No evidence of bullae. No signs of secondary bacterial infection (e.g., significant surrounding erythema, purulence, pain)."
+    },
+    {
+      "id": "plan-localised-h2o2",
+      "trigger": "ipcplanlh",
+      "label": "Plan (Localised - H2O2)",
+      "category": "plan",
+      "content": "Diagnosis of localised non-bullous impetigo confirmed. Meets criteria for treatment under Pharmacy First protocol. Supplied Hydrogen Peroxide 1% cream, apply 2-3 times daily for 5 days. Provided hygiene and safety netting advice."
+    },
+    {
+      "id": "plan-widespread-fluclox",
+      "trigger": "ipcplanwf",
+      "label": "Plan (Widespread - Fluclox)",
+      "category": "plan",
+      "content": "Diagnosis of widespread non-bullous impetigo confirmed. Meets criteria for treatment under Pharmacy First PGD. Supplied Flucloxacillin [500mg] four times daily for 5 days. Advised on importance of adherence and completing the course. Provided hygiene and safety netting advice."
+    },
+    {
+      "id": "plan-referral",
+      "trigger": "ipcplanref",
+      "label": "Referral Plan",
+      "category": "plan",
+      "content": "Patient does not meet criteria for treatment under the Pharmacy First pathway due to [reason, e.g., bullous lesions, systemically unwell, recurrent infection]. Referred to GP for further assessment and management. Provided self-care and safety netting advice."
+    },
+    {
+      "id": "safety-netting",
+      "trigger": "ipcsafety",
+      "label": "Safety Netting",
+      "category": "safety-net",
+      "content": "Advised to seek urgent medical attention (GP/A&E) if: symptoms worsen rapidly, develops a fever or feels systemically unwell, the skin becomes very red, swollen, and painful (cellulitis), or develops large blisters (bullous impetigo). Advised to return if lesions do not start to heal after completing treatment."
+    }
+  ],
+  "reasoning": {
+    "discriminators": [
+      "Number of lesions (Localised: ≤3 vs Widespread: ≥4)",
+      "Type of lesion (Non-bullous vs. Bullous)",
+      "Presence of systemic symptoms (fever, malaise)",
+      "History of recurrence (2+ episodes in a year)",
+      "Penicillin allergy status",
+      "Pregnancy status"
+    ],
+    "mustNotMiss": [
+      "Cellulitis",
+      "Staphylococcal Scalded Skin Syndrome (SSSS)",
+      "Bullous Impetigo",
+      "Systemic infection / Sepsis",
+      "Post-streptococcal glomerulonephritis (rare)"
+    ],
+    "redFlags": [
+      "Systemic signs of infection (fever, malaise, rigors, confusion)",
+      "Rapidly spreading erythema, swelling, and pain suggesting cellulitis",
+      "Large, flaccid blisters (bullae)",
+      "Severe immunosuppression",
+      "Recurrent infection (2 or more episodes in the same year)"
+    ],
+    "references": [
+      { "label": "NHS England Pharmacy First Clinical Pathway: Impetigo", "url": "https://clinicalpathways.uk/pharmacy/impetigo/" },
+      { "label": "NICE CKS: Impetigo", "url": "https://cks.nice.org.uk/topics/impetigo/" },
+      { "label": "NHS England PGD: Hydrogen Peroxide 1% cream", "url": "https://www.england.nhs.uk/wp-content/uploads/2023/11/PRN01010-3a.-impetigo-hydrogen-peroxide-cream-protocol-pharmacy-first.pdf" },
+      { "label": "NHS England PGD: Fusidic Acid 2% cream", "url": "https://www.england.nhs.uk/wp-content/uploads/2023/11/PRN01010-3b.-Impetigo-fusidic-acid-cream-patient-group-direction-Pharmacy-First.pdf" },
+      { "label": "NHS England PGD: Flucloxacillin", "url": "https://www.england.nhs.uk/wp-content/uploads/2023/11/PRN01010-3c.-impetigo-flucloxacillin-patient-group-direction-pharmacy-first.pdf" },
+      { "label": "NHS England PGD: Clarithromycin", "url": "https://www.england.nhs.uk/wp-content/uploads/2023/11/PRN01010-3d.-impetigo-clarithromycin-patient-group-direction-pharmacy-first.pdf" }
+    ]
+  },
+  "structuredFields": [
+    {
+      "id": "assessment",
+      "title": "Pharmacy First Impetigo Assessment",
+      "fields": [
+        {
+          "id": "age",
+          "label": "Age (years)",
+          "type": "number",
+          "required": true
+        },
+        {
+          "id": "lesion_type",
+          "label": "Lesion Type",
+          "type": "select",
+          "options": ["Non-bullous (crusts)", "Bullous (blisters)"],
+          "required": true
+        },
+        {
+          "id": "lesion_count",
+          "label": "Number of lesions/clusters",
+          "type": "select",
+          "options": ["Localised (1-3)", "Widespread (4+)"],
+          "required": true
+        },
+        {
+          "id": "systemically_unwell",
+          "label": "Systemically unwell (fever, malaise)?",
+          "type": "toggle",
+          "required": true
+        },
+        {
+          "id": "penicillin_allergy",
+          "label": "Penicillin allergy?",
+          "type": "toggle",
+          "required": true
+        },
+        {
+          "id": "pregnant",
+          "label": "Pregnant or suspected pregnancy?",
+          "type": "toggle",
+          "required": true
+        }
+      ]
+    }
+  ],
+  "outputTemplate": {
+    "sections": [
+      { "id": "editor", "title": "Consultation Notes", "source": "editor", "includeByDefault": true },
+      { "id": "structured-assessment", "title": "Pharmacy First Impetigo Assessment", "source": "structured", "structuredSectionId": "assessment", "includeByDefault": true },
+      { "id": "ddx", "title": "Differential Diagnosis", "source": "ddx", "includeByDefault": false }
+    ]
+  },
+  "review": {
+    "illnessScript": {
+      "summary": "Impetigo is a common, contagious superficial bacterial skin infection. The Pharmacy First service covers non-bullous impetigo, characterised by red sores that rupture to form golden, honey-coloured crusts. The pathway differentiates between localised (≤3 lesions) and widespread (≥4 lesions) infection to guide treatment, starting with topical antiseptics and escalating to oral antibiotics based on severity and patient factors like penicillin allergy."
+    },
+    "mustNotMiss": [
+      {
+        "condition": "Cellulitis",
+        "redFlags": ["Spreading erythema, swelling, warmth, and pain", "Systemic symptoms like fever"],
+        "whyDangerous": "Deeper skin infection that can lead to sepsis if not treated promptly with systemic antibiotics.",
+        "escalationConcern": "Urgent same-day GP referral or A&E if systemically unwell."
+      },
+      {
+        "condition": "Bullous Impetigo",
+        "redFlags": ["Presence of flaccid, fluid-filled blisters (bullae)"],
+        "whyDangerous": "Excluded from the Pharmacy First pathway and often requires oral antibiotics.",
+        "escalationConcern": "Refer to GP for assessment and management."
+      }
+    ],
+    "discriminators": [
+      { "question": "Is the infection localised (≤3 lesions) or widespread (≥4 lesions)?", "reasoning": "This is the key decision point in the Pharmacy First pathway, determining whether topical or oral treatment is appropriate.", "clinicalValue": "Guides first-line treatment choice between hydrogen peroxide/fusidic acid (localised) and flucloxacillin (widespread)." },
+      { "question": "Are the lesions crusted (non-bullous) or are there large blisters (bullous)?", "reasoning": "The Pharmacy First service specifically excludes bullous impetigo, which requires different management.", "clinicalValue": "Exclusion criteria. Bullous impetigo requires referral to a GP." }
+    ],
+    "historyPrompts": [
+      {
+        "category": "Eligibility Screening",
+        "prompts": [
+          { "id": "age_check", "label": "Confirm age (≥ 1 year)", "mode": "yesNo" },
+          { "id": "lesion_type_check", "label": "Confirm non-bullous lesions (no large blisters)", "mode": "yesNo" },
+          { "id": "systemic_check", "label": "Confirm not systemically unwell", "mode": "yesNo" },
+          { "id": "recurrent_check", "label": "Confirm not recurrent ( <2 episodes in last year)", "mode": "yesNo" }
+        ]
+      }
+    ],
+    "examSections": [
+      {
+        "id": "lesion_assessment",
+        "title": "Lesion Assessment",
+        "prompts": [
+          { "id": "distribution", "label": "Assess number of lesions/clusters (localised vs widespread)", "significance": "Determines treatment pathway (topical vs oral)." },
+          { "id": "crusting", "label": "Confirm presence of characteristic golden/honey-coloured crusts", "significance": "Key diagnostic feature of non-bullous impetigo." }
+        ]
+      }
+    ],
+    "diagnoses": {
+      "common": [{ "name": "Non-bullous Impetigo", "likelihood": "High" }],
+      "mustNotMiss": [{ "name": "Cellulitis" }, { "name": "Bullous Impetigo" }],
+      "oftenMissed": [{ "name": "Infected Eczema" }, { "name": "Herpes Simplex (Cold Sore)" }]
+    },
+    "investigations": {
+      "whenHelpful": [{ "test": "None routinely required", "rationale": "Impetigo is a clinical diagnosis in the community pharmacy setting." }],
+      "whenNotNeeded": [{ "test": "Bacterial swabs", "rationale": "Not required for uncomplicated impetigo under Pharmacy First. Reserved for treatment failure or recurrent cases in general practice." }],
+      "limitations": []
+    },
+    "managementConsiderations": {
+      "selfCare": ["Gently wash lesions with soap and water daily", "Avoid scratching or picking at crusts", "Wash hands frequently", "Use separate towels and flannels", "Stay off school/work until 48h after starting treatment or when lesions are crusted and dry"],
+      "pharmacologicalConcepts": [
+        { "concept": "Topical First (Localised)", "considerations": "For localised disease (≤3 lesions), an antiseptic (Hydrogen Peroxide 1%) is first-line to reduce antibiotic use, as per NICE NG153." },
+        { "concept": "Systemic First (Widespread)", "considerations": "For widespread disease (≥4 lesions), oral antibiotics (Flucloxacillin) are first-line to ensure adequate treatment and prevent complications." }
+      ],
+      "delayedStrategies": [],
+      "followUpLogic": ["Advise to see GP if lesions do not improve after the 5-day treatment course or if they worsen at any point."]
+    },
+    "safetyNetting": {
+      "returnAdvice": ["Lesions spreading or new ones appearing despite treatment", "Signs of secondary infection (increasing pus, pain, redness)"],
+      "escalationTriggers": ["Feeling unwell with fever, chills, or confusion (sepsis)", "Skin becoming hot, swollen, and very painful (cellulitis)", "Development of large blisters (bullous impetigo)"]
+    }
+  },
+  "jitl": {
+    "termMap": [
+      { "term": "Localised", "contextType": "clinical", "description": "3 or fewer lesions or clusters of lesions.", "source": "NHS England Pharmacy First Protocol" },
+      { "term": "Widespread", "contextType": "clinical", "description": "4 or more lesions or clusters of lesions.", "source": "NHS England PGD" }
+    ],
+    "linkProviders": [
+      { "label": "NHS England Pharmacy First Pathway: Impetigo", "hrefTemplate": "https://clinicalpathways.uk/pharmacy/impetigo/", "row": 1 }
+    ]
+  },
+  "ddx": {
+    "evidencePrompts": ["Crusted lesions", "Located around mouth/nose", "Itchy", "Recent skin break (cut/graze)"],
+    "compareEnabled": true
+  },
+  "qa": {
+    "status": "draft",
+    "clinicalReviewer": "unassigned",
+    "reviewedAt": "1970-01-01",
+    "version": "1.0.0"
+  }
+}
